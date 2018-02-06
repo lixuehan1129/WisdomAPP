@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp">
+                    <ImageView
+                        android:id="@+id/card_message_image"
+                        android:layout_gravity="center"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@mipmap/ic_blue_message"/>
+                    <TextView
+                        android:paddingLeft="20dp"
+                        android:id="@+id/card_message_tell"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="停水通知"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20dp"/>
+                </LinearLayout>
+                <TextView
+                    android:paddingLeft="60dp"
+                    android:text="具体内容"
+                    android:id="@+id/card_message_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorGray_1"/>
+                <TextView
+                    android:id="@+id/card_message_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="01月24日"
+                    android:textColor="@color/colorGray_1"
+                    android:gravity="right"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGray"/>
+            </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</android.support.constraint.ConstraintLayout>
