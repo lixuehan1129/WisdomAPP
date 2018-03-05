@@ -5,8 +5,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,7 +47,40 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
         Toolbar mToolbar = (Toolbar)view.findViewById(R.id.mainTool);
         mToolbar.setTitle("社区");
         initView(view);
+        setHasOptionsMenu(true);
+        setMenu(mToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_society_select,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void setMenu(Toolbar toolbar){
+        //返回按钮监听
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //menu item点击事件监听
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.menu_message:
+
+                        break;
+                }
+                return false;
+            }
+        });
+
     }
 
     private void initView(View view){
