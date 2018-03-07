@@ -124,6 +124,7 @@ public class SocietyNewMessage extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
                 Toast toast=Toast.makeText(getActivity(), card_message_tell.get(position), Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }

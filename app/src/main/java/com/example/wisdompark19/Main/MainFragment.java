@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.wisdompark19.Adapter.FunctionListAdapter;
@@ -229,6 +230,7 @@ public class MainFragment extends Fragment {
 //                intent.putExtras(bundle);
 //                startActivity(intent);
                 System.out.println(card_message_content_tv.getText().toString());
+                Toast.makeText(getActivity(), card_message_content_tv.getText(),Toast.LENGTH_LONG).show();
             }
         });
         if (viewFlipper.getChildCount() > 1) {

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.wisdompark19.Adapter.PayItemAdapter;
@@ -34,6 +35,11 @@ public class PayActivity extends AppCompatActivity{
     ArrayList<String> card_message_content = new ArrayList<String>();
     ArrayList<String> card_message_time = new ArrayList<String>();
 
+    ImageButton pay_water;
+    ImageButton pay_electric;
+    ImageButton pay_gas;
+    ImageButton pay_property;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -49,18 +55,46 @@ public class PayActivity extends AppCompatActivity{
         initRollData();
         initData();
         findView();
+        ButtonCick();
     }
 
     private void findView(){
-        ImageButton pay_water = (ImageButton)findViewById(R.id.pay_water);
-        ImageButton pay_electric = (ImageButton)findViewById(R.id.pay_electric);
-        ImageButton pay_gas = (ImageButton)findViewById(R.id.pay_gas);
-        ImageButton pay_property = (ImageButton)findViewById(R.id.pay_property);
+        pay_water = (ImageButton)findViewById(R.id.pay_water);
+        pay_electric = (ImageButton)findViewById(R.id.pay_electric);
+        pay_gas = (ImageButton)findViewById(R.id.pay_gas);
+        pay_property = (ImageButton)findViewById(R.id.pay_property);
         mRecyclerView = (RecyclerView)findViewById(R.id.rv_pay_item);
         mLayoutManager = new LinearLayoutManager(PayActivity.this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mPayItemAdapter = new PayItemAdapter(Data);
         mRecyclerView.setAdapter(mPayItemAdapter);
+    }
+
+    private void ButtonCick(){
+        pay_water.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PayActivity.this,"水费",Toast.LENGTH_LONG).show();
+            }
+        });
+        pay_electric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PayActivity.this,"电费",Toast.LENGTH_LONG).show();
+            }
+        });
+        pay_gas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PayActivity.this,"天然气",Toast.LENGTH_LONG).show();
+            }
+        });
+        pay_property.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PayActivity.this,"物业费",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void initRollData(){
@@ -105,12 +139,6 @@ public class PayActivity extends AppCompatActivity{
             System.out.println(card_message_content.get(i));
         }
     }
-
-//    private void setAdapter(){
-//
-//        System.out.println("11");
-//    }
-
 
     //返回注销事件
     private void back(Toolbar toolbar){

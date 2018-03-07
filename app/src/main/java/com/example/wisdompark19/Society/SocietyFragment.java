@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.wisdompark19.Adapter.TabLayoutAdapter;
 import com.example.wisdompark19.R;
@@ -48,8 +49,8 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
         mToolbar.setTitle("社区");
         initView(view);
         setHasOptionsMenu(true);
-        setMenu(mToolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        setMenu(mToolbar);
         return view;
     }
 
@@ -64,7 +65,6 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
             }
         });
 
@@ -74,7 +74,13 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.menu_message:
-
+                        Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.menu_find:
+                        Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.menu_tu_cao:
+                        Toast.makeText(getActivity(),"社区吐槽",Toast.LENGTH_LONG).show();
                         break;
                 }
                 return false;
