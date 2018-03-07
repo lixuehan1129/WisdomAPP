@@ -1,20 +1,37 @@
 package com.example.wisdompark19.Main;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.example.wisdompark19.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 最美人间四月天 on 2018/1/18.
  */
 
 public class MapActivity extends AppCompatActivity {
+
+    private LocationClient mLocationClient;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -27,12 +44,95 @@ public class MapActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
         back(toolbar);
-        findView(intent_data);
+        findView();
+
+        //获取权限
+        List<String> permissionList = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if(!permissionList.isEmpty()){
+            String[] permissions= permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(MapActivity.this,permissions,1);
+        }else{
+            requestLocation();
+        }
+
     }
 
-    private void findView(String s){
-        TextView textView = (TextView)findViewById(R.id.test_text);
-        textView.setText(s);
+    private void findView(){
+
+        textView = (TextView)findViewById(R.id.test_text);
+
+        mLocationClient = new LocationClient(getApplicationContext());
+        mLocationClient.registerLocationListener(new BDLocationListener() {
+            @Override
+            public void onReceiveLocation(BDLocation bdLocation) {
+                StringBuilder  currentPosition =  new StringBuilder();
+                currentPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
+                currentPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
+                currentPosition.append("国家：").append(bdLocation.getCountry()).append("\n");
+                currentPosition.append("省：").append(bdLocation.getProvince()).append("\n");
+                currentPosition.append("市：").append(bdLocation.getCity()).append("\n");
+                currentPosition.append("区：").append(bdLocation.getDistrict()).append("\n");
+                currentPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
+                currentPosition.append("定位方式：");
+                Log.e("tag","当前的定位方式="+bdLocation.getLocType());
+
+                if(bdLocation.getLocType() == BDLocation.TypeGpsLocation){
+                    currentPosition.append("GPS");
+                }else if(bdLocation.getLocType() == BDLocation.TypeNetWorkLocation){
+                    currentPosition.append("网络");
+                }
+                textView.setText(currentPosition);
+
+            }
+        });
+//        mLocationClient.start();
+    }
+
+    private void requestLocation() {
+        LocationClientOption  option = new LocationClientOption();
+  //      option.setScanSpan(LocationClientOption.MIN_SCAN_SPAN);
+        option.setAddrType("all");
+        option.setIsNeedAddress(true);
+        mLocationClient.setLocOption(option);
+        mLocationClient.start();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if(grantResults.length>0){
+                    for (int result: grantResults
+                            ) {
+                        if(result != PackageManager.PERMISSION_GRANTED){
+                            Toast.makeText(this, "必须同意所有的权限才能使用本程序", Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                    }
+                    requestLocation();
+                }else{
+                    Toast.makeText(this, "发生了错误", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+  //      mLocationClient.stop();
     }
 
 
