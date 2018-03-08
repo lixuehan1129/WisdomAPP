@@ -21,6 +21,7 @@ public class PayItemAdapter extends RecyclerView.Adapter<PayItemAdapter.ViewHold
     private OnItemClickListener mOnItemClickListener;
     private Context mContext;
 
+    //新添加数据后未修改内容2018.3.8
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView count_name;
         TextView count_fee;
