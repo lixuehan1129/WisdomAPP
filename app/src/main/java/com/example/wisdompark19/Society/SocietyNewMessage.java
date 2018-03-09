@@ -50,7 +50,6 @@ public class SocietyNewMessage extends BaseFragment {
         setItemClick();
         return view;
     }
-
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
@@ -68,6 +67,7 @@ public class SocietyNewMessage extends BaseFragment {
 //            mRefreshListener.onRefreshFinish();
         }
     }
+
 
 //    @Override
 //    protected void onFragmentFirstVisible() {
@@ -110,7 +110,6 @@ public class SocietyNewMessage extends BaseFragment {
             NoticeItemAdapter.Notice_item notice_item = newData.new Notice_item(card_message_tell.get(i),
                     card_message_content.get(i),card_message_time.get(i));
             Data.add(notice_item);
-            System.out.println("ssss");
         }
     }
 
