@@ -57,8 +57,11 @@
         <activity android:name=".Main.CodeActivity"></activity>
         <activity android:name=".Main.MapActivity"></activity>
         <activity android:name=".Main.PeripheralActivity"></activity>
-        <activity android:name=".Main.RepairActivity"></activity>
+        <activity android:name=".Repair.RepairActivity"></activity>
         <activity android:name=".Main.ShopActivity"></activity>
+        <activity android:name=".Repair.RepairMakeActivity"></activity>
+        <activity android:name=".Repair.RepairCheckActivity"></activity>
+        <activity android:name=".Society.SocietyNewMessagePage"></activity>
 
 
         <service android:name="com.baidu.location.f"

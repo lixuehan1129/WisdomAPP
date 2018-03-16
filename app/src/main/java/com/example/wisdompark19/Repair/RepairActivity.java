@@ -1,4 +1,4 @@
-package com.example.wisdompark19.Main;
+package com.example.wisdompark19.Repair;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.wisdompark19.R;
@@ -27,12 +28,31 @@ public class RepairActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
         back(toolbar);
-        findView(intent_data);
+        findView();
     }
 
-    private void findView(String s){
-        TextView textView = (TextView)findViewById(R.id.test_text);
-        textView.setText(s);
+    private void findView(){
+        Button repair_make = (Button)findViewById(R.id.repair_make);
+        Button repair_check = (Button)findViewById(R.id.repair_check);
+
+        repair_make.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RepairActivity.this,RepairMakeActivity.class);
+                intent.putExtra("put_data","我要报修");
+                startActivity(intent);
+            }
+        });
+
+        repair_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RepairActivity.this,RepairCheckActivity.class);
+                intent.putExtra("put_data","报修查询");
+                startActivity(intent);
+            }
+        });
+
     }
 
 

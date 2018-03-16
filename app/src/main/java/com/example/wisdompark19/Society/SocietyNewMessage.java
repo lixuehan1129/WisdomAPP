@@ -1,10 +1,10 @@
 package com.example.wisdompark19.Society;
 
-import android.support.v4.app.Fragment;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,6 +124,9 @@ public class SocietyNewMessage extends BaseFragment {
             public void onItemClick(View view, int position) {
                 Toast toast=Toast.makeText(getActivity(), card_message_tell.get(position), Toast.LENGTH_SHORT);
                 toast.show();
+                Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
+                intent.putExtra("put_data",card_message_tell.get(position));
+                startActivity(intent);
             }
         });
     }

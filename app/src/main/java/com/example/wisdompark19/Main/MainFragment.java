@@ -19,6 +19,8 @@ import android.widget.ViewFlipper;
 
 import com.example.wisdompark19.Adapter.FunctionListAdapter;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.Repair.RepairActivity;
+import com.example.wisdompark19.Society.SocietyNewMessagePage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,7 +206,7 @@ public class MainFragment extends Fragment {
 
         View noticeView = getLayoutInflater().inflate(R.layout.notice_item, null);
         CardView cardView = (CardView)noticeView.findViewById(R.id.card_message);
-        TextView card_message_tell_tv = (TextView)cardView.findViewById(R.id.card_message_tell);
+        final TextView card_message_tell_tv = (TextView)cardView.findViewById(R.id.card_message_tell);
         final TextView card_message_content_tv = (TextView)cardView.findViewById(R.id.card_message_content);
         TextView card_message_time_tv = (TextView)cardView.findViewById(R.id.card_message_time);
         if ((curr < next) && (next > (card_message_content.size() - 1))) {
@@ -223,12 +225,9 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-//                Bundle bundle = new Bundle();
-//                bundle.putString("url", linkUrlArray.get(mCurrPos));
-//                bundle.putString("title", titleList.get(mCurrPos));
-//                Intent intent = new Intent(MainActivity.this, BaseWebActivity.class);
-//                intent.putExtras(bundle);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
+                intent.putExtra("put_data",card_message_tell_tv.getText().toString());
+                startActivity(intent);
                 System.out.println(card_message_content_tv.getText().toString());
                 Toast.makeText(getActivity(), card_message_content_tv.getText(),Toast.LENGTH_LONG).show();
             }

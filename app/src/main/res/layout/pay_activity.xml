@@ -86,7 +86,7 @@
                 android:id="@+id/pay_gas"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@mipmap/ic_shui"/>
+                android:background="@mipmap/ic_qi"/>
             <TextView
                 android:paddingTop="5dp"
                 android:layout_width="match_parent"
