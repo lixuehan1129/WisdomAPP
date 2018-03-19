@@ -119,7 +119,7 @@ public class MapActivity extends AppCompatActivity {
 
     private void requestLocation() {
         LocationClientOption  option = new LocationClientOption();
-        option.setScanSpan(3000);
+        option.setScanSpan(1500); //刷新时间
         option.setAddrType("all");
         option.setCoorType("bd09ll");// 可选，默认gcj02，设置返回的定位结果坐标系
         option.setIsNeedAddress(true);

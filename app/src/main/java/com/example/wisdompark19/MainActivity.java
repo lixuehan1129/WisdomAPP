@@ -1,7 +1,11 @@
 package com.example.wisdompark19;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,10 +13,14 @@ import android.view.MenuItem;
 
 import com.example.wisdompark19.Adapter.ViewPagerAdapter;
 import com.example.wisdompark19.Main.MainFragment;
+import com.example.wisdompark19.Main.MapActivity;
 import com.example.wisdompark19.Mine.MineFragment;
 import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.BottomNavigationViewHelper;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         findView(); //初始化布局
         startFragment();//执行点击或滑动
-
+        setQuanXian();
     }
 
     private void findView(){
@@ -87,6 +95,31 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(SocietyFragment.newInstance("社区"));
         viewPagerAdapter.addFragment(MineFragment.newInstance("我的"));
         viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    private void setQuanXian(){
+        //获取权限
+        List<String> permissionList = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.VIBRATE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.VIBRATE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.CAMERA);
+        }
+
+        if(!permissionList.isEmpty()){
+            String[] permissions= permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
+        }
     }
 
 }

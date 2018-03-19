@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Society;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wisdompark19.Adapter.ShopTradeItemAdapter;
+import com.example.wisdompark19.Main.ShopActivity;
 import com.example.wisdompark19.R;
 
 import java.util.ArrayList;
@@ -85,6 +87,9 @@ public class SocietyFindThing extends Fragment {
             public void onItemClick(View view, int position) {
                 Toast toast=Toast.makeText(getActivity(), shop_trade_content.get(position), Toast.LENGTH_SHORT);
                 toast.show();
+                Intent intent = new Intent(getActivity(),SocietyFindPageActivity.class);
+                intent.putExtra("put_data",shop_trade_content.get(position));
+                startActivity(intent);
             }
         });
     }

@@ -91,6 +91,9 @@ public class ShopActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 Toast toast=Toast.makeText(ShopActivity.this, shop_trade_content.get(position), Toast.LENGTH_SHORT);
                 toast.show();
+                Intent intent = new Intent(ShopActivity.this,ShopPageActivity.class);
+                intent.putExtra("put_data",shop_trade_content.get(position));
+                startActivity(intent);
             }
         });
     }

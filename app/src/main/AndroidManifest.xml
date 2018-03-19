@@ -62,6 +62,8 @@
         <activity android:name=".Repair.RepairMakeActivity"></activity>
         <activity android:name=".Repair.RepairCheckActivity"></activity>
         <activity android:name=".Society.SocietyNewMessagePage"></activity>
+        <activity android:name=".Society.SocietyFindPageActivity"></activity>
+        <activity android:name=".Main.ShopPageActivity"></activity>
 
 
         <service android:name="com.baidu.location.f"
