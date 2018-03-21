@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Society;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -75,6 +76,9 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
                 switch (item.getItemId()){
                     case R.id.menu_message:
                         Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
+                        intent.putExtra("put_data","消息通知");
+                        startActivity(intent);
                         break;
                     case R.id.menu_find:
                         Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();

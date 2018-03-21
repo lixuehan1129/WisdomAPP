@@ -179,14 +179,16 @@ public class MainFragment extends Fragment {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        moveNext();
-                        Log.d("Task", "下一个");
-                    }
-                });
-
+               if(getActivity() == null){
+                   return;
+               }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            moveNext();
+                            Log.d("Task", "下一个");
+                        }
+                    });
             }
         };
         Timer timer = new Timer();

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,18 +26,24 @@ public class SocietyNewMessagePage extends AppCompatActivity {
         String intent_data = intent.getStringExtra("put_data");
         Toolbar toolbar = (Toolbar)findViewById(R.id.new_message_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-//        toolbar.setTitle(intent_data);
+        toolbar.setTitle(intent_data);
+        setSupportActionBar(toolbar);
         back(toolbar);
-        findView(intent_data);
+        findView();
 //        findData();
 //        initData();
 //        setAdapter();
 //        setItemClick();
     }
 
-    private void findView(String s){
-        TextView textView = (TextView)findViewById(R.id.new_message_tv);
-        textView.setText(s);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save_item, menu);
+        return true;
+    }
+
+    private void findView(){
+
     }
 
 
