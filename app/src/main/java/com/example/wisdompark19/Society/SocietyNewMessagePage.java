@@ -23,7 +23,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
         setContentView(R.layout.society_new_message_page);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data");
+        String intent_data = intent.getStringExtra("put_data_mes");
         Toolbar toolbar = (Toolbar)findViewById(R.id.new_message_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
@@ -41,6 +41,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.save_item, menu);
         return true;
     }
+
 
     private void findView(){
 
@@ -60,6 +61,9 @@ public class SocietyNewMessagePage extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                finish();
+                break;
+            case R.id.society_new_message_page_save:
                 finish();
                 break;
         }

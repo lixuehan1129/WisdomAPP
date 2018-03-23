@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -36,8 +37,15 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         String intent_data = intent.getStringExtra("put_data");
         Toolbar toolbar = (Toolbar)findViewById(R.id.repair_make_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
+        setSupportActionBar(toolbar);
         back(toolbar);
         findView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save_item, menu);
+        return true;
     }
 
     private void findView(){
@@ -46,14 +54,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         repair_spanner = (Spinner)findViewById(R.id.repair_spanner);
         repair_time = (TextView)findViewById(R.id.repair_time);
         repair_time.setOnClickListener(RepairMakeActivity.this);
-        repair_button_ok = (Button)findViewById(R.id.repair_button_ok);
-
-        repair_button_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
         initDatePicker();
     }
 
@@ -96,6 +96,9 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                finish();
+                break;
+            case R.id.society_new_message_page_save:
                 finish();
                 break;
         }

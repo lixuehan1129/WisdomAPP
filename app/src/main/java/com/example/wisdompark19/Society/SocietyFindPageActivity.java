@@ -22,21 +22,20 @@ public class SocietyFindPageActivity extends AppCompatActivity {
         setContentView(R.layout.society_find_page);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data");
+        String intent_data = intent.getStringExtra("put_data_find");
         Toolbar toolbar = (Toolbar)findViewById(R.id.society_find_page_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
 //        toolbar.setTitle(intent_data);
         back(toolbar);
-        findView(intent_data);
+        findView();
 //        findData();
 //        initData();
 //        setAdapter();
 //        setItemClick();
     }
 
-    private void findView(String s){
-        TextView textView = (TextView)findViewById(R.id.society_find_page_tv);
-        textView.setText(s);
+    private void findView(){
+
     }
 
 

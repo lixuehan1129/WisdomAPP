@@ -14,13 +14,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.wisdompark19.Adapter.SocietyTuCaoAdapter;
 import com.example.wisdompark19.Adapter.TabLayoutAdapter;
 import com.example.wisdompark19.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by 最美人间四月天 on 2018/1/9.
@@ -28,6 +32,7 @@ import java.util.List;
 
 public class SocietyFragment extends Fragment implements TabLayout.OnTabSelectedListener{
 
+    private SocietyTuCaoAdapter societyTuCaoAdapter;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private TabLayoutAdapter mTabLayoutAdapter;
@@ -76,15 +81,19 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
                 switch (item.getItemId()){
                     case R.id.menu_message:
                         Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
-                        intent.putExtra("put_data","消息通知");
-                        startActivity(intent);
+                        Intent intent_mes = new Intent(getActivity(), SocietyNewMessagePage.class);
+                        intent_mes.putExtra("put_data_mes","消息通知");
+                        startActivity(intent_mes);
                         break;
                     case R.id.menu_find:
                         Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();
+                        Intent intent_find = new Intent(getActivity(), SocietyFindPageActivity.class);
+                        intent_find.putExtra("put_data_find","失物招领");
+                        startActivity(intent_find);
                         break;
                     case R.id.menu_tu_cao:
                         Toast.makeText(getActivity(),"社区吐槽",Toast.LENGTH_LONG).show();
+                        showEditDialog();
                         break;
                 }
                 return false;
@@ -113,6 +122,20 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
         mViewPager.setAdapter(mTabLayoutAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
+    }
+
+    private void showEditDialog(){
+        societyTuCaoAdapter = new SocietyTuCaoAdapter(getActivity());
+        societyTuCaoAdapter.setView(new EditText(getContext()));
+        societyTuCaoAdapter.show();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                societyTuCaoAdapter.showKeyboard();
+            }
+        }, 200);
     }
 
     @Override
