@@ -7,7 +7,7 @@
     android:background="@color/colorGray">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/mainTool"
+        android:id="@+id/mainFragment_mainTool"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorBlue"
@@ -38,13 +38,25 @@
             android:textSize="20dp"/>
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/function_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/main_fragment_view">
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/function_list"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@+id/main_fragment_view">-->
+    <!--</android.support.v7.widget.RecyclerView>-->
 
-    </android.support.v7.widget.RecyclerView>
+    <GridView
+        android:id="@+id/mainFragment_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="0dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:numColumns="3"
+        android:verticalSpacing="0dp"
+        android:layout_marginTop="10dp">
+
+    </GridView>
 
 
 </LinearLayout>

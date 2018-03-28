@@ -53,7 +53,7 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.map_activity);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data");
+        String intent_data = intent.getStringExtra("put_data_weizhi");
         Toolbar toolbar = (Toolbar)findViewById(R.id.mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);

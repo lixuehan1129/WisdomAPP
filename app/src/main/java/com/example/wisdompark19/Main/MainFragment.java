@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -23,6 +26,7 @@ import com.example.wisdompark19.Repair.RepairActivity;
 import com.example.wisdompark19.Society.SocietyNewMessagePage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,12 +41,38 @@ public class MainFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private FunctionListAdapter mFunctionListAdapter;
     private RecyclerView mRecyclerView;
+    private GridView mGridView;
 
 
     private int mCurrPos;
     ArrayList<String> card_message_tell = new ArrayList<String>(); // 上下滚动消息栏内容
     ArrayList<String> card_message_content = new ArrayList<String>();
     ArrayList<String> card_message_time = new ArrayList<String>();
+
+    private int[] mImages = {
+            R.mipmap.ic_main_pay,
+            R.mipmap.ic_main_map,
+            R.mipmap.ic_main_cart,
+            R.mipmap.ic_main_waishe,
+            R.mipmap.ic_main_repair,
+            R.mipmap.ic_main_code,
+            R.mipmap.ic_main_more,
+            0,
+            0
+
+    };
+    private String[] mContent = {
+            "生活缴费",
+            "我的位置",
+            "电商平台",
+            "外设接口",
+            "报修管理",
+            "通行二维码",
+            "更多",
+            null,
+            null
+    };
+
     private ViewFlipper viewFlipper;
 
     public static MainFragment newInstance(String info) {
@@ -64,9 +94,10 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.mainfragment, null);
         findView(view); //界面
-        initData();     //数据
-        setAdapter();   //更新Adapter
-        clickItem();    //功能按钮的点击
+    //    initData();     //数据
+    //    setAdapter();   //更新Adapter
+    //    clickItem();    //功能按钮的点击
+        initGridData();
         initRollData();
         initRollNotice();
         return view;
@@ -74,14 +105,81 @@ public class MainFragment extends Fragment {
 
     //初始化界面
     private void findView(View view){
-        Toolbar mToolber = (Toolbar)view.findViewById(R.id.mainTool);
+        Toolbar mToolber = (Toolbar)view.findViewById(R.id.mainFragment_mainTool);
         mToolber.setTitle("主页");
-        mRecyclerView = (RecyclerView)view.findViewById(R.id.function_list);
-        mLayoutManager = new GridLayoutManager(getActivity(),3);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
+     //   mRecyclerView = (RecyclerView)view.findViewById(R.id.function_list);
+    //    mLayoutManager = new GridLayoutManager(getActivity(),3);
+    //    mRecyclerView.setLayoutManager(mLayoutManager);
+        mGridView = (GridView)view.findViewById(R.id.mainFragment_gridview);
         //滚动通知
         viewFlipper = (ViewFlipper)view.findViewById(R.id.roll_flipper);
+    }
+
+    private void initGridData(){
+        ArrayList<HashMap<String, Object>> lstImageItem = new ArrayList<HashMap<String, Object>>();
+
+        for (int i = 0; i < 9; i++) {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("ItemImage", mImages[i]);// 添加图像资源的ID
+            map.put("ItemText", mContent[i]);// 按序号做ItemText
+            lstImageItem.add(map);
+        }
+        //构建一个适配器
+        SimpleAdapter simple = new SimpleAdapter(getActivity(), lstImageItem, R.layout.gridview_item,
+                new String[] { "ItemImage", "ItemText" }, new int[] {R.id.gridview_item_card_image,
+                R.id.gridview_item_card_name });
+        mGridView.setAdapter(simple);
+        //添加选择项监听事件
+        mGridView.setOnItemClickListener(new GridView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){ //对应的功能点击
+                    case 0:{
+                        //显示toast信息
+//                        Toast toast=Toast.makeText(getActivity(), "功能列表"+position, Toast.LENGTH_SHORT);
+//                        toast.show();
+                        Intent intent = new Intent(getActivity(),PayActivity.class);
+                        intent.putExtra("put_data_pay","生活缴费");
+                        startActivity(intent);
+                    }break;
+                    case 1:{
+                        Intent intent = new Intent(getActivity(),MapActivity.class);
+                        intent.putExtra("put_data_weizhi","我的位置");
+                        startActivity(intent);
+
+                    }break;
+                    case 2:{
+                        Intent intent = new Intent(getActivity(),ShopActivity.class);
+                        intent.putExtra("put_data_shop","电商平台");
+                        startActivity(intent);
+                    }break;
+                    case 3:{
+                        Intent intent = new Intent(getActivity(),PeripheralActivity.class);
+                        intent.putExtra("put_data_waishe","外设接口");
+                        startActivity(intent);
+                    }break;
+                    case 4:{
+                        Intent intent = new Intent(getActivity(),RepairActivity.class);
+                        intent.putExtra("put_data_repair","报修管理");
+                        startActivity(intent);
+                    }break;
+                    case 5:{
+                        Intent intent = new Intent(getActivity(),CodeActivity.class);
+                        intent.putExtra("put_data_code","通行二维码");
+                        startActivity(intent);
+                    }break;
+                    case 6:{
+//                        显示toast信息
+                        Toast toast=Toast.makeText(getActivity(), "正在更新", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }break;
+                    case 7:{
+                    }break;
+
+                }
+            }
+
+        });
     }
 
     //添加数据，可以直接修改，关联Adapter修改功能的数量
@@ -109,9 +207,6 @@ public class MainFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 switch (position){ //对应的功能点击
                     case 0:{
-                        //显示toast信息
-//                        Toast toast=Toast.makeText(getActivity(), "功能列表"+position, Toast.LENGTH_SHORT);
-//                        toast.show();
                         Intent intent = new Intent(getActivity(),PayActivity.class);
                         intent.putExtra("put_data","生活缴费");
                         startActivity(intent);

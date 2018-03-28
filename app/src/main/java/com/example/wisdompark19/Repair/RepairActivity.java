@@ -23,7 +23,7 @@ public class RepairActivity extends AppCompatActivity {
         setContentView(R.layout.repair_acitivity);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data");
+        String intent_data = intent.getStringExtra("put_data_repair");
         Toolbar toolbar = (Toolbar)findViewById(R.id.mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
