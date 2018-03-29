@@ -100,7 +100,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:gravity="right"
-                    android:entries="@array/spinnerxml">
+                    android:entries="@array/spinner_repair">
 
                 </Spinner>
 

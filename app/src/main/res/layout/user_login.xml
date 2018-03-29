@@ -15,6 +15,7 @@
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
+        android:id="@+id/edit_relativeLayout"
         android:layout_below="@id/user_login_mainTool"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,7 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLength="15"
-                android:hint="手机号或邮箱"
+                android:digits="0123456789qwertyuioplkjhgfdsazxcvbnmABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                android:hint="手机号或用户名"
                 android:inputType="text"
                 android:textSize="20sp"
                 android:textColor="@color/colorBlack"

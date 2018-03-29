@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="spinnerxml">
+    <string-array name="spinner_repair">
         <item>水电维修</item>
         <item>家具维修</item>
         <item>电器维修</item>

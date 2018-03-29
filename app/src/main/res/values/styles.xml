@@ -42,4 +42,13 @@
         <item name="android:textColor">#6000</item>
     </style>
 
+    <style name="InputStyle">
+        <!-- 底部线 默认颜色 -->
+        <item name="colorControlNormal">@android:color/holo_blue_bright</item>
+        <!-- 底部线 EditText激活时颜色 -->
+        <item name="colorControlActivated">@android:color/holo_blue_bright</item>
+        <!-- 设置光标 -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
 </resources>

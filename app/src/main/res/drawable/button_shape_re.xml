@@ -11,7 +11,7 @@
                 android:color="@color/colorWhite"/>
             <solid android:color="@color/colorGray_1"/>
 
-            <corners android:radius="10dp" />
+            <corners android:radius="5dp" />
 
 
 
