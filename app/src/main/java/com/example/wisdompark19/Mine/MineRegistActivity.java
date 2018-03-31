@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
@@ -27,8 +28,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -62,17 +65,14 @@ public class MineRegistActivity extends AppCompatActivity{
 
     private CircleImageView user_register_picture;
     private TextInputLayout user_regist_number_layout;
-    private TextInputLayout user_regist_name_layout;
     private TextInputLayout user_regist_password_layout;
     private TextInputLayout user_regist_again_layout;
     private TextInputEditText user_regist_number;
-    private TextInputEditText user_regist_name;
     private TextInputEditText user_regist_password;
     private TextInputEditText user_regist_again;
     private Button user_regist_button;
 
     String user_phone;
-    String user_name;
     String user_password;
     int user_sort = 2;
 
@@ -81,6 +81,8 @@ public class MineRegistActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_regist);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); //不弹出输入法
         Intent intent = getIntent();
         String intent_data = intent.getStringExtra("put_data_regist");
         Toolbar toolbar = (Toolbar)findViewById(R.id.user_regist_mainTool); //标题栏
@@ -88,23 +90,20 @@ public class MineRegistActivity extends AppCompatActivity{
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         back(toolbar);
 
-        clear_focus(); //关闭输入法
         findView();  //定义控件
+        problem_jiaodian();   //关闭输入法
 
         select_touxiang();  //添加头像
         initEdit();    //输入内容
-        problem_jiaodian();   //关闭输入法
         upload();
     }
 
     private void findView(){
         user_register_picture = (CircleImageView)findViewById(R.id.user_register_picture);
         user_regist_number_layout = (TextInputLayout)findViewById(R.id.user_regist_number_layout);
-        user_regist_name_layout = (TextInputLayout)findViewById(R.id.user_regist_name_layout);
         user_regist_password_layout = (TextInputLayout)findViewById(R.id.user_regist_password_layout);
         user_regist_again_layout = (TextInputLayout)findViewById(R.id.user_regist_again_layout);
         user_regist_number = (TextInputEditText) findViewById(R.id.user_regist_number);
-        user_regist_name = (TextInputEditText) findViewById(R.id.user_regist_name);
         user_regist_password = (TextInputEditText) findViewById(R.id.user_regist_password);
         user_regist_again = (TextInputEditText) findViewById(R.id.user_regist_again);
         user_regist_button = (Button)findViewById(R.id.user_regist_button);
@@ -146,22 +145,6 @@ public class MineRegistActivity extends AppCompatActivity{
                 ((ScrollView)findViewById(R.id.register_scrollview)).fullScroll(ScrollView.FOCUS_DOWN);
                 user_regist_again.requestFocus();
                 return false;
-            }
-        });
-
-        /*
-        * 用户名输入监听
-        * */
-        user_regist_name.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                user_regist_name_layout.setErrorEnabled(false);
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
             }
         });
 
@@ -316,18 +299,15 @@ public class MineRegistActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
           //      progressDialog.dismiss();
-                if(user_regist_number == null || user_regist_name == null || user_regist_password  == null){
+                if(user_regist_number == null || user_regist_password  == null){
                     Toast toast=Toast.makeText(MineRegistActivity.this, "手机号，用户名，密码不能为空", Toast.LENGTH_SHORT);
                     toast.show();
                 }
                 else if(user_regist_password.getText().toString().equals(user_regist_again.getText().toString()) ){
-                    Toast toast=Toast.makeText(MineRegistActivity.this, "注册成功", Toast.LENGTH_SHORT);
                     Log.e("头像",touxiang_path);
                     //首先连接数据库，查找
                     createConnect();
-
-                    toast.show();
-                    showNormalDialog();
+             //       showNormalDialog();
                 }
                 else {
                     Toast toast=Toast.makeText(MineRegistActivity.this, "两次密码不相同", Toast.LENGTH_SHORT);
@@ -339,51 +319,93 @@ public class MineRegistActivity extends AppCompatActivity{
     }
 
     private void createConnect(){
-
-        new  Thread(){
-            public  void run(){
+        new  Thread() {
+            public void run() {
                 try {
+                    Looper.prepare();
                     Class.forName("com.mysql.jdbc.Driver");//动态加载类
                     String url = "jdbc:mysql://60.205.140.219:3306/shequ";
                     //上面语句中 60.205.140.219为你的mysql服务器地址 3306为端口号   public是你的数据库名 根据你的实际情况更改
                     Connection conn = (Connection) DriverManager.getConnection(url, "shequ", "Zz123456");
                     //使用 DriverManger.getConnection链接数据库  第一个参数为连接地址 第二个参数为用户名 第三个参数为连接密码  返回一个Connection对象
-                    if(conn!=null){ //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试","连接成功");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
 
-
-                       //查找管理员
-                        String administrators_sql_number = "select * from administrators where administrators_number = '" +
+                        //查找管理员
+                        String administrators_sql_number = "select * from administrators where administrators_phone = '" +
                                 user_regist_number.getText().toString() +
                                 "'"; //要执行的sql语句
                         ResultSet resultSet_number = stmt.executeQuery(administrators_sql_number); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-                        if(resultSet_number != null){
-                           user_sort = 0;   //这里为查找管理员所用,管理员为0，业主为1，访客为2
+                        if (resultSet_number.next()) {
+                            user_sort = 0;   //这里为查找管理员所用,管理员为0，业主为1，访客为2
+                        }else {
+                            user_sort = 2;
                         }
-
                         //查找手机号是否已存在
                         String user_sql_phone = "select * from user where user_phone = '" +
                                 user_regist_number.getText().toString() +
                                 "'";
                         ResultSet resultSet_phone = stmt.executeQuery(user_sql_phone);
-                        if(resultSet_phone != null){
-                            Toast toast=Toast.makeText(MineRegistActivity.this, "手机号已存在", Toast.LENGTH_SHORT);
+                        if(resultSet_phone.next()){
+                            Log.d("调试", "不是空值");
+                            Toast toast = Toast.makeText(MineRegistActivity.this, "用户名已存在", Toast.LENGTH_SHORT);
                             toast.show();
                         }else {
+                            Log.d("调试", "结果为空，执行");
                             user_phone = user_regist_number.getText().toString();
+                            //手机号判断
+                            user_password = user_regist_password.getText().toString();
+
+                            String user_sql_insert = "insert into user (user_sort,user_phone,user_password) " +
+                                    "values ('" +
+                                    user_sort +
+                                    "','" +
+                                    user_phone +
+                                    "','" +
+                                    user_password +
+                                    "')";
+                            stmt.execute(user_sql_insert);
+                            Toast toast = Toast.makeText(MineRegistActivity.this, "注册成功", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
-                        //到此为止。。。。。。。。。。。
-
-
-                    }else{
-                        Log.d("调试","连接失败");
+                        if (resultSet_phone != null) {
+                            try {
+                                resultSet_phone.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (resultSet_number != null) {
+                            try {
+                                resultSet_number.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (stmt != null) {
+                            try {
+                                stmt.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (conn != null) {
+                            try {
+                                conn.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        Log.d("调试", "连接失败");
                     }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                Looper.loop();
             }
         }.start();
 
@@ -522,20 +544,6 @@ public class MineRegistActivity extends AppCompatActivity{
     }
 
     /*
-        * 清除焦点
-        * */
-    private void clear_focus(){
-        final ScrollView register_scrollview = (ScrollView) findViewById(R.id.register_scrollview);
-        register_scrollview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                register_scrollview.requestFocus();
-                close_input();
-                return false;
-            }
-        });
-    }
-    /*
    * 点击空白区域 Edittext失去焦点 关闭输入法
    * */
     private void problem_jiaodian() {
@@ -549,16 +557,6 @@ public class MineRegistActivity extends AppCompatActivity{
                 return false;
             }
         });
-    }
-
-    /*
-    * 关闭输入法
-    * */
-    private void close_input(){
-        hasFocus_pre_password = false;
-        hasFocus_pre_password_again = false;
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
     }
 
     //返回注销事件

@@ -3,6 +3,7 @@ package com.example.wisdompark19.Mine;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +22,12 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.wisdompark19.R;
+import com.mysql.jdbc.Connection;
+
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,11 +51,12 @@ public class MineLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_login);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); //不弹出输入法
         Intent intent = getIntent();
         String intent_data = intent.getStringExtra("put_data_login");
         Toolbar toolbar = (Toolbar)findViewById(R.id.user_login_mainTool); //标题栏
 //        toolbar.setTitle(intent_data);  //标题栏名称
-        clear_focus();
         findView();
         problem_jiaodian();
     }
@@ -126,29 +135,79 @@ public class MineLoginActivity extends AppCompatActivity {
         user_login_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast=Toast.makeText(MineLoginActivity.this, "登录", Toast.LENGTH_SHORT);
+                login();
                 Log.e("name", String.valueOf(user_login_name.getText()));
                 Log.e("name", String.valueOf(user_login_password.getText()));
-                toast.show();
             }
         });
     }
 
-
-    /*
-    * 清除焦点
-    * */
-    private void clear_focus(){
-        final RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.edit_relativeLayout);
-        relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                relativeLayout.requestFocus();
-                close_input();
-                return false;
+    private void login(){
+        new  Thread() {
+            public void run() {
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");//动态加载类
+                    String url = "jdbc:mysql://60.205.140.219:3306/shequ";
+                    //上面语句中 60.205.140.219为你的mysql服务器地址 3306为端口号   public是你的数据库名 根据你的实际情况更改
+                    Connection conn = (Connection) DriverManager.getConnection(url, "shequ", "Zz123456");
+                    //使用 DriverManger.getConnection链接数据库  第一个参数为连接地址 第二个参数为用户名 第三个参数为连接密码  返回一个Connection对象
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //查找管理员
+                        String administrators_sql_number = "select * from user where user_phone = '" +
+                                user_login_name.getText().toString() +
+                                "'"; //要执行的sql语句
+                        ResultSet resultSet_number = stmt.executeQuery(administrators_sql_number); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
+                        Looper.prepare();
+                        if (resultSet_number.next()) {
+                            String login_password_get = resultSet_number.getString("user_password");
+                            if(login_password_get.equals(user_login_password.getText().toString())){
+                                Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                            else {
+                                Toast toast = Toast.makeText(MineLoginActivity.this, "密码错误", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        }else {
+                            Toast toast = Toast.makeText(MineLoginActivity.this, "用户名不存在", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                        Looper.loop();
+                        if (resultSet_number != null) {
+                            try {
+                                resultSet_number.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (stmt != null) {
+                            try {
+                                stmt.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (conn != null) {
+                            try {
+                                conn.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        Log.d("调试", "连接失败");
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        }.start();
     }
+
     /*
    * 点击空白区域 Edittext失去焦点 关闭输入法
    * */
@@ -165,13 +224,4 @@ public class MineLoginActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    * 关闭输入法并 清除焦点
-    * */
-    private void close_input(){
-        final RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.edit_relativeLayout);
-        //linearLayout.clearFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-    }
 }
