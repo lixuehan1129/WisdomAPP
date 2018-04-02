@@ -17,48 +17,36 @@ import java.sql.SQLException;
  */
 
 public class JDBCTools {
-    // 关闭conn和statement的操作
-
-    public static void release(java.sql.Statement statement, Connection conn) {
-        if (statement != null) {
-            try {
-                statement.close();
-
-            } catch (Exception e2) {
-                // TODO: handle exception
-            }
-        }
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 1。获取连接的方法 通过读取配置文件从数据库服务器获取一个连接
-     *
-     * @author Administrator
-     *
-     */
-    public static Connection getConnection() throws Exception {
-        Class.forName("com.mysql.jdbc.Driver");//动态加载类
-        String url = "jdbc:mysql://60.205.140.219:3306/shequ";
-        Log.d("a", "223");
-        //上面语句中 60.205.140.219为你的mysql服务器地址 3306为端口号   public是你的数据库名 根据你的实际情况更改
-        Connection conn = (Connection) DriverManager.getConnection(url, "shequ", "Zz123456");
+    //数据库连接
+    public static Connection getConnection(String user, String pass) {
+        Connection conn = null;//声明连接对象
+        String driver = "com.mysql.jdbc.Driver";// 驱动程序类名
+        String url = "jdbc:mysql://60.205.140.219:3306/shequ?" // 数据库URL
+                + "useUnicode=true&characterEncoding=UTF8";// 防止乱码
         //使用 DriverManger.getConnection链接数据库  第一个参数为连接地址 第二个参数为用户名 第三个参数为连接密码  返回一个Connection对象
-        Log.d("a", "224");
-        if(conn!=null){ //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-            Log.d("调试","连接成功");
-            return conn;
-        }else{
-            Log.d("调试","连接失败");
-            return null;
+        try {
+            Class.forName(driver);// 注册(加载)驱动程序
+            conn = (Connection) DriverManager.getConnection(url, user, pass);// 获取数据库连接
+            Log.d("调试", "连接成功JDBC");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
+        return conn;
+    }
+    //释放数据库连接
+    public static void releaseConnection(java.sql.Statement stmt, Connection conn) {
+        try {
+            if (stmt != null)
+                stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (conn != null)
+                conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

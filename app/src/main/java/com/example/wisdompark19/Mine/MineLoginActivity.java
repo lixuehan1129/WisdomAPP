@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
 
@@ -56,7 +57,7 @@ public class MineLoginActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String intent_data = intent.getStringExtra("put_data_login");
         Toolbar toolbar = (Toolbar)findViewById(R.id.user_login_mainTool); //标题栏
-//        toolbar.setTitle(intent_data);  //标题栏名称
+        toolbar.setTitle("用户登录");  //标题栏名称
         findView();
         problem_jiaodian();
     }
@@ -76,7 +77,7 @@ public class MineLoginActivity extends AppCompatActivity {
 
     private void initEditText(){
         user_login_name_layout.setCounterEnabled(true);  //设置可以计数
-        user_login_name_layout.setCounterMaxLength(15); //计数的最大值
+        user_login_name_layout.setCounterMaxLength(11); //计数的最大值
 
         user_login_name.setText(getIntent().getStringExtra("put_extra"));
 
@@ -125,8 +126,8 @@ public class MineLoginActivity extends AppCompatActivity {
         user_login_regist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast=Toast.makeText(MineLoginActivity.this, "注册", Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast=Toast.makeText(MineLoginActivity.this, "注册", Toast.LENGTH_SHORT);
+//                toast.show();
                 Intent intent = new Intent(MineLoginActivity.this,MineRegistActivity.class);
                 intent.putExtra("put_data_regist","注册");
                 startActivity(intent);
@@ -135,7 +136,13 @@ public class MineLoginActivity extends AppCompatActivity {
         user_login_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login();
+                if(user_login_name.getText().toString().length() == 11 &&
+                        user_login_password.getText().toString().length() > 5){
+                    login();
+                }else {
+                    Toast toast = Toast.makeText(MineLoginActivity.this, "手机号或密码格式不正确", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
                 Log.e("name", String.valueOf(user_login_name.getText()));
                 Log.e("name", String.valueOf(user_login_password.getText()));
             }
@@ -146,11 +153,7 @@ public class MineLoginActivity extends AppCompatActivity {
         new  Thread() {
             public void run() {
                 try {
-                    Class.forName("com.mysql.jdbc.Driver");//动态加载类
-                    String url = "jdbc:mysql://60.205.140.219:3306/shequ";
-                    //上面语句中 60.205.140.219为你的mysql服务器地址 3306为端口号   public是你的数据库名 根据你的实际情况更改
-                    Connection conn = (Connection) DriverManager.getConnection(url, "shequ", "Zz123456");
-                    //使用 DriverManger.getConnection链接数据库  第一个参数为连接地址 第二个参数为用户名 第三个参数为连接密码  返回一个Connection对象
+                   Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
                         Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
@@ -182,25 +185,10 @@ public class MineLoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-                        if (stmt != null) {
-                            try {
-                                stmt.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (conn != null) {
-                            try {
-                                conn.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        JDBCTools.releaseConnection(stmt,conn);
                     } else {
                         Log.d("调试", "连接失败");
                     }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

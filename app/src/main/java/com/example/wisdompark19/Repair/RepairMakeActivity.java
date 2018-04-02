@@ -37,6 +37,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         String intent_data = intent.getStringExtra("put_data");
         Toolbar toolbar = (Toolbar)findViewById(R.id.repair_make_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
+        toolbar.setTitle("报修");
         setSupportActionBar(toolbar);
         back(toolbar);
         findView();

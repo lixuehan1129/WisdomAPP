@@ -15,7 +15,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
@@ -38,9 +40,13 @@ import android.widget.Toast;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
 //import com.mysql.jdbc.Connection;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,7 +67,6 @@ public class MineRegistActivity extends AppCompatActivity{
     //调用系统相册-选择图片
     private static final int IMAGE = 1;
     String touxiang_path = "null";
-    private ProgressDialog progressDialog;
 
     private CircleImageView user_register_picture;
     private TextInputLayout user_regist_number_layout;
@@ -71,6 +76,8 @@ public class MineRegistActivity extends AppCompatActivity{
     private TextInputEditText user_regist_password;
     private TextInputEditText user_regist_again;
     private Button user_regist_button;
+
+    public static final int UPDATE_DIALOG = 1;
 
     String user_phone;
     String user_password;
@@ -86,7 +93,7 @@ public class MineRegistActivity extends AppCompatActivity{
         Intent intent = getIntent();
         String intent_data = intent.getStringExtra("put_data_regist");
         Toolbar toolbar = (Toolbar)findViewById(R.id.user_regist_mainTool); //标题栏
-//        toolbar.setTitle(intent_data);  //标题栏名称
+        toolbar.setTitle("用户注册");  //标题栏名称
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         back(toolbar);
 
@@ -110,6 +117,9 @@ public class MineRegistActivity extends AppCompatActivity{
     }
 
     private void initEdit(){
+
+        user_regist_number_layout.setCounterEnabled(true);  //设置可以计数
+        user_regist_number_layout.setCounterMaxLength(11); //计数的最大值
 
         user_regist_password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -299,20 +309,22 @@ public class MineRegistActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
           //      progressDialog.dismiss();
-                if(user_regist_number == null || user_regist_password  == null){
-                    Toast toast=Toast.makeText(MineRegistActivity.this, "手机号，用户名，密码不能为空", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-                else if(user_regist_password.getText().toString().equals(user_regist_again.getText().toString()) ){
-                    Log.e("头像",touxiang_path);
+                System.out.println(user_regist_number.getText().toString());
+                if(user_regist_number.getText().toString().length() == 11  && user_regist_password.getText().toString().length()  > 5){
+                    if(user_regist_password.getText().toString().equals(user_regist_again.getText().toString()) ){
+                    Log.e("头像1",touxiang_path);
+                    System.out.println(user_regist_number.getText().toString());
                     //首先连接数据库，查找
                     createConnect();
-             //       showNormalDialog();
-                }
-                else {
+                } else {
                     Toast toast=Toast.makeText(MineRegistActivity.this, "两次密码不相同", Toast.LENGTH_SHORT);
                     toast.show();
                 }
+                }else {
+                    Toast toast=Toast.makeText(MineRegistActivity.this, "手机号，密码格式不正确", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+
             }
         });
 
@@ -322,12 +334,8 @@ public class MineRegistActivity extends AppCompatActivity{
         new  Thread() {
             public void run() {
                 try {
-                    Looper.prepare();
-                    Class.forName("com.mysql.jdbc.Driver");//动态加载类
-                    String url = "jdbc:mysql://60.205.140.219:3306/shequ";
-                    //上面语句中 60.205.140.219为你的mysql服务器地址 3306为端口号   public是你的数据库名 根据你的实际情况更改
-                    Connection conn = (Connection) DriverManager.getConnection(url, "shequ", "Zz123456");
-                    //使用 DriverManger.getConnection链接数据库  第一个参数为连接地址 第二个参数为用户名 第三个参数为连接密码  返回一个Connection对象
+                    Looper.prepare();//用于toast
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
                         Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
@@ -341,6 +349,13 @@ public class MineRegistActivity extends AppCompatActivity{
                             user_sort = 0;   //这里为查找管理员所用,管理员为0，业主为1，访客为2
                         }else {
                             user_sort = 2;
+                        }
+                        if (resultSet_number != null) {
+                            try {
+                                resultSet_number.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
                         }
                         //查找手机号是否已存在
                         String user_sql_phone = "select * from user where user_phone = '" +
@@ -357,17 +372,27 @@ public class MineRegistActivity extends AppCompatActivity{
                             //手机号判断
                             user_password = user_regist_password.getText().toString();
 
-                            String user_sql_insert = "insert into user (user_sort,user_phone,user_password) " +
-                                    "values ('" +
-                                    user_sort +
-                                    "','" +
-                                    user_phone +
-                                    "','" +
-                                    user_password +
-                                    "')";
-                            stmt.execute(user_sql_insert);
-                            Toast toast = Toast.makeText(MineRegistActivity.this, "注册成功", Toast.LENGTH_SHORT);
-                            toast.show();
+                            java.sql.PreparedStatement preparedStatement = null;
+                            String user_sql_insert = "insert into user (user_sort,user_phone,user_password,user_picture) values(?,?,?,?)";
+                            preparedStatement = (java.sql.PreparedStatement)conn.prepareStatement(user_sql_insert,Statement.RETURN_GENERATED_KEYS);
+                            preparedStatement.setInt(1,user_sort);
+                            preparedStatement.setString(2,user_phone);
+                            preparedStatement.setString(3,user_password);
+                            Log.e("头像",touxiang_path);
+                            File file = new File(touxiang_path);
+                            if(file.exists()){
+                                try {
+                                    InputStream inputStream = new FileInputStream(file);
+                                    preparedStatement.setBinaryStream(4,inputStream,file.length());
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                preparedStatement.setBinaryStream(4,null, 0);
+                            }
+                            preparedStatement.executeUpdate();
+                            preparedStatement.close();
+                            showNormalDialog();
                         }
                         if (resultSet_phone != null) {
                             try {
@@ -376,32 +401,10 @@ public class MineRegistActivity extends AppCompatActivity{
                                 e.printStackTrace();
                             }
                         }
-                        if (resultSet_number != null) {
-                            try {
-                                resultSet_number.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (stmt != null) {
-                            try {
-                                stmt.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (conn != null) {
-                            try {
-                                conn.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        JDBCTools.releaseConnection(stmt,conn);
                     } else {
                         Log.d("调试", "连接失败");
                     }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -419,21 +422,21 @@ public class MineRegistActivity extends AppCompatActivity{
          */
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(MineRegistActivity.this);
-        normalDialog.setMessage("注册成功，如果您是业主，请到详细资料填写信息。");
+        normalDialog.setMessage("注册成功，填写详细信息成为业主。");
         normalDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //...To-do
-                //        finish();
+                        Intent intent = new Intent(MineRegistActivity.this,MineRegistAddActivity.class);
+                        intent.putExtra("put_data_regist_add","注册");
+                        startActivity(intent);
                     }
                 });
-        normalDialog.setNegativeButton("关闭",
+        normalDialog.setNegativeButton("跳过",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //...To-do
-                 //       finish();
+                        finish();
                     }
                 });
         // 显示

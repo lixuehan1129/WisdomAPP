@@ -126,7 +126,6 @@ public class MapActivity extends AppCompatActivity {
         option.setIsNeedAddress(true);
         mLocationClient.setLocOption(option);
         mLocationClient.start();
-
     }
 
     @Override

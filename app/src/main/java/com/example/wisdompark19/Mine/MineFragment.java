@@ -29,7 +29,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private TextView minefragment_ziliao;
     private TextView minefragment_recode;
     private TextView minefragment_setting;
-    private TextView minefragment_regist;
     private TextView minefragment_back;
 
     public static MineFragment newInstance(String info) {
@@ -57,14 +56,12 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         minefragment_phone = (TextView)view.findViewById(R.id.minefragment_phone);
         minefragment_ziliao = (TextView)view.findViewById(R.id.minefragment_ziliao);
         minefragment_recode = (TextView)view.findViewById(R.id.minefragment_recode);
-        minefragment_regist = (TextView)view.findViewById(R.id.minefragment_regist);
         minefragment_setting = (TextView)view.findViewById(R.id.minefragment_setting);
         minefragment_back = (TextView)view.findViewById(R.id.minefragment_back);
 
         minefragment_phone.setOnClickListener(this);
         minefragment_ziliao.setOnClickListener(this);
         minefragment_recode.setOnClickListener(this);
-        minefragment_regist.setOnClickListener(this);
         minefragment_setting.setOnClickListener(this);
         minefragment_back.setOnClickListener(this);
     }
@@ -75,29 +72,31 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             case R.id.minefragment_phone:{
                 Toast toast=Toast.makeText(getActivity(), minefragment_phone.getText(), Toast.LENGTH_SHORT);
                 toast.show();
+                break;
             }
             case R.id.minefragment_ziliao:{
                 Toast toast=Toast.makeText(getActivity(), minefragment_ziliao.getText(), Toast.LENGTH_SHORT);
                 toast.show();
+                break;
             }
             case R.id.minefragment_recode:{
                 Toast toast=Toast.makeText(getActivity(), minefragment_recode.getText(), Toast.LENGTH_SHORT);
                 toast.show();
-            }
-            case R.id.minefragment_regist:{
-                Toast toast=Toast.makeText(getActivity(), minefragment_regist.getText(), Toast.LENGTH_SHORT);
-                toast.show();
-                Intent intent = new Intent(getActivity(),MineLoginActivity.class);
-                intent.putExtra("put_data_login","登录");
-                startActivity(intent);
+                break;
             }
             case R.id.minefragment_setting:{
                 Toast toast=Toast.makeText(getActivity(), minefragment_setting.getText(), Toast.LENGTH_SHORT);
                 toast.show();
+                Intent intent = new Intent(getActivity(),MineRegistAddActivity.class);
+                intent.putExtra("put_data_regist_add","注册");
+                startActivity(intent);
+                break;
             }
             case R.id.minefragment_back:{
-                Toast toast=Toast.makeText(getActivity(), minefragment_back.getText(), Toast.LENGTH_SHORT);
-                toast.show();
+                Intent intent = new Intent(getActivity(),MineLoginActivity.class);
+                intent.putExtra("put_data_login","登录");
+                startActivity(intent);
+                break;
             }
         }
     }

@@ -65,7 +65,8 @@
         <activity android:name=".Society.SocietyFindPageActivity"></activity>
         <activity android:name=".Main.ShopPageActivity"></activity>
         <activity android:name=".Mine.MineLoginActivity"></activity>
-        <activity android:name=".Mine.MineRegistActivity"></activity>
+        <activity android:name=".Mine.MineRegistActivity"></activity>dd
+        <activity android:name=".Mine.MineRegistAddActivity"></activity>
 
 
         <service android:name="com.baidu.location.f"
