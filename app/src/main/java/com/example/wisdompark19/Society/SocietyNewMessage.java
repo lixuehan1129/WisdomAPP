@@ -125,7 +125,7 @@ public class SocietyNewMessage extends BaseFragment {
                 Toast toast=Toast.makeText(getActivity(), card_message_tell.get(position), Toast.LENGTH_SHORT);
                 toast.show();
                 Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
-                intent.putExtra("put_data",card_message_tell.get(position));
+                intent.putExtra("put_data_mes",card_message_tell.get(position));
                 startActivity(intent);
             }
         });

@@ -21,7 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.JDBCTools;
+import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.MainActivity;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
 
@@ -166,8 +169,13 @@ public class MineLoginActivity extends AppCompatActivity {
                         if (resultSet_number.next()) {
                             String login_password_get = resultSet_number.getString("user_password");
                             if(login_password_get.equals(user_login_password.getText().toString())){
+                                //登陆后记住用户名
+                                SharePreferences.putString(MineLoginActivity.this, AppConstants.user_phone,user_login_name.getText().toString());
+
                                 Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
                                 toast.show();
+                                Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                             else {
                                 Toast toast = Toast.makeText(MineLoginActivity.this, "密码错误", Toast.LENGTH_SHORT);
@@ -188,6 +196,8 @@ public class MineLoginActivity extends AppCompatActivity {
                         JDBCTools.releaseConnection(stmt,conn);
                     } else {
                         Log.d("调试", "连接失败");
+                        Toast toast = Toast.makeText(MineLoginActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

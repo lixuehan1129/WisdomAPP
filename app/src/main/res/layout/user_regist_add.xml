@@ -12,8 +12,19 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorBlue"
         app:titleTextColor="@color/colorWhite"
+        android:paddingRight="15dp"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <Button
+            android:id="@+id/user_regist_add_ok"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end"
+            android:background="@drawable/button_ok"
+            android:text="完成"
+            android:textColor="@color/colorWhite"
+            android:textSize="10sp" />
     </android.support.v7.widget.Toolbar>
 
         <RelativeLayout
@@ -75,8 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
-                    android:gravity="left"
-                    android:entries="@array/spinner_xiaoqu" />
+                    android:gravity="left" />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

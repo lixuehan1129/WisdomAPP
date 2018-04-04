@@ -43,11 +43,11 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         findView();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.save_item, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.save_item, menu);
+//        return true;
+//    }
 
     private void findView(){
         repair_name = (TextView)findViewById(R.id.repair_name);
@@ -99,9 +99,9 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.society_new_message_page_save:
-                finish();
-                break;
+//            case R.id.society_new_message_page_save:
+//                finish();
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }

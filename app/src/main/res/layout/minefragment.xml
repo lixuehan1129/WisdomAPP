@@ -52,14 +52,14 @@
                     android:id="@+id/minefragment_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="李学翰"
+                    android:text="正在加载"
                     android:textSize="25sp"
                     android:textColor="@color/colorBlack"/>
                 <TextView
                     android:id="@+id/minefragment_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="科群大厦205室"
+                    android:text="正在加载"
                     android:maxLines="2"
                     android:textSize="20sp"/>
             </LinearLayout>

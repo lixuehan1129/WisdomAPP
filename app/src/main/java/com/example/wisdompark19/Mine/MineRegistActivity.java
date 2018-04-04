@@ -392,7 +392,6 @@ public class MineRegistActivity extends AppCompatActivity{
                             }
                             preparedStatement.executeUpdate();
                             preparedStatement.close();
-                            showNormalDialog();
                         }
                         if (resultSet_phone != null) {
                             try {
@@ -402,8 +401,11 @@ public class MineRegistActivity extends AppCompatActivity{
                             }
                         }
                         JDBCTools.releaseConnection(stmt,conn);
+                        showNormalDialog();
                     } else {
                         Log.d("调试", "连接失败");
+                        Toast toast = Toast.makeText(MineRegistActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -428,7 +430,8 @@ public class MineRegistActivity extends AppCompatActivity{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(MineRegistActivity.this,MineRegistAddActivity.class);
-                        intent.putExtra("put_data_regist_add","注册");
+                        intent.putExtra("put_data_regist_add",user_phone);
+                        intent.putExtra("put_data_regist_select","regist");
                         startActivity(intent);
                     }
                 });

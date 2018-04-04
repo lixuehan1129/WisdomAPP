@@ -13,6 +13,15 @@
         app:titleTextColor="@color/colorWhite"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        <Button
+            android:id="@+id/society_new_message_ok"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end"
+            android:background="@drawable/button_ok"
+            android:text="完成"
+            android:textColor="@color/colorWhite"
+            android:textSize="10sp" />
     </android.support.v7.widget.Toolbar>
     <ScrollView
         android:layout_below="@+id/new_message_mainTool"

@@ -26,7 +26,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
         String intent_data = intent.getStringExtra("put_data_mes");
         Toolbar toolbar = (Toolbar)findViewById(R.id.new_message_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-        toolbar.setTitle(intent_data);
+        toolbar.setTitle("消息通知");
         setSupportActionBar(toolbar);
         back(toolbar);
         findView();
@@ -36,11 +36,11 @@ public class SocietyNewMessagePage extends AppCompatActivity {
 //        setItemClick();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.save_item, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.save_item, menu);
+//        return true;
+//    }
 
 
     private void findView(){
@@ -63,9 +63,9 @@ public class SocietyNewMessagePage extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.society_new_message_page_save:
-                finish();
-                break;
+//            case R.id.society_new_message_page_save:
+//                finish();
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }

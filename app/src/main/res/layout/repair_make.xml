@@ -12,7 +12,17 @@
         android:background="@color/colorBlue"
         app:titleTextColor="@color/colorWhite"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:paddingRight="15dp">
+        <Button
+            android:id="@+id/repair_make_ok"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end"
+            android:background="@drawable/button_ok"
+            android:text="完成"
+            android:textColor="@color/colorWhite"
+            android:textSize="10sp" />
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
