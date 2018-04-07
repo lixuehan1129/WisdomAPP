@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.wisdompark19.Adapter.SocietyTuCaoAdapter;
 import com.example.wisdompark19.Adapter.TabLayoutAdapter;
 import com.example.wisdompark19.R;
 
@@ -32,7 +31,6 @@ import java.util.TimerTask;
 
 public class SocietyFragment extends Fragment implements TabLayout.OnTabSelectedListener{
 
-    private SocietyTuCaoAdapter societyTuCaoAdapter;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private TabLayoutAdapter mTabLayoutAdapter;
@@ -83,6 +81,7 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
                         Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
                         Intent intent_mes = new Intent(getActivity(), SocietyNewMessagePage.class);
                         intent_mes.putExtra("put_data_mes","消息通知");
+                        intent_mes.putExtra("put_data_mes_select",0);
                         startActivity(intent_mes);
                         break;
                     case R.id.menu_find:
@@ -93,7 +92,9 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
                         break;
                     case R.id.menu_tu_cao:
                         Toast.makeText(getActivity(),"社区吐槽",Toast.LENGTH_LONG).show();
-                        showEditDialog();
+                        Intent intent_tucao = new Intent(getActivity(), SocietyMakeComplaintPage.class);
+                        intent_tucao.putExtra("put_data_tucao","社区吐槽");
+                        startActivity(intent_tucao);
                         break;
                 }
                 return false;
@@ -124,19 +125,6 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
 
     }
 
-    private void showEditDialog(){
-        societyTuCaoAdapter = new SocietyTuCaoAdapter(getActivity());
-        societyTuCaoAdapter.setView(new EditText(getContext()));
-        societyTuCaoAdapter.show();
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                societyTuCaoAdapter.showKeyboard();
-            }
-        }, 200);
-    }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {

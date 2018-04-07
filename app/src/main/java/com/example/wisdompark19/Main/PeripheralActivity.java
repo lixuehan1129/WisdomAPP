@@ -31,8 +31,7 @@ public class PeripheralActivity extends AppCompatActivity {
     }
 
     private void findView(String s){
-        TextView textView = (TextView)findViewById(R.id.test_text);
-        textView.setText(s);
+
     }
 
 

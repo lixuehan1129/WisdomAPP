@@ -2,6 +2,8 @@ package com.example.wisdompark19.Mine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.TextInputEditText;
@@ -10,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +31,9 @@ import com.example.wisdompark19.MainActivity;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,7 +50,7 @@ public class MineLoginActivity extends AppCompatActivity {
     private CircleImageView user_login_picture;
     private TextInputLayout user_login_name_layout;
     private TextInputLayout user_login_password_layout;
-    private TextInputEditText user_login_name;
+    private TextInputEditText user_login_phone;
     private TextInputEditText user_login_password;
     private Button user_login_forget;
     private Button user_login_regist;
@@ -69,7 +75,7 @@ public class MineLoginActivity extends AppCompatActivity {
         user_login_picture = (CircleImageView)findViewById(R.id.user_login_picture);
         user_login_name_layout = (TextInputLayout)findViewById(R.id.user_login_name_layout);
         user_login_password_layout = (TextInputLayout)findViewById(R.id.user_login_password_layout);
-        user_login_name = (TextInputEditText)findViewById(R.id.user_login_name);
+        user_login_phone = (TextInputEditText)findViewById(R.id.user_login_name);
         user_login_password = (TextInputEditText)findViewById(R.id.user_login_password);
         user_login_forget = (Button)findViewById(R.id.user_login_forget);
         user_login_regist = (Button)findViewById(R.id.user_login_regist);
@@ -82,9 +88,9 @@ public class MineLoginActivity extends AppCompatActivity {
         user_login_name_layout.setCounterEnabled(true);  //设置可以计数
         user_login_name_layout.setCounterMaxLength(11); //计数的最大值
 
-        user_login_name.setText(getIntent().getStringExtra("put_extra"));
+        user_login_phone.setText(getIntent().getStringExtra("put_extra"));
 
-        user_login_name.addTextChangedListener(new TextWatcher() {
+        user_login_phone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -139,14 +145,14 @@ public class MineLoginActivity extends AppCompatActivity {
         user_login_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(user_login_name.getText().toString().length() == 11 &&
+                if(user_login_phone.getText().toString().length() == 11 &&
                         user_login_password.getText().toString().length() > 5){
                     login();
                 }else {
                     Toast toast = Toast.makeText(MineLoginActivity.this, "手机号或密码格式不正确", Toast.LENGTH_SHORT);
                     toast.show();
                 }
-                Log.e("name", String.valueOf(user_login_name.getText()));
+                Log.e("name", String.valueOf(user_login_phone.getText()));
                 Log.e("name", String.valueOf(user_login_password.getText()));
             }
         });
@@ -162,16 +168,40 @@ public class MineLoginActivity extends AppCompatActivity {
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
                         //查找管理员
                         String administrators_sql_number = "select * from user where user_phone = '" +
-                                user_login_name.getText().toString() +
+                                user_login_phone.getText().toString() +
                                 "'"; //要执行的sql语句
                         ResultSet resultSet_number = stmt.executeQuery(administrators_sql_number); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
                         Looper.prepare();
                         if (resultSet_number.next()) {
                             String login_password_get = resultSet_number.getString("user_password");
                             if(login_password_get.equals(user_login_password.getText().toString())){
-                                //登陆后记住用户名
-                                SharePreferences.putString(MineLoginActivity.this, AppConstants.user_phone,user_login_name.getText().toString());
+                                //登陆后记住用户名,存储本地信息
+                                String login_user_picture = null;
+                                Blob user_picture = resultSet_number.getBlob("user_picture");
+                                if(user_picture != null){
+                                    //图片格式转换，保存为String格式
+                                    InputStream inputStream = user_picture.getBinaryStream();
+                                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 50,baos);
+                                    String imageBase64 = new String (Base64.encode(baos.toByteArray(), 0));
+                                    login_user_picture = imageBase64;
+                                }
+                                int login_user_sort = resultSet_number.getInt("user_sort");
+                                if(login_user_sort == 2){
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_PHONE,user_login_phone.getText().toString());
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_NAME,"访客");
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_ADDRESS,"访客");
+                                    SharePreferences.putInt(MineLoginActivity.this, AppConstants.USER_SORT,login_user_sort);
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_PICTURE,login_user_picture);
 
+                                }else {
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_PHONE,user_login_phone.getText().toString());
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_NAME,resultSet_number.getString("user_name"));
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_ADDRESS,resultSet_number.getString("user_address"));
+                                    SharePreferences.putInt(MineLoginActivity.this, AppConstants.USER_SORT,login_user_sort);
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_PICTURE,login_user_picture);
+                                }
                                 Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
                                 toast.show();
                                 Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);

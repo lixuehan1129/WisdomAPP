@@ -2,6 +2,9 @@ package com.example.wisdompark19.AutoProject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+
+import java.io.InputStream;
 
 /**
  * Created by 最美人间四月天 on 2018/4/4.
@@ -107,7 +110,4 @@ public class SharePreferences {
         editor.commit();
     }
 
-    public static void putString(Object o, String touxiang_url) {
-
-    }
 }

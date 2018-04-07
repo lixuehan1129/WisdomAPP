@@ -6,26 +6,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.wisdompark19.R;
 
 /**
- * Created by 最美人间四月天 on 2018/3/19.
+ * Created by 最美人间四月天 on 2018/4/7.
  */
 
-public class SocietyFindPageActivity extends AppCompatActivity {
-
+public class SocietyMakeComplaintPage extends AppCompatActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.society_find_page);
+        setContentView(R.layout.society_tocao_page);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data_find");
-        Toolbar toolbar = (Toolbar)findViewById(R.id.society_find_page_mainTool); //标题栏
+        String intent_data = intent.getStringExtra("put_data_tucao");
+        Toolbar toolbar = (Toolbar) findViewById(R.id.society_tocao_page_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
+        setSupportActionBar(toolbar);
         back(toolbar);
         findView();
     }

@@ -3,6 +3,7 @@ package com.example.wisdompark19.Mine;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
@@ -39,7 +42,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MineFragment extends Fragment implements View.OnClickListener {
 
-    public static final int UPDATE_USER = 1;
 
     private CircleImageView minefragment_picture;
     private TextView minefragment_name;
@@ -49,10 +51,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private TextView minefragment_recode;
     private TextView minefragment_setting;
     private TextView minefragment_back;
-    private InputStream inputStream; //用户头像
-    private String user_phone; //用户名
-    private String user_address;
-    private String user_name;
 
     public static MineFragment newInstance(String info) {
         Bundle args = new Bundle();
@@ -68,11 +66,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.minefragment, null);
         Toolbar mToolbar = (Toolbar)view.findViewById(R.id.minefragment_mainTool);
         mToolbar.setTitle("我的");
-        user_phone = SharePreferences.getString(getActivity(),AppConstants.user_phone);
         findView(view);
-        if(minefragment_name.getText().toString().equals("正在加载")){
-            initData();
-        }
         return view;
     }
 
@@ -86,77 +80,25 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         minefragment_setting = (TextView)view.findViewById(R.id.minefragment_setting);
         minefragment_back = (TextView)view.findViewById(R.id.minefragment_back);
 
+        String imageBase64 = SharePreferences.getString(getActivity(),AppConstants.USER_PICTURE);
+        byte[] byte64 = Base64.decode(imageBase64, 0);
+        ByteArrayInputStream bais = new ByteArrayInputStream(byte64);
+        Bitmap user_bitmap = BitmapFactory.decodeStream(bais);
+        if(user_bitmap != null){
+            minefragment_picture.setImageBitmap(user_bitmap);
+        }else {
+            minefragment_picture.setImageResource(R.mipmap.ic_launcher_round);
+        }
+        minefragment_name.setText(SharePreferences.getString(getActivity(),AppConstants.USER_NAME));//姓名
+        minefragment_address.setText(SharePreferences.getString(getActivity(),AppConstants.USER_ADDRESS));//地址
+
+
+
         minefragment_phone.setOnClickListener(this);
         minefragment_ziliao.setOnClickListener(this);
         minefragment_recode.setOnClickListener(this);
         minefragment_setting.setOnClickListener(this);
         minefragment_back.setOnClickListener(this);
-    }
-
-    //异步更新界面
-    private Handler handler_user = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            switch (msg.what){
-                case UPDATE_USER:{
-                    //图片格式转换，InputStream转换为Bitmap
-                    minefragment_picture.setImageBitmap(BitmapFactory.decodeStream(inputStream));
-                    if(user_name == null){
-                        minefragment_name.setText("访客");
-                    }else {
-                        minefragment_name.setText(user_name);
-                    }
-                    if(user_address == null){
-                        minefragment_address.setText("访客模式，请完善信息");
-                    }else {
-                        minefragment_address.setText(user_address);
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
-
-    private void initData(){
-        new Thread(){
-            public void run(){
-                try {
-                    Log.d("调试", "开始执行");
-                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) {
-                        Statement statement_user = conn.createStatement();
-                        String user_check_sql = "select * from user where user_phone = '" +
-                                user_phone +
-                                "'";
-                        ResultSet resultSet_user = statement_user.executeQuery(user_check_sql);
-                        resultSet_user.next();
-                        user_address = resultSet_user.getString("user_address");
-                        user_name = resultSet_user.getString("user_name");
-                        Blob user_picture = resultSet_user.getBlob("user_picture");
-                        inputStream = user_picture.getBinaryStream();
-                        //更新UI
-                        Message message = new Message();
-                        message.what = UPDATE_USER;
-                        handler_user.sendMessage(message);
-                        //关闭数据库连接
-                        resultSet_user.close();
-                        JDBCTools.releaseConnection(statement_user,conn);
-
-                    } else {
-                        Log.d("调试", "连接失败");
-                        Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
     }
 
     @Override
@@ -202,7 +144,12 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SharePreferences.putString(getActivity(), AppConstants.user_phone,null);
+                        //清楚缓存
+                        SharePreferences.putString(getActivity(), AppConstants.USER_PHONE,null);
+                        SharePreferences.putString(getActivity(), AppConstants.USER_NAME,null);
+                        SharePreferences.putString(getActivity(), AppConstants.USER_ADDRESS,null);
+                        SharePreferences.putString(getActivity(), AppConstants.USER_SORT,null);
+                        SharePreferences.putString(getActivity(), AppConstants.USER_PICTURE,null);
                         Intent intent = new Intent(getActivity(),MineLoginActivity.class);
                         intent.putExtra("put_data_login","登录");
                         startActivity(intent);
