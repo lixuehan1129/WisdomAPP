@@ -14,7 +14,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:titleTextColor="@color/colorWhite"
-        android:paddingRight="115dp">
+        android:paddingRight="15dp">
 
         <Button
             android:id="@+id/society_tocao_page_ok"

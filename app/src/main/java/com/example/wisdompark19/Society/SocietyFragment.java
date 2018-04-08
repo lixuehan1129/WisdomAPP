@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.wisdompark19.Adapter.TabLayoutAdapter;
+import com.example.wisdompark19.AutoProject.AppConstants;
+import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.Main.CodeActivity;
 import com.example.wisdompark19.R;
 
 import java.util.ArrayList;
@@ -78,11 +81,20 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.menu_message:
-                        Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
-                        Intent intent_mes = new Intent(getActivity(), SocietyNewMessagePage.class);
-                        intent_mes.putExtra("put_data_mes","消息通知");
-                        intent_mes.putExtra("put_data_mes_select",0);
-                        startActivity(intent_mes);
+                        if (SharePreferences.getInt(getActivity(), AppConstants.USER_SORT) == 0) {
+                            Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
+                            Intent intent_mes = new Intent(getActivity(), SocietyNewMessagePage.class);
+                            intent_mes.putExtra("put_data_mes","消息通知");
+                            intent_mes.putExtra("put_data_mes_select",0);
+                            startActivity(intent_mes);
+                        }else {
+                            Toast.makeText(getActivity(),"您不是管理员，没有该权限",Toast.LENGTH_LONG).show();
+                        }
+//                        Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
+//                        Intent intent_mes = new Intent(getActivity(), SocietyNewMessagePage.class);
+//                        intent_mes.putExtra("put_data_mes","消息通知");
+//                        intent_mes.putExtra("put_data_mes_select",0);
+//                        startActivity(intent_mes);
                         break;
                     case R.id.menu_find:
                         Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();
