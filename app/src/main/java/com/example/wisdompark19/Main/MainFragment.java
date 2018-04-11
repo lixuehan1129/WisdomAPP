@@ -24,6 +24,7 @@ import com.example.wisdompark19.Adapter.FunctionListAdapter;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.Repair.RepairActivity;
 import com.example.wisdompark19.Society.SocietyNewMessagePage;
+import com.example.wisdompark19.ViewHelper.BaseFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ import java.util.TimerTask;
  * Created by 最美人间四月天 on 2018/1/9.
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends BaseFragment {
 
     private List<FunctionListAdapter.Function_item> Data;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -102,6 +103,22 @@ public class MainFragment extends Fragment {
         initRollNotice();
         return view;
     }
+
+//    @Override
+//    protected void onFragmentVisibleChange(boolean isVisible) {
+//        if (isVisible) {
+//            findView(getView());
+//            initGridData();
+//            initRollData();
+//            initRollNotice();
+//        }
+//    }
+//
+//    @Override
+//    protected void onFragmentFirstVisible() {
+//        //去服务器下载数据
+//    }
+
 
     //初始化界面
     private void findView(View view){

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
@@ -10,52 +11,49 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@drawable/bottom_lay">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingLeft="10dp">
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/card_message_image"
                         android:layout_gravity="center"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:background="@mipmap/ic_blue_message"/>
+                        android:src="@mipmap/ic_launcher_round"/>
                     <TextView
-                        android:paddingLeft="20dp"
+                        android:paddingLeft="10dp"
                         android:id="@+id/card_message_tell"
                         android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:layout_height="wrap_content"
                         android:text="停水通知"
                         android:textColor="@color/colorBlack"
-                        android:textSize="20dp"/>
+                        android:textSize="18sp"/>
                 </LinearLayout>
                 <TextView
-                    android:paddingLeft="60dp"
+                    android:paddingLeft="20dp"
                     android:text="具体内容"
                     android:id="@+id/card_message_content"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
+                    android:minLines="2"
                     android:maxLines="2"
                     android:ellipsize="end"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textColor="@color/colorGray_1"/>
                 <TextView
+                    android:paddingRight="20dp"
                     android:id="@+id/card_message_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="01月24日"
                     android:textColor="@color/colorGray_1"
-                    android:gravity="right"
-                    />
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorGray"/>
+                    android:gravity="right" />
             </LinearLayout>
-
     </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>

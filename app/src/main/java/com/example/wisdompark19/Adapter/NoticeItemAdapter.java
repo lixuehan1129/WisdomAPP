@@ -1,15 +1,19 @@
 package com.example.wisdompark19.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.wisdompark19.R;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by 最美人间四月天 on 2018/1/25.
@@ -26,12 +30,14 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         TextView card_message_tell;
         TextView card_message_content;
         TextView card_message_time;
+        CircleImageView card_message_image;
 
         public ViewHolder(View itemView) {
             super(itemView);
             card_message_tell = (TextView)itemView.findViewById(R.id.card_message_tell);
             card_message_content = (TextView)itemView.findViewById(R.id.card_message_content);
             card_message_time = (TextView)itemView.findViewById(R.id.card_message_time);
+            card_message_image = (CircleImageView)itemView.findViewById(R.id.card_message_image);
         }
     }
 
@@ -56,6 +62,12 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         String card_message_tell = mNotice_item.getCard_message_tell();
         String card_message_content = mNotice_item.getCard_message_content();
         String card_message_time = mNotice_item.getCard_message_time();
+        Bitmap url = mNotice_item.getCard_message_image();
+        if(url!=null){
+           holder.card_message_image.setImageBitmap(url);
+        }else {
+            holder.card_message_image.setImageResource(R.mipmap.ic_launcher_round);
+        }
 
         holder.card_message_tell.setText(card_message_tell);
         holder.card_message_content.setText(card_message_content);
@@ -92,13 +104,30 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         private String card_message_tell;
         private String card_message_content;
         private String card_message_time;
-
-        public Notice_item(String card_message_tell,String card_message_content,String card_message_time){
+        private Bitmap card_message_image;
+        private int card_message_id;
+        public Notice_item(String card_message_tell, String card_message_content, String card_message_time,
+                           Bitmap card_message_image, int card_message_id){
             this.card_message_tell = card_message_tell;
             this.card_message_content = card_message_content;
             this.card_message_time = card_message_time;
+            this.card_message_image = card_message_image;
+            this.card_message_id = card_message_id;
+        }
+        public int getCard_message_id() {
+            return card_message_id;
         }
 
+        public void setCard_message_id(int card_message_id) {
+            this.card_message_id = card_message_id;
+        }
+        public Bitmap getCard_message_image() {
+            return card_message_image;
+        }
+
+        public void setCard_message_image(Bitmap card_message_image) {
+            this.card_message_image = card_message_image;
+        }
         public String getCard_message_tell() {
             return card_message_tell;
         }

@@ -3,6 +3,7 @@ package com.example.wisdompark19.AutoProject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.support.v4.content.SharedPreferencesCompat;
 
 import java.io.InputStream;
 
@@ -109,5 +110,28 @@ public class SharePreferences {
         editor.putLong(strKey, strData);
         editor.commit();
     }
+
+    /**
+     * 移除某个key值已经对应的值
+     */
+    public static void remove(Context context, String key) {
+        SharedPreferences activityPreferences = context.getSharedPreferences(
+                spFileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = activityPreferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
+
+    /**
+     * 清除所有数据
+     */
+    public static void clear(Context context) {
+        SharedPreferences activityPreferences = context.getSharedPreferences(spFileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = activityPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+
 
 }

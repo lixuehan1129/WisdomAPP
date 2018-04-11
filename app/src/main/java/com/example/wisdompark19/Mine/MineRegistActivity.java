@@ -339,24 +339,6 @@ public class MineRegistActivity extends AppCompatActivity{
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
                         Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-
-                        //查找管理员
-                        String administrators_sql_number = "select * from administrators where administrators_phone = '" +
-                                user_regist_number.getText().toString() +
-                                "'"; //要执行的sql语句
-                        ResultSet resultSet_number = stmt.executeQuery(administrators_sql_number); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-                        if (resultSet_number.next()) {
-                            user_sort = 0;   //这里为查找管理员所用,管理员为0，业主为1，访客为2
-                        }else {
-                            user_sort = 2;
-                        }
-                        if (resultSet_number != null) {
-                            try {
-                                resultSet_number.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        }
                         //查找手机号是否已存在
                         String user_sql_phone = "select * from user where user_phone = '" +
                                 user_regist_number.getText().toString() +
@@ -375,7 +357,7 @@ public class MineRegistActivity extends AppCompatActivity{
                             java.sql.PreparedStatement preparedStatement = null;
                             String user_sql_insert = "insert into user (user_sort,user_phone,user_password,user_picture) values(?,?,?,?)";
                             preparedStatement = (java.sql.PreparedStatement)conn.prepareStatement(user_sql_insert,Statement.RETURN_GENERATED_KEYS);
-                            preparedStatement.setInt(1,user_sort);
+                            preparedStatement.setInt(1,2);
                             preparedStatement.setString(2,user_phone);
                             preparedStatement.setString(3,user_password);
                             Log.e("头像",touxiang_path);
@@ -392,16 +374,17 @@ public class MineRegistActivity extends AppCompatActivity{
                             }
                             preparedStatement.executeUpdate();
                             preparedStatement.close();
-                        }
-                        if (resultSet_phone != null) {
-                            try {
-                                resultSet_phone.close();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
+                            if (resultSet_phone != null) {
+                                try {
+                                    resultSet_phone.close();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                            JDBCTools.releaseConnection(stmt,conn);
+                            showNormalDialog();
                         }
-                        JDBCTools.releaseConnection(stmt,conn);
-                        showNormalDialog();
+
                     } else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(MineRegistActivity.this, "请检查网络", Toast.LENGTH_SHORT);

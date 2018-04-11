@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.R;
 
 import java.util.List;
@@ -49,14 +50,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ImageAdapter.ViewHolder holder, int position) {
         Item_Image item_image = mDataSet.get(position);
-        String url = item_image.getItem_image();
+        Bitmap url = item_image.getItem_image();
         if(url!=null){
-            Glide.with(mcontext)
-                    .load(url)
-                    .asBitmap()  //不可加载动图
-                    .dontAnimate()//取消淡入淡出动画
-                    .thumbnail(0.1f) //先加载十分之一作为缩略图
-                    .into(holder.item_text);
+          holder.item_text.setImageBitmap(DealBitmap.createBitmapThumbnail(url));
         }
         //判断是否设置了监听器
         if(mOnItemClickListener != null){
@@ -103,17 +99,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     }
 
     public class Item_Image {
-        private String item_image;
+        private Bitmap item_image;
 
-        public String getItem_image() {
+        public Bitmap getItem_image() {
             return item_image;
         }
 
-        public void setItem_image(String item_image) {
+        public void setItem_image(Bitmap item_image) {
             this.item_image = item_image;
         }
 
-        public Item_Image(String item_image){
+        public Item_Image(Bitmap item_image){
             this.item_image = item_image;
         }
     }

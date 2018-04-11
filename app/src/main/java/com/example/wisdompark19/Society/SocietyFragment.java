@@ -22,6 +22,7 @@ import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Main.CodeActivity;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.BaseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.TimerTask;
  * Created by 最美人间四月天 on 2018/1/9.
  */
 
-public class SocietyFragment extends Fragment implements TabLayout.OnTabSelectedListener{
+public class SocietyFragment extends BaseFragment implements TabLayout.OnTabSelectedListener{
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -67,6 +68,18 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+//    @Override
+//    protected void onFragmentVisibleChange(boolean isVisible) {
+//        if (isVisible) {
+//            initView(getView());
+//        }
+//    }
+//
+//    @Override
+//    protected void onFragmentFirstVisible() {
+//        //去服务器下载数据
+//    }
+
     private void setMenu(Toolbar toolbar){
         //返回按钮监听
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -100,6 +113,7 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
                         Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();
                         Intent intent_find = new Intent(getActivity(), SocietyFindPageActivity.class);
                         intent_find.putExtra("put_data_find","失物招领");
+                        intent_find.putExtra("put_data_find_select",0);
                         startActivity(intent_find);
                         break;
                     case R.id.menu_tu_cao:
@@ -118,6 +132,7 @@ public class SocietyFragment extends Fragment implements TabLayout.OnTabSelected
     private void initView(View view){
         mTabLayout = (TabLayout)view.findViewById(R.id.society_layout);
         mViewPager = (ViewPager)view.findViewById(R.id.society_viewpager);
+        mViewPager.setOffscreenPageLimit(3);
         //设置TabLayout标签的显示方式
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         for (String tab:titles){

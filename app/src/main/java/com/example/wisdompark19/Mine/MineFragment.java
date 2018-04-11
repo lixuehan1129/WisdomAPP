@@ -21,9 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wisdompark19.AutoProject.AppConstants;
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.mysql.jdbc.Connection;
 
 import java.io.ByteArrayInputStream;
@@ -40,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by 最美人间四月天 on 2018/1/9.
  */
 
-public class MineFragment extends Fragment implements View.OnClickListener {
+public class MineFragment extends BaseFragment implements View.OnClickListener {
 
 
     private CircleImageView minefragment_picture;
@@ -70,6 +72,18 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+//    @Override
+//    protected void onFragmentVisibleChange(boolean isVisible) {
+//        if (isVisible) {
+//            findView(getView());
+//        }
+//    }
+//
+//    @Override
+//    protected void onFragmentFirstVisible() {
+//        //去服务器下载数据
+//    }
+
     private void findView(View view){
         minefragment_picture = (CircleImageView)view.findViewById(R.id.minefragment_picture);
         minefragment_name = (TextView)view.findViewById(R.id.minefragment_name);
@@ -81,9 +95,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         minefragment_back = (TextView)view.findViewById(R.id.minefragment_back);
 
         String imageBase64 = SharePreferences.getString(getActivity(),AppConstants.USER_PICTURE);
-        byte[] byte64 = Base64.decode(imageBase64, 0);
-        ByteArrayInputStream bais = new ByteArrayInputStream(byte64);
-        Bitmap user_bitmap = BitmapFactory.decodeStream(bais);
+        Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
         if(user_bitmap != null){
             minefragment_picture.setImageBitmap(user_bitmap);
         }else {
@@ -122,6 +134,10 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             case R.id.minefragment_setting:{
                 Toast toast=Toast.makeText(getActivity(), minefragment_setting.getText(), Toast.LENGTH_SHORT);
                 toast.show();
+                Intent intent = new Intent(getActivity(),MineRegistAddActivity.class);
+                intent.putExtra("put_data_regist_add","17888836862");
+                intent.putExtra("put_data_regist_select","regist");
+                startActivity(intent);
                 break;
             }
             case R.id.minefragment_back:{
@@ -145,11 +161,12 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //清楚缓存
-                        SharePreferences.putString(getActivity(), AppConstants.USER_PHONE,null);
-                        SharePreferences.putString(getActivity(), AppConstants.USER_NAME,null);
-                        SharePreferences.putString(getActivity(), AppConstants.USER_ADDRESS,null);
-                        SharePreferences.putString(getActivity(), AppConstants.USER_SORT,null);
-                        SharePreferences.putString(getActivity(), AppConstants.USER_PICTURE,null);
+//                        SharePreferences.putString(getActivity(), AppConstants.USER_PHONE," ");
+//                        SharePreferences.putString(getActivity(), AppConstants.USER_NAME," ");
+//                        SharePreferences.putString(getActivity(), AppConstants.USER_ADDRESS," ");
+//                        SharePreferences.putString(getActivity(), AppConstants.USER_SORT," ");
+//                        SharePreferences.putString(getActivity(), AppConstants.USER_PICTURE," ");
+                        SharePreferences.clear(getActivity());
                         Intent intent = new Intent(getActivity(),MineLoginActivity.class);
                         intent.putExtra("put_data_login","登录");
                         startActivity(intent);
