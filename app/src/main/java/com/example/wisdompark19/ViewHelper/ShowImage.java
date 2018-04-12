@@ -130,14 +130,6 @@ public class ShowImage extends AppCompatActivity {
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = false;//加载到内存中
                     Bitmap mBitmap = BitmapFactory.decodeStream(inputStream,null,options);
-//                    bitmap.
-                    Resources resources = ShowImage.this.getResources();
-                    DisplayMetrics dm = resources.getDisplayMetrics();
-                    float density = dm.density;
-                    int width = dm.widthPixels;
-                    int height = dm.heightPixels;
-//                    mBitmap.setWidth(width);
-//                    mBitmap.setHeight(height);
                     img.setImageBitmap(mBitmap.copy(Bitmap.Config.ARGB_8888, true));
                     break;
                 }

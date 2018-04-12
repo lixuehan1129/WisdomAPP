@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.R;
 
 import java.util.List;
@@ -53,14 +55,20 @@ public class SocietyFindAdapter extends RecyclerView.Adapter<SocietyFindAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-//        Shop_Trade_item mShop_Trade_item = mDataSet.get(position);
-//        String shop_image = mShop_Trade_item.getShop_trade_image();
-//        String shop_content = mShop_Trade_item.getShop_trade_content();
-        //这里的图片来源需要修改
-//        holder.shop_item_image.setImageResource(R.mipmap.ic_image_load);
-//        holder.shop_item_content.setText(shop_content);
 
         Society_Find_item society_find_item = mDataSet.get(position);
+        Bitmap bitmap1 = society_find_item.getShop_trade_image1();
+        Bitmap bitmap2 = society_find_item.getShop_trade_image2();
+        Bitmap bitmap3 = society_find_item.getShop_trade_image3();
+        if(bitmap1 != null){
+            holder.shop_item_image1.setImageBitmap(DealBitmap.centerSquareScaleBitmap(bitmap1));
+        }
+        if(bitmap2 != null){
+            holder.shop_item_image2.setImageBitmap(DealBitmap.centerSquareScaleBitmap(bitmap2));
+        }
+        if(bitmap3 != null){
+            holder.shop_item_image3.setImageBitmap(DealBitmap.centerSquareScaleBitmap(bitmap3));
+        }
         holder.shop_item_content.setText(society_find_item.getShop_trade_content());
 
         //判断是否设置了监听
@@ -92,32 +100,32 @@ public class SocietyFindAdapter extends RecyclerView.Adapter<SocietyFindAdapter.
     }
 
     public class Society_Find_item{
-        private String shop_trade_image1;
-        private String shop_trade_image2;
-        private String shop_trade_image3;
+        private Bitmap shop_trade_image1;
+        private Bitmap shop_trade_image2;
+        private Bitmap shop_trade_image3;
         private String shop_trade_content;
 
-        public String getShop_trade_image1() {
+        public Bitmap getShop_trade_image1() {
             return shop_trade_image1;
         }
 
-        public void setShop_trade_image1(String shop_trade_image1) {
+        public void setShop_trade_image1(Bitmap shop_trade_image1) {
             this.shop_trade_image1 = shop_trade_image1;
         }
 
-        public String getShop_trade_image2() {
+        public Bitmap getShop_trade_image2() {
             return shop_trade_image2;
         }
 
-        public void setShop_trade_image2(String shop_trade_image2) {
+        public void setShop_trade_image2(Bitmap shop_trade_image2) {
             this.shop_trade_image2 = shop_trade_image2;
         }
 
-        public String getShop_trade_image3() {
+        public Bitmap getShop_trade_image3() {
             return shop_trade_image3;
         }
 
-        public void setShop_trade_image3(String shop_trade_image3) {
+        public void setShop_trade_image3(Bitmap shop_trade_image3) {
             this.shop_trade_image3 = shop_trade_image3;
         }
 
@@ -128,15 +136,15 @@ public class SocietyFindAdapter extends RecyclerView.Adapter<SocietyFindAdapter.
         public void setShop_trade_content(String shop_trade_content) {
             this.shop_trade_content = shop_trade_content;
         }
-        public Society_Find_item( String shop_trade_content){
-            this.shop_trade_content = shop_trade_content;
-        }
-//        public Society_Find_item(String shop_trade_image1, String shop_trade_image2,
-//                                 String shop_trade_image3, String shop_trade_content){
-//            this.shop_trade_image1 = shop_trade_image1;
-//            this.shop_trade_image2 = shop_trade_image2;
-//            this.shop_trade_image3 = shop_trade_image3;
+//        public Society_Find_item( String shop_trade_content){
 //            this.shop_trade_content = shop_trade_content;
 //        }
+        public Society_Find_item(Bitmap shop_trade_image1, Bitmap shop_trade_image2,
+                                 Bitmap shop_trade_image3, String shop_trade_content){
+            this.shop_trade_image1 = shop_trade_image1;
+            this.shop_trade_image2 = shop_trade_image2;
+            this.shop_trade_image3 = shop_trade_image3;
+            this.shop_trade_content = shop_trade_content;
+        }
     }
 }

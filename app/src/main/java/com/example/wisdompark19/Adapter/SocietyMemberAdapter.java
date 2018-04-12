@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,15 +56,16 @@ public class SocietyMemberAdapter extends RecyclerView.Adapter<SocietyMemberAdap
     public void onBindViewHolder(final ViewHolder holder, int position) {
         //holder.mTextView.setText(mDataSet.get(position));
         Item_member mItem_member = mDataSet.get(position);
-        String url = mItem_member.getItem_member_img_url();
+        Bitmap url = mItem_member.getItem_member_img_url();
         if(url!=null){
-            Glide.with(mcontext)
-                    .load(url)
-                    .asBitmap()  //不可加载动图
-                    .placeholder(R.mipmap.ic_launcher_round)
-                    .dontAnimate()//取消淡入淡出动画
-                    .thumbnail(0.1f) //先加载十分之一作为缩略图
-                    .into(holder.item_member_img);
+//            Glide.with(mcontext)
+//                    .load(url)
+//                    .asBitmap()  //不可加载动图
+//                    .placeholder(R.mipmap.ic_launcher_round)
+//                    .dontAnimate()//取消淡入淡出动画
+//                    .thumbnail(0.1f) //先加载十分之一作为缩略图
+//                    .into(holder.item_member_img);
+            holder.item_member_img.setImageBitmap(url);
         }else {
             holder.item_member_img.setImageResource(R.mipmap.ic_launcher_round);
         }
@@ -118,9 +120,9 @@ public class SocietyMemberAdapter extends RecyclerView.Adapter<SocietyMemberAdap
     public class Item_member{
         private String item_member_id;
         private String item_member_name;
-        private String item_member_img_url;
+        private Bitmap item_member_img_url;
 
-        public Item_member(String item_member_name,String item_member_img_url,String item_member_id){
+        public Item_member(String item_member_name,Bitmap item_member_img_url,String item_member_id){
             this.item_member_name = item_member_name;
             this.item_member_img_url = item_member_img_url;
             this.item_member_id=item_member_id;
@@ -130,7 +132,7 @@ public class SocietyMemberAdapter extends RecyclerView.Adapter<SocietyMemberAdap
         public String getItem_member_name(){
             return item_member_name;
         }
-        public String getItem_member_img_url(){
+        public Bitmap getItem_member_img_url(){
             return item_member_img_url;
         }
 

@@ -172,6 +172,7 @@ public class SocietyNewMessage extends BaseFragment {
                                 picture_path = DealBitmap.InputToBitmap(inputStream);
                             }
                             card_message_image.add(picture_path); //发布者头像
+                            resultSet_content_name.close();
                         }
                         Message message = new Message();
                         message.what = UPDATE_CONNECT;
@@ -202,6 +203,7 @@ public class SocietyNewMessage extends BaseFragment {
         card_message_time.add(StringToString(time));
         card_message_id.add(id);
     }
+    //时间格式转换
     private String StringToString(String time){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;

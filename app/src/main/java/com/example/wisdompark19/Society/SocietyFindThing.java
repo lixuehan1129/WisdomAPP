@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Society;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,16 +18,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.wisdompark19.Adapter.SocietyFindAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.mysql.jdbc.Connection;
 
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -42,8 +49,14 @@ public class SocietyFindThing extends BaseFragment {
     private RecyclerView mRecyclerView;
     public static final int UPDATE_FIND = 1;
 
-    ArrayList<String> shop_trade_image = new ArrayList<String>();
-    ArrayList<String> shop_trade_content = new ArrayList<>();
+    ArrayList<Bitmap> society_find_image1 = new ArrayList<>();
+    ArrayList<Bitmap> society_find_image2 = new ArrayList<>();
+    ArrayList<Bitmap> society_find_image3 = new ArrayList<>();
+    ArrayList<String> society_find_content = new ArrayList<>();
+    ArrayList<Integer> society_find_id = new ArrayList<>();
+    ArrayList<String> society_find_time = new ArrayList<>();
+    ArrayList<String> society_find_phone = new ArrayList<>();
+    ArrayList<String> society_find_title = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,7 +88,14 @@ public class SocietyFindThing extends BaseFragment {
     @Override
     protected void onFragmentFirstVisible() {
         //去服务器下载数据
-        shop_trade_content = new ArrayList<>();
+        society_find_id = new ArrayList<>();
+        society_find_phone = new ArrayList<>();
+        society_find_time = new ArrayList<>();
+        society_find_image1 = new ArrayList<>();
+        society_find_image2 = new ArrayList<>();
+        society_find_image3 = new ArrayList<>();
+        society_find_content = new ArrayList<>();
+        society_find_title = new ArrayList<>();
         connectData();
     }
 
@@ -120,7 +140,27 @@ public class SocietyFindThing extends BaseFragment {
                                 "' order by shiwu_id desc";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         while (resultSet.next()){
-                            findData(resultSet.getString("shiwu_content"));
+                            Blob picture1 = resultSet.getBlob("shiwu_picture1");
+                            Blob picture2 = resultSet.getBlob("shiwu_picture2");
+                            Blob picture3 = resultSet.getBlob("shiwu_picture3");
+                            Bitmap bitmap1 = null;
+                            Bitmap bitmap2 = null;
+                            Bitmap bitmap3 = null;
+                            if(picture1 != null){
+                                InputStream inputStream1 = picture1.getBinaryStream();
+                                bitmap1 = DealBitmap.InputToBitmap(inputStream1);
+                            }
+                            if(picture2 != null){
+                                InputStream inputStream2 = picture2.getBinaryStream();
+                                bitmap2 = DealBitmap.InputToBitmap(inputStream2);
+                            }
+                            if(picture3 != null){
+                                InputStream inputStream3 = picture3.getBinaryStream();
+                                bitmap3 = DealBitmap.InputToBitmap(inputStream3);
+                            }
+                            findData(bitmap1,bitmap2,bitmap3,resultSet.getString("shiwu_content"),
+                                    resultSet.getString("shiwu_phone"),resultSet.getString("shiwu_time"),
+                                    resultSet.getInt("shiwu_id"),resultSet.getString("shiwu_title"));
                         }
                         Message message = new Message();
                         message.what = UPDATE_FIND;
@@ -128,7 +168,7 @@ public class SocietyFindThing extends BaseFragment {
                         resultSet.close();
                         JDBCTools.releaseConnection(stmt,conn);
                     }else {
-                        Log.d("调试", "连接失败，发布消息");
+                        Log.d("调试", "连接失败，失物招领");
                         Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
                     }
@@ -141,15 +181,36 @@ public class SocietyFindThing extends BaseFragment {
         }.start();
     }
 
-    private void findData(String content){
-        shop_trade_content.add(content);
+    //时间格式转换
+    private String StringToString(String time){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = formatter.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
+    private void findData(Bitmap bitmap1, Bitmap bitmap2, Bitmap bitmap3, String content,
+                          String phone, String time, int id, String title){
+        society_find_image1.add(bitmap1);
+        society_find_image2.add(bitmap2);
+        society_find_image3.add(bitmap3);
+        society_find_content.add(content);
+        society_find_phone.add(phone);
+        society_find_time.add(StringToString(time));
+        society_find_id.add(id);
+        society_find_title.add(title);
     }
 
     private void initData(){
         Data = new ArrayList<>();
-        for(int i=0; i<shop_trade_content.size(); i++){
+        for(int i=0; i<society_find_content.size(); i++){
             SocietyFindAdapter newData = new SocietyFindAdapter(Data);
-            SocietyFindAdapter.Society_Find_item society_find_item = newData.new Society_Find_item(shop_trade_content.get(i));
+            SocietyFindAdapter.Society_Find_item society_find_item = newData.new Society_Find_item(society_find_image1.get(i),
+                    society_find_image2.get(i),society_find_image3.get(i),society_find_content.get(i));
             Data.add(society_find_item);
         }
     }
@@ -163,10 +224,15 @@ public class SocietyFindThing extends BaseFragment {
         mSocietyFindAdapter.setmOnItemClickListener(new SocietyFindAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(getActivity(), shop_trade_content.get(position), Toast.LENGTH_SHORT);
+                Toast toast=Toast.makeText(getActivity(), society_find_content.get(position), Toast.LENGTH_SHORT);
                 toast.show();
                 Intent intent = new Intent(getActivity(),SocietyFindPageActivity.class);
-                intent.putExtra("put_data",shop_trade_content.get(position));
+                intent.putExtra("put_data_find_content",society_find_content.get(position));
+                intent.putExtra("put_data_find_title",society_find_title.get(position));
+                intent.putExtra("put_data_find_time",society_find_time.get(position));
+                intent.putExtra("put_data_find_phone",society_find_phone.get(position));
+                intent.putExtra("put_data_find_id",society_find_id.get(position));
+                intent.putExtra("put_data_find_select",1);
                 startActivity(intent);
             }
         });

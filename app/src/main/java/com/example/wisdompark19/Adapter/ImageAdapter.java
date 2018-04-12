@@ -2,6 +2,8 @@ package com.example.wisdompark19.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.R;
 
@@ -52,7 +55,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         Item_Image item_image = mDataSet.get(position);
         Bitmap url = item_image.getItem_image();
         if(url!=null){
-          holder.item_text.setImageBitmap(DealBitmap.createBitmapThumbnail(url));
+          holder.item_text.setImageBitmap(DealBitmap.centerSquareScaleBitmap(url));
+//            Drawable drawable = new BitmapDrawable(url);
+//            Glide.with(mcontext)
+//                    .load(drawable)
+//                    .placeholder(R.mipmap.ic_launcher_round)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .override(100,100)
+//                    .into(holder.item_text);
         }
         //判断是否设置了监听器
         if(mOnItemClickListener != null){

@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -37,6 +39,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -60,13 +64,22 @@ public class SocietyFindPageActivity extends AppCompatActivity {
     private int mes_select;
     private List<ImageAdapter.Item_Image> ImageDatas;
     private List<String> ImagePath;
+    private List<String> ImageData;
+    private List<Bitmap> ImageGetPath;
     private Button society_find_page_ok;
     private EditText society_find_page_title;
     private EditText society_find_page_content;
+    private TextView society_find_page_time;
     private RecyclerView society_find_page_rv;
     private ImageView society_find_page_take;
     private ImageView society_find_page_add;
     private CardView society_find_page_tacv;
+    private String title;
+    private String content;
+    private String time;
+    private String phone;
+    private int intent_data_id;
+    public static final int UPDATE_FIND = 1;
 
 
     @Override
@@ -75,16 +88,21 @@ public class SocietyFindPageActivity extends AppCompatActivity {
         setContentView(R.layout.society_find_page);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data_find");
+        intent_data_id = intent.getIntExtra("put_data_find_id",0);
         mes_select = intent.getIntExtra("put_data_find_select",1);
+        title = intent.getStringExtra("put_data_find_title");
+        content = intent.getStringExtra("put_data_find_content");
+        time = intent.getStringExtra("put_data_find_time");
+        phone = intent.getStringExtra("put_data_find_phone");
         Toolbar toolbar = (Toolbar)findViewById(R.id.society_find_page_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-        toolbar.setTitle(intent_data);
+    //    toolbar.setTitle();
         back(toolbar);
         findView();
     }
 
     private void findView(){
+        society_find_page_time = (TextView)findViewById(R.id.society_find_page_time);
         society_find_page_ok = (Button)findViewById(R.id.society_find_page_ok);
         society_find_page_title = (EditText) findViewById(R.id.society_find_page_name);
         society_find_page_content = (EditText)findViewById(R.id.society_find_page_neirong);
@@ -96,11 +114,20 @@ public class SocietyFindPageActivity extends AppCompatActivity {
         if(mes_select == 1){
             society_find_page_ok.setVisibility(View.INVISIBLE);
             society_find_page_tacv.setVisibility(View.INVISIBLE);
-            society_find_page_title.setFocusable(false);
-            society_find_page_content.setFocusable(false);
+            society_find_page_time.setVisibility(View.VISIBLE);
+            society_find_page_title.setEnabled(false);
+            society_find_page_content.setEnabled(false);
+            society_find_page_title.setText(title);
+            society_find_page_content.setText(content);
+            society_find_page_time.setText(time);
+            ImageGetPath = new ArrayList<>();
+            ImageDatas = new ArrayList<>();
+            ImagePath = new ArrayList<>();
+            getData();
         }else {
             ImageDatas = new ArrayList<>();
             ImagePath = new ArrayList<>();
+            ImageData = new ArrayList<>();
         }
 
         society_find_page_take.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +172,97 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    //异步更新
+    private Handler handler_find = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            switch (msg.what){
+                case UPDATE_FIND:{
+                    for(int i = 0; i<ImageGetPath.size(); i++){
+                        showLoadImage(ImageGetPath.get(i));
+                    }
+                    updateLoad();
+                    break;
+                }
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+
+    private void getData(){
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功,消息界面");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //查找信息
+                        String sql_connect = "select * from shiwu where shiwu_id = '" +
+                                intent_data_id +
+                                "'";
+                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+                        resultSet.next();
+                        Blob picture1 = resultSet.getBlob("shiwu_picture1");
+                        Blob picture2 = resultSet.getBlob("shiwu_picture2");
+                        Blob picture3 = resultSet.getBlob("shiwu_picture3");
+                        Blob picture4 = resultSet.getBlob("shiwu_picture4");
+                        Blob picture5 = resultSet.getBlob("shiwu_picture5");
+                        Blob picture6 = resultSet.getBlob("shiwu_picture6");
+                        if(picture1 != null){
+                            InputStream inputStream1 = picture1.getBinaryStream();
+                            Bitmap bitmap1 = DealBitmap.InputToBitmap(inputStream1);
+                            ImageGetPath.add(bitmap1);
+                        }
+                        if(picture2 != null){
+                            InputStream inputStream2 = picture2.getBinaryStream();
+                            Bitmap bitmap2 = DealBitmap.InputToBitmap(inputStream2);
+                            ImageGetPath.add(bitmap2);
+                        }
+                        if(picture3 != null){
+                            InputStream inputStream3 = picture3.getBinaryStream();
+                            Bitmap bitmap3 = DealBitmap.InputToBitmap(inputStream3);
+                            ImageGetPath.add(bitmap3);
+                        }
+                        if(picture4 != null){
+                            InputStream inputStream4 = picture4.getBinaryStream();
+                            Bitmap bitmap4 = DealBitmap.InputToBitmap(inputStream4);
+                            ImageGetPath.add(bitmap4);
+                        }
+                        if(picture5 != null){
+                            InputStream inputStream5 = picture5.getBinaryStream();
+                            Bitmap bitmap5 = DealBitmap.InputToBitmap(inputStream5);
+                            ImageGetPath.add(bitmap5);
+                        }
+                        if(picture6 != null){
+                            InputStream inputStream6 = picture6.getBinaryStream();
+                            Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
+                            ImageGetPath.add(bitmap6);
+                        }
+                        System.out.println(ImageGetPath);
+                        Message message = new Message();
+                        message.what = UPDATE_FIND;
+                        handler_find.sendMessage(message);
+                        resultSet.close();
+                        JDBCTools.releaseConnection(stmt,conn);
+                    }else {
+                        Log.d("调试", "连接失败,消息界面");
+                        Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }.start();
     }
 
     private void UpdateData(){
@@ -204,6 +322,68 @@ public class SocietyFindPageActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    /*
+  * 加载图片
+  * */
+    private void showLoadImage(Bitmap bitmap){
+        ImageAdapter first = new ImageAdapter(ImageDatas);
+        ImageAdapter.Item_Image item_image = first.new Item_Image(bitmap);
+        ImageDatas.add(item_image);
+    }
+
+    //加载网络图片的大图
+    private void updateLoad(){
+        society_find_page_rv.setLayoutManager(new GridLayoutManager(this,3));
+        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
+        society_find_page_rv.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(SocietyFindPageActivity.this,ShowImage.class);
+                Bundle bundle = new Bundle();
+                int pos = position+1;
+                bundle.putString("image_select_name","newmessage_picture"+pos);
+                bundle.putInt("image_select_id",1);
+                bundle.putInt("image_select_new",intent_data_id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /*
+    * 加载图片
+    * */
+    private void showImage(String image_Path){
+        File file = new File(image_Path);
+        compressWithLs(file);
+        ImageAdapter first = new ImageAdapter(ImageDatas);
+        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
+        ImageData.add(image_Path);
+        ImageDatas.add(item_image);
+        update();
+    }
+
+    //显示图片
+    private void update(){
+        society_find_page_rv.setLayoutManager(new GridLayoutManager(this,3));
+        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
+        society_find_page_rv.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(SocietyFindPageActivity.this,ShowImage.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("image_select_name",ImageData.get(position));
+                bundle.putInt("image_select_id",0);
+                bundle.putInt("image_select_new",9);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
+
 
     //获取系统时间，并进行格式转换
     private String getTime(){
@@ -326,35 +506,6 @@ public class SocietyFindPageActivity extends AppCompatActivity {
 
                     }
                 }).launch();
-    }
-
-    /*
-    * 加载图片
-    * */
-    private void showImage(String image_Path){
-        File file = new File(image_Path);
-        compressWithLs(file);
-        ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
-        ImageDatas.add(item_image);
-        update();
-    }
-
-    //显示图片
-    private void update(){
-        society_find_page_rv.setLayoutManager(new GridLayoutManager(this,3));
-        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
-        society_find_page_rv.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(SocietyFindPageActivity.this,ShowImage.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("image_select",ImagePath.get(position));
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
     }
 
 
