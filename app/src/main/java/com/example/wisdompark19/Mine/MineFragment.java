@@ -160,7 +160,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //清楚缓存
+                        //清楚缓存a
 //                        SharePreferences.putString(getActivity(), AppConstants.USER_PHONE," ");
 //                        SharePreferences.putString(getActivity(), AppConstants.USER_NAME," ");
 //                        SharePreferences.putString(getActivity(), AppConstants.USER_ADDRESS," ");
