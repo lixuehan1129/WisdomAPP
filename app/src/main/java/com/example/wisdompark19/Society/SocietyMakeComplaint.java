@@ -56,7 +56,6 @@ public class SocietyMakeComplaint extends BaseFragment {
         initData();
         setAdapter();
         setItemClick();
-
         return view;
     }
 

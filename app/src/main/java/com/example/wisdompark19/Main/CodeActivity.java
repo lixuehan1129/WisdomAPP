@@ -84,60 +84,6 @@ public class CodeActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
     }
 
-    //异步更新界面
-//    private Handler handler_code = new Handler(new Handler.Callback() {
-//        @Override
-//        public boolean handleMessage(Message msg) {
-//            // TODO Auto-generated method stub
-//            switch (msg.what){
-//                case UPDATE_CODE:{
-//                    setView();
-//                    break;
-//                }
-//                default:
-//                    break;
-//            }
-//            return false;
-//        }
-//    });
-    //从数据库获取数据
-//    private void initdata(){
-//        new Thread(){
-//            public void run(){
-//                try {
-//                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-//                    if (conn != null) {
-//                        Statement statement_user = conn.createStatement();
-//                        String user_check_sql = "select * from user where user_phone = '" +
-//                                user_phone +
-//                                "'";
-//                        ResultSet resultSet_user = statement_user.executeQuery(user_check_sql);
-//                        resultSet_user.next();
-//                        user_address = resultSet_user.getString("user_address");
-//                        user_name = resultSet_user.getString("user_name");
-//                        user_sort = resultSet_user.getInt("user_sort");
-//
-//                        //更新UI
-//                        Message message = new Message();
-//                        message.what = UPDATE_CODE;
-//                        handler_code.sendMessage(message);
-//                        //关闭数据库连接
-//                        resultSet_user.close();
-//                        JDBCTools.releaseConnection(statement_user,conn);
-//
-//                    } else {
-//                        Log.d("调试", "连接失败");
-//                        Toast toast = Toast.makeText(CodeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                    }
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.start();
-//
-//    }
-
     //获取系统时间，并进行格式转换
     private String getTime(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

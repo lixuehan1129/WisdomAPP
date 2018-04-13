@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/mainTool"
+        android:id="@+id/repair_mainTool"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorBlue"
@@ -15,17 +15,27 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
 
-    <Button
-        android:id="@+id/repair_make"
-        android:text="我要报修"
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/repair_mainTool"
+        android:id="@+id/repair_check_rec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+
+
+    <android.support.v7.widget.CardView
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/mainTool"/>
-    <Button
-        android:id="@+id/repair_check"
-        android:text="报修查询"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/repair_make"/>
+        android:background="@drawable/function_list_shape"
+        app:cardBackgroundColor="@color/colorGray"
+        android:padding="5dp">
+        <Button
+            android:id="@+id/repair_make"
+            android:text="我要报修"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGray"/>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

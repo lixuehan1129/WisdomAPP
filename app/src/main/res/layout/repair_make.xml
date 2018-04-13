@@ -38,45 +38,43 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
                 android:background="@color/colorGray_White"/>
-
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="80dp">
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:paddingLeft="15dp">
+                    android:padding="10dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:id="@+id/repair_image"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:src="@mipmap/ic_launcher_round"/>
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="12dp">
-
                         <TextView
                             android:id="@+id/repair_name"
                             android:layout_width="match_parent"
-                            android:layout_height="25dp"
+                            android:layout_height="wrap_content"
                             android:text="业主（联系方式）"
-                            android:textSize="16dp"
+                            android:textSize="16sp"
                             android:textColor="@color/colorBlack"/>
                         <TextView
                             android:id="@+id/repair_add"
                             android:layout_width="match_parent"
-                            android:layout_height="25dp"
+                            android:layout_height="wrap_content"
                             android:text="家庭住址"
-                            android:textSize="16dp"
+                            android:textSize="16sp"
                             android:textColor="@color/colorBlack"/>
                     </LinearLayout>
                 </LinearLayout>
@@ -88,70 +86,71 @@
                 android:background="@color/colorGray_White"/>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingLeft="15dp"
                 android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:background="@drawable/bottom_lay">
 
                 <TextView
                     android:text="报修类型"
-                    android:textSize="17dp"
+                    android:textSize="17sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
                 <View
                     android:layout_width="140dp"
-                    android:layout_height="25dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
                 <Spinner
-                    android:id="@+id/repair_spanner"
+                    android:id="@+id/repair_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="25dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="right"
                     android:entries="@array/spinner_repair">
-
                 </Spinner>
-
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingLeft="15dp"
                 android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:background="@drawable/bottom_lay">
-
                 <TextView
                     android:text="报修时间"
-                    android:textSize="17dp"
+                    android:textSize="17sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
                 <View
                     android:layout_width="130dp"
-                    android:layout_height="25dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
                 <TextView
                     android:id="@+id/repair_time"
                     android:text="2018-03-16 17:30"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="@color/colorBlue"
                     android:layout_width="match_parent"
-                    android:layout_height="25dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center" />
 
             </LinearLayout>
 
             <TextView
                 android:text="报修内容"
-                android:textSize="17dp"
+                android:textSize="17sp"
                 android:paddingLeft="15dp"
                 android:paddingTop="3dp"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="left"/>
 
             <android.support.v7.widget.CardView
@@ -168,9 +167,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <EditText
-                        android:id="@+id/repair_make_edit_neirong"
+                        android:id="@+id/repair_make_edit"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:paddingBottom="25dp"
                         android:paddingTop="15dp"
                         android:background="@null"
@@ -180,20 +179,20 @@
                         android:textSize="15sp"
                         android:hint="输入内容"
                         android:textColor="@color/colorBlack"
-                        android:minLines="6"
+                        android:minLines="5"
                         android:gravity="left|top"
                         android:theme="@style/MyEditText" />
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/repair_make_rv"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content">
                     </android.support.v7.widget.RecyclerView>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
     <android.support.v7.widget.CardView
-        android:id="@+id/society_new_message_page_tacv"
+        android:id="@+id/repair_make_tacv"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -206,15 +205,15 @@
             android:padding="8dp">
             <ImageView
                 android:layout_alignParentRight="true"
-                android:id="@+id/society_new_message_page_take"
+                android:id="@+id/repair_make_take"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_take_photo"
                 android:paddingRight="10dp"
                 android:tint="@color/colorGray_1"/>
             <ImageView
-                android:layout_toLeftOf="@+id/society_new_message_page_take"
-                android:id="@+id/society_new_message_page_add"
+                android:layout_toLeftOf="@+id/repair_make_take"
+                android:id="@+id/repair_make_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_add_photo"

@@ -16,13 +16,13 @@
             android:background="@drawable/bottom_lay">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/society_complaint_image"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@mipmap/ic_launcher_round"
                 app:civ_border_width="1dp"
                 app:civ_border_color="@color/colorGray"/>
             <TextView
-                android:paddingTop="15dp"
+                android:paddingTop="10dp"
                 android:paddingLeft="10dp"
                 android:id="@+id/society_complaint_text"
                 android:layout_width="match_parent"
