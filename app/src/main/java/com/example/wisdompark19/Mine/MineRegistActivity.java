@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.Society.SocietyNewMessagePage;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 //import com.mysql.jdbc.Connection;
@@ -46,15 +47,21 @@ import com.mysql.jdbc.PreparedStatement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
+
+import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolutePath;
 
 /**
  * Created by 最美人间四月天 on 2018/3/29.
@@ -64,8 +71,9 @@ public class MineRegistActivity extends AppCompatActivity{
 
     boolean hasFocus_pre_password = false;
     boolean hasFocus_pre_password_again = false;
+    private final int camera = 1;
+    private final int album = 2;
     //调用系统相册-选择图片
-    private static final int IMAGE = 1;
     String touxiang_path = "null";
 
     private CircleImageView user_register_picture;
@@ -239,29 +247,108 @@ public class MineRegistActivity extends AppCompatActivity{
         user_register_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MineRegistActivity.this,"选择一张图片",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, IMAGE);
-
+//                Toast.makeText(MineRegistActivity.this,"选择一张图片",Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(intent, IMAGE);
+                final String[] items = new String[] {"选择图片","拍摄图片"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(MineRegistActivity.this);
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(i == 0){
+                            select_photo();
+                        }else if(i == 1){
+                            take_photo();
+                        }
+                    }
+                }).create().show();
             }
         });
 
     }
 
-    /*
-   * 从相册中选择图片
-   * */
+    //调用相机拍照
+    private void take_photo(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, camera);
+    }
+    //调用系统相册
+    private void select_photo(){
+        Intent intent = new Intent(
+                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, album);
+    }
+
+    //从拍照或相册获取图片
+    //找到图片路径
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //获取图片路径
-        if (requestCode == IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            String imagePath;
-            imagePath = getImageAbsolutePath(this,selectedImage);
-            showImage(imagePath);
-            File image = new File(imagePath);
-            compressWithLs(image);
+        switch (requestCode) {
+            case camera:
+                if(data != null) {
+                    ContentResolver cr = MineRegistActivity.this.getContentResolver();
+                    Bitmap bitmap_camera = null;
+                    Uri uri_camera = data.getData();
+                    Bundle extras = null;
+                    try {
+                        if(data.getData() != null)
+                            //这个方法是根据Uri获取Bitmap图片的静态方法
+                            bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
+                            //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
+                        else
+                            extras = data.getExtras();
+                        bitmap_camera = extras.getParcelable("data");
+
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    FileOutputStream fileOutputStream = null;
+                    File file = null;
+                    try {
+                        // 获取 SD 卡根目录
+                        String saveDir = Environment.getExternalStorageDirectory() + "/IMG";
+                        // 新建目录
+                        File dir = new File(saveDir);
+                        if (! dir.exists()) dir.mkdir();
+                        // 生成文件名
+                        SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+                        String filename = "IMG_" + (t.format(new Date())) + ".jpg";
+                        // 新建文件
+                        file = new File(saveDir, filename);
+                        // 打开文件输出流
+                        fileOutputStream = new FileOutputStream(file);
+                        // 生成图片文件
+                        bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                        // 相片的完整路径
+                        System.out.println( file.getPath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (fileOutputStream != null) {
+                            try {
+                                fileOutputStream.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    showImage(file.getPath());
+                }
+                break;
+            case album:
+                if (data != null) {
+                    Uri uri = data.getData();
+                    String imagePath;
+                    imagePath = getImageAbsolutePath(this, uri);
+                    showImage(imagePath);
+                }
+                break;
+
         }
     }
 
@@ -271,6 +358,7 @@ public class MineRegistActivity extends AppCompatActivity{
     * */
     private void showImage(String imaePath){
         Bitmap bm = BitmapFactory.decodeFile(imaePath);
+        compressWithLs(new File(imaePath));
         user_register_picture.setImageBitmap(bm);
     }
 
@@ -285,20 +373,14 @@ public class MineRegistActivity extends AppCompatActivity{
                 .setCompressListener(new OnCompressListener() {
                     @Override
                     public void onStart() {
-
                     }
                     @Override
                     public void onSuccess(File file) {
                         Log.i("path", file.getAbsolutePath());
                         touxiang_path = file.getAbsolutePath();
-
-                        // Glide.with(RegisterActivity.this).load(file).into(image);
-
                     }
-
                     @Override
                     public void onError(Throwable e) {
-
                     }
                 }).launch();
     }
@@ -429,108 +511,6 @@ public class MineRegistActivity extends AppCompatActivity{
         normalDialog.show();
     }
 
-
-    /**
-     * 根据Uri获取图片绝对路径，解决Android4.4以上版本Uri转换
-     * @param context
-     * @param imageUri
-     * @author yaoxing
-     * @date 2014-10-12
-     */
-    @TargetApi(19)
-    public static String getImageAbsolutePath(Activity context, Uri imageUri) {
-        if (context == null || imageUri == null)
-            return null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, imageUri)) {
-            if (isExternalStorageDocument(imageUri)) {
-                String docId = DocumentsContract.getDocumentId(imageUri);
-                String[] split = docId.split(":");
-                String type = split[0];
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-                }
-            } else if (isDownloadsDocument(imageUri)) {
-                String id = DocumentsContract.getDocumentId(imageUri);
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                return getDataColumn(context, contentUri, null, null);
-            } else if (isMediaDocument(imageUri)) {
-                String docId = DocumentsContract.getDocumentId(imageUri);
-                String[] split = docId.split(":");
-                String type = split[0];
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-                String selection = MediaStore.Images.Media._ID + "=?";
-                String[] selectionArgs = new String[] { split[1] };
-                return getDataColumn(context, contentUri, selection, selectionArgs);
-            }
-        } // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(imageUri.getScheme())) {
-            // Return the remote address
-            if (isGooglePhotosUri(imageUri))
-                return imageUri.getLastPathSegment();
-            return getDataColumn(context, imageUri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(imageUri.getScheme())) {
-            return imageUri.getPath();
-        }
-        return null;
-    }
-
-    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
-        Cursor cursor = null;
-        String column = MediaStore.Images.Media.DATA;
-        String[] projection = { column };
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                int index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
-     */
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
-     */
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
-     */
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
-     */
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
-    }
 
     /*
    * 点击空白区域 Edittext失去焦点 关闭输入法

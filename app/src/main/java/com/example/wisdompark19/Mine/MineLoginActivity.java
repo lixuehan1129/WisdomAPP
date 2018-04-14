@@ -194,6 +194,7 @@ public class MineLoginActivity extends AppCompatActivity {
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_NAME,"访客");
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_ADDRESS,"访客");
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_AREA,"访客");
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_SEX,"访客");
                                     SharePreferences.putInt(MineLoginActivity.this, AppConstants.USER_SORT,login_user_sort);
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_PICTURE,login_user_picture);
 
@@ -202,6 +203,7 @@ public class MineLoginActivity extends AppCompatActivity {
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_NAME,resultSet_number.getString("user_name"));
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_ADDRESS,resultSet_number.getString("user_address"));
                                     SharePreferences.putInt(MineLoginActivity.this, AppConstants.USER_SORT,login_user_sort);
+                                    SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_SEX,resultSet_number.getString("user_sex"));
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_AREA,resultSet_number.getString("user_area"));
                                     SharePreferences.putString(MineLoginActivity.this, AppConstants.USER_PICTURE,login_user_picture);
                                 }

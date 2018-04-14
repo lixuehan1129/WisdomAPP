@@ -59,8 +59,10 @@ public class CodeActivity extends AppCompatActivity {
 //        user_number = "23";
 //        user_name = "李学翰";
 //        user_address = "科群大厦205";
+        String sex = SharePreferences.getString(CodeActivity.this, AppConstants.USER_SEX);
         String user_phone = SharePreferences.getString(CodeActivity.this, AppConstants.USER_PHONE);
-        String user_number = user_phone;
+      //  String user_number = user_phone;
+        String user_number = "2";
         int user_sort = SharePreferences.getInt(CodeActivity.this, AppConstants.USER_SORT);
         String model = null;
         String user_name = SharePreferences.getString(CodeActivity.this, AppConstants.USER_NAME);
@@ -75,11 +77,17 @@ public class CodeActivity extends AppCompatActivity {
             user_address = "访客";
         }
         String time = getTime();
+        if(sex.equals("男")){
+            user_number = "0";
+        }else if(sex.equals("女")){
+            user_number = "1";
+        }
 
         String setContent = user_number + " " + user_name + " " + model + " " + time + " " + user_address;
         String md5Content = md5(setContent);
         String newContent = user_number + "," + user_name + "," + model + "," + time + "," + user_address + ","
                 + md5Content.substring(md5Content.length()-8);
+        System.out.println(newContent);
         Bitmap bitmap = QRCodeUtil.createQRCodeBitmap(newContent,640,640);
         imageView.setImageBitmap(bitmap);
     }

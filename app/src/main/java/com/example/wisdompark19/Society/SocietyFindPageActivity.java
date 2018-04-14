@@ -51,7 +51,7 @@ import java.util.List;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
-import static com.example.wisdompark19.Mine.MineRegistActivity.getImageAbsolutePath;
+import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolutePath;
 
 /**
  * Created by 最美人间四月天 on 2018/3/19.

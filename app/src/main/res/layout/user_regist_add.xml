@@ -63,8 +63,43 @@
                     android:theme="@style/MyEditText" />
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/Linear_2"
+                android:id="@+id/Linear_4"
                 android:layout_below="@id/Linear_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bottom_lay">
+                <TextView
+                    android:text="选择性别:"
+                    android:textSize="20sp"
+                    android:paddingRight="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+                    <RadioGroup
+                        android:id="@+id/user_sex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center_horizontal">
+                        <RadioButton
+                            android:id="@+id/user_male"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="男" />
+                        <RadioButton
+                            android:id="@+id/user_female"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="女"/>
+                    </RadioGroup>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/Linear_2"
+                android:layout_below="@id/Linear_4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

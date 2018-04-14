@@ -17,5 +17,6 @@ public class AppConstants {
     public static final String USER_ADDRESS = "app_user_address";
     public static final String USER_SORT = "app_user_sort";
     public static final String USER_AREA = "app_user_area";
+    public static final String USER_SEX = "app_user_sex";
     public static final String USER_PICTURE = "app_user_picture";
 }

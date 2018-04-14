@@ -45,6 +45,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +54,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
-import static com.example.wisdompark19.Mine.MineRegistActivity.getImageAbsolutePath;
+import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolutePath;
 
 /**
  * Created by 最美人间四月天 on 2018/3/13.
@@ -377,6 +378,9 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private void initDatePicker() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
         String now = sdf.format(new Date());
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH)+3);
+        String future = sdf.format(calendar.getTime());
         repair_time.setText(now);
 
         mCustomDatePicker = new CustomDatePicker(this, new CustomDatePicker.ResultHandler() {
@@ -384,7 +388,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             public void handle(String time) { // 回调接口，获得选中的时间
                 repair_time.setText(time);
             }
-        }, "2010-01-01 00:00", now); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
+        }, now, future); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
         mCustomDatePicker.showSpecificTime(true); // 显示时和分
         mCustomDatePicker.setIsLoop(true); // 允许循环滚动
     }

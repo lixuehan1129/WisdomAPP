@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListAdapter;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,6 +49,10 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
     private TextView user_regist_add_join;
     private TextView user_regist_add_add;
     private EditText user_regist_add_society;
+    private RadioGroup user_sex;
+    private RadioButton user_male;
+    private RadioButton user_female;
+    private String user_sex_select;
     private String user_phone;
     private int user_sort;
     private String select;
@@ -76,7 +82,9 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
     private void findView(){
         user_regist_add_ok = (Button)findViewById(R.id.user_regist_add_ok);
         user_regist_add_name = (EditText)findViewById(R.id.user_regist_add_name);
-//        user_regist_add_spinner = (Spinner)findViewById(R.id.user_regist_add_spinner);
+        user_sex = (RadioGroup)findViewById(R.id.user_sex);
+        user_male = (RadioButton)findViewById(R.id.user_male);
+        user_female = (RadioButton)findViewById(R.id.user_female);
         user_regist_add_society = (EditText) findViewById(R.id.user_regist_add_society);
         user_regist_add_address = (EditText)findViewById(R.id.user_regist_add_address);
         user_regist_add_join = (TextView)findViewById(R.id.user_regist_add_join);
@@ -85,6 +93,18 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
         user_regist_add_join.setOnClickListener(this);
         user_regist_add_add.setOnClickListener(this);
         user_regist_add_society.setEnabled(false);
+        user_sex_select = "女";
+        user_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if(R.id.user_male == i){
+                    user_sex_select = "男";
+                }else{
+                    user_sex_select = "女";
+                }
+
+            }
+        });
     }
 
 
@@ -258,14 +278,15 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
                                 user_sort = 1; //业主，没有创建社区
                             }
                             String update_sql = "update user set user_sort = ?, user_name = ?, user_address = ?, " +
-                                    "user_area = ? where user_phone = ?";
+                                    "user_area = ?, user_sex = ? where user_phone = ?";
                             java.sql.PreparedStatement preparedStatement = null;
                             preparedStatement = conn_update.prepareStatement(update_sql);
                             preparedStatement.setInt(1,user_sort);
                             preparedStatement.setString(2,user_regist_add_name.getText().toString());
                             preparedStatement.setString(3,user_regist_add_address.getText().toString());
                             preparedStatement.setString(4,user_regist_add_society.getText().toString());
-                            preparedStatement.setString(5,user_phone);
+                            preparedStatement.setString(5,user_sex_select);
+                            preparedStatement.setString(6,user_phone);
                             preparedStatement.executeUpdate();//执行更新操作
                             preparedStatement.close();
                             if(AREA_SELECT == 1){
