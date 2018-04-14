@@ -85,6 +85,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 //    }
 
     private void findView(View view){
+
         minefragment_picture = (CircleImageView)view.findViewById(R.id.minefragment_picture);
         minefragment_name = (TextView)view.findViewById(R.id.minefragment_name);
         minefragment_address = (TextView)view.findViewById(R.id.minefragment_address);

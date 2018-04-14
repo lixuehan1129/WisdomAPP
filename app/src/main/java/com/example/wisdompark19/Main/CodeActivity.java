@@ -56,9 +56,6 @@ public class CodeActivity extends AppCompatActivity {
     }
 
     private void setView(){
-//        user_number = "23";
-//        user_name = "李学翰";
-//        user_address = "科群大厦205";
         String sex = SharePreferences.getString(CodeActivity.this, AppConstants.USER_SEX);
         String user_phone = SharePreferences.getString(CodeActivity.this, AppConstants.USER_PHONE);
       //  String user_number = user_phone;

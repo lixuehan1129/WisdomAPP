@@ -15,6 +15,7 @@ import android.provider.MediaStore;
  */
 
 public class AbsolutePath {
+
     /**
      * 根据Uri获取图片绝对路径，解决Android4.4以上版本Uri转换
      * @param context

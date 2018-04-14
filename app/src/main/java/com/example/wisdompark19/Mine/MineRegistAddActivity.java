@@ -237,7 +237,7 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
         user_regist_add_join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AREA_SELECT = 0; //选择了一个社区
+                AREA_SELECT = 0; //选择了一个社区。
                 user_regist_add_add.setSelected(false);
                 user_regist_add_join.setSelected(true);
                 user_regist_add_society.setEnabled(false);

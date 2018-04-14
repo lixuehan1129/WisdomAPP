@@ -409,9 +409,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             case android.R.id.home:
                 finish();
                 break;
-//            case R.id.society_new_message_page_save:
-//                finish();
-//                break;
         }
         return super.onOptionsItemSelected(item);
     }

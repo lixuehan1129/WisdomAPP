@@ -96,7 +96,6 @@ public class SocietyFindPageActivity extends AppCompatActivity {
         phone = intent.getStringExtra("put_data_find_phone");
         Toolbar toolbar = (Toolbar)findViewById(R.id.society_find_page_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-    //    toolbar.setTitle();
         back(toolbar);
         findView();
     }
