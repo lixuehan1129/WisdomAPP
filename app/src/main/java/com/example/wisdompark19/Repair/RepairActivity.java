@@ -42,7 +42,7 @@ public class RepairActivity extends AppCompatActivity {
     public static final int UPDATE_REP = 1;
 
     ArrayList<String> repair_check_content = new ArrayList<String>();
-
+    ArrayList<Integer> repair_check_id = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -72,7 +72,7 @@ public class RepairActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RepairActivity.this,RepairMakeActivity.class);
-                intent.putExtra("put_data","我要报修");
+                intent.putExtra("repair_check",0);
                 startActivity(intent);
             }
         });
@@ -101,6 +101,7 @@ public class RepairActivity extends AppCompatActivity {
             public void run(){
                 try{
                     repair_check_content = new ArrayList<>();
+                    repair_check_id = new ArrayList<>();
                     Looper.prepare();
                     Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
@@ -112,7 +113,8 @@ public class RepairActivity extends AppCompatActivity {
                                 "' order by repair_time";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         while (resultSet.next()){
-                            findData(resultSet.getString("repair_content"));
+                            findData(resultSet.getString("repair_content"),
+                                     resultSet.getInt("repair_id"));
                         }
                         Message message = new Message();
                         message.what = UPDATE_REP;
@@ -132,8 +134,9 @@ public class RepairActivity extends AppCompatActivity {
             }
         }.start();
     }
-    private void findData(String content){
+    private void findData(String content,int id){
         repair_check_content.add(content);
+        repair_check_id.add(id);
     }
 
     private void initData(){
@@ -158,6 +161,10 @@ public class RepairActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 Toast toast=Toast.makeText(RepairActivity.this, repair_check_content.get(position), Toast.LENGTH_SHORT);
                 toast.show();
+                Intent intent = new Intent(RepairActivity.this,RepairMakeActivity.class);
+                intent.putExtra("repair_check",1);
+                intent.putExtra("repair_check_image",repair_check_id.get(position));
+                startActivity(intent);
             }
         });
     }

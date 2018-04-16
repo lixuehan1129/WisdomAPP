@@ -126,6 +126,7 @@ public class SocietyMakeComplaint extends BaseFragment {
                             content_name.add(resultSet.getString("tucao_phone"));
                             findData(resultSet.getString("tucao_content"));
                         }
+                        resultSet.close();
                         for(int i = 0; i<content_name.size(); i++){
                             String sql_content_name = "select * from user where user_phone = '" +
                                     content_name.get(i) +
@@ -133,6 +134,7 @@ public class SocietyMakeComplaint extends BaseFragment {
                             ResultSet resultSet_content_name = stmt.executeQuery(sql_content_name);
                             resultSet_content_name.next();
                             Bitmap picture_path = null;
+                            System.out.println(content_name.get(i));
                             Blob content_picture = resultSet_content_name.getBlob("user_picture");
                             if(content_picture != null){
                                 InputStream inputStream = content_picture.getBinaryStream();
@@ -144,7 +146,6 @@ public class SocietyMakeComplaint extends BaseFragment {
                         Message message = new Message();
                         message.what = UPDATE_COM;
                         handler_find.sendMessage(message);
-                        resultSet.close();
                         JDBCTools.releaseConnection(stmt,conn);
                     }else {
                         Log.d("调试", "连接失败，吐槽界面");

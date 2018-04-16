@@ -52,6 +52,7 @@ public class ShowImage extends AppCompatActivity {
         String image_select_name = bundle.getString("image_select_name");
         int image_select_id = bundle.getInt("image_select_id");
         int image_selece_new = bundle.getInt("image_select_new");
+        String select_fenlei = bundle.getString("select_fenlei");
 
         if(image_select_id == 0){
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -59,7 +60,7 @@ public class ShowImage extends AppCompatActivity {
             Bitmap bm = BitmapFactory.decodeFile(image_select_name,options);
             img.setImageBitmap(bm);
         }else if(image_select_id == 1){
-            getPicture(image_selece_new,image_select_name);
+            getPicture(image_selece_new,image_select_name,select_fenlei);
         }else {
             Toast.makeText(this, "图片加载出现错误",Toast.LENGTH_SHORT).show();
             ShowImage.this.finish();
@@ -82,17 +83,23 @@ public class ShowImage extends AppCompatActivity {
 
     }
 
-    private void getPicture(final int intent_data_id, final String picture_name){
+    private void getPicture(final int intent_data_id, final String picture_name,
+                            final String select_fenlei){
         new Thread(){
             public void run(){
                 try{
                     Looper.prepare();
                     Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试", "连接成功,消息界面");
+                        Log.d("调试", "连接成功,图片界面");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
                         //查找信息
-                        String sql_connect = "select * from newmessage where newmessage_id = '" +
+                        String id = select_fenlei + "_id";
+                        String sql_connect = "select * from " +
+                                select_fenlei +
+                                " where " +
+                                id +
+                                " = '" +
                                 intent_data_id +
                                 "'";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);

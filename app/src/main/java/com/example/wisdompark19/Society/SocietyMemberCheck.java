@@ -1,5 +1,7 @@
 package com.example.wisdompark19.Society;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -53,19 +55,14 @@ public class SocietyMemberCheck extends BaseFragment {
         View view = inflater.inflate(R.layout.society_member_check, container, false);
 
         findView(view);
-//        findData();
-//        initData();
-//        setAdapter();
-//        setItemClick();
         return view;
     }
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
             //更新界面数据，如果数据还在下载中，就显示加载框
-            System.out.println("第一次出现1111");
+
         } else {
-            //关闭加载框
 
         }
     }
@@ -173,9 +170,57 @@ public class SocietyMemberCheck extends BaseFragment {
         mSocietyMemberAdapter.setOnItemClickListener(new SocietyMemberAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(getActivity(), member_name.get(position), Toast.LENGTH_SHORT);
+                Toast toast=Toast.makeText(getActivity(), member_phone.get(position), Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
+        mSocietyMemberAdapter.setOnItemLongClickListener(new SocietyMemberAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, final int position) {
+                if(SharePreferences.getInt(getActivity(), AppConstants.USER_SORT) == 0){
+                    final String[] items = new String[] {"升为管理员"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            updateUser(member_phone.get(position));
+                        }
+                    }).create().show();
+                }else {
+                    Toast.makeText(getActivity(), "您还不是管理员", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void updateUser(final String user_phone){
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功,成员更新");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //更新用户信息
+                        String sql_update = "update user set user_sort = '" +
+                                0 +
+                                "' where user_phone = '" +
+                                user_phone +
+                                "'";
+                        stmt.execute(sql_update);
+                        JDBCTools.releaseConnection(stmt,conn);
+                    }else {
+                        Log.d("调试", "连接失败,成员更新");
+                        Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }.start();
     }
 }

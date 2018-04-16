@@ -212,6 +212,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
                 Intent intent = new Intent(SocietyNewMessagePage.this,ShowImage.class);
                 Bundle bundle = new Bundle();
                 int pos = position+1;
+                bundle.putString("select_fenlei","newmessage");
                 bundle.putString("image_select_name","newmessage_picture"+pos);
                 bundle.putInt("image_select_id",1);
                 bundle.putInt("image_select_new",intent_data_id);

@@ -2,6 +2,7 @@ package com.example.wisdompark19;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         findView(); //初始化布局
         startFragment();//执行点击或滑动
         setQuanXian();
-      //  createConnect();
+        createConnect();
     }
 
     private void findView(){
@@ -152,34 +153,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    private void createConnect(){
-//        new  Thread(){
-//            public  void run(){
-//                try {
-//                    Class.forName("com.mysql.jdbc.Driver");//动态加载类
-//                    String url = "jdbc:mysql://60.205.140.219:3306/shequ";
-//                    //上面语句中 60.205.140.219为你的mysql服务器地址 3306为端口号   public是你的数据库名 根据你的实际情况更改
-//                    Connection conn = (Connection) DriverManager.getConnection(url, "shequ", "Zz123456");
-//                   //使用 DriverManger.getConnection链接数据库  第一个参数为连接地址 第二个参数为用户名 第三个参数为连接密码  返回一个Connection对象
-//                    if(conn!=null){ //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-//                        Log.d("调试","连接成功");
-//                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-//                        String sql = "select * from administrators"; //要执行的sql语句
-//                        ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-//                        while (rs.next()) {
-//                            Log.d("rs", rs.getString("administrators_name"));
-//                        }
-//                    }else{
-//                        Log.d("调试","连接失败");
-//                    }
-//                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.start();
-//
-//    }
+    private void createConnect(){
+        new  Thread(){
+            public  void run(){
+                try {
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if(conn!=null){ //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试","连接成功");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        String sql = "select * from user where user_phone = '" +
+                                SharePreferences.getString(MainActivity.this,AppConstants.USER_PHONE) +
+                                "'"; //要执行的sql语句
+                        ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
+                        while (rs.next()) {
+                            int user_sort = rs.getInt("user_sort");
+                            SharePreferences.remove(MainActivity.this,AppConstants.USER_SORT);
+                            SharePreferences.putInt(MainActivity.this,AppConstants.USER_SORT,user_sort);
+                        }
+                    }else{
+                        Log.d("调试","连接失败");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    Looper.loop();
+                }
+            }
+        }.start();
+
+    }
 
 }

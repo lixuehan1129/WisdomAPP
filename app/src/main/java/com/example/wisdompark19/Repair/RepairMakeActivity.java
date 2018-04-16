@@ -2,11 +2,14 @@ package com.example.wisdompark19.Repair;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -17,10 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +48,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -70,6 +79,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private List<String> ImageData = new ArrayList<>();
     private List<Bitmap> ImageGetPath = new ArrayList<>();
     private int intent_data_id = 0;
+    public static final int UPDATE_REPM = 1;
 
     private TextView repair_time, repair_name, repair_add;
     private CircleImageView repair_image;
@@ -80,13 +90,17 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private Spinner repair_spinner;
     private Button repair_button_ok;
     private CustomDatePicker mCustomDatePicker;
+    private String time;
+    private String spinner;
+    private String content;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.repair_make);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data");
+        mes_select = intent.getIntExtra("repair_check",1);
+        intent_data_id = intent.getIntExtra("repair_check_image",0);
         Toolbar toolbar = (Toolbar)findViewById(R.id.repair_make_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle("报修");
@@ -117,11 +131,21 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         repair_name.setText(name);
         repair_add.setText(SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_ADDRESS));
 
-        repair_time.setOnClickListener(RepairMakeActivity.this);
-        repair_button_ok.setOnClickListener(this);
-        repair_make_take.setOnClickListener(this);
-        repair_make_add.setOnClickListener(this);
-        initDatePicker();
+        if(mes_select == 1){ //第二次进入时使用
+            repair_button_ok.setVisibility(View.INVISIBLE);
+            repair_time.setEnabled(false);
+            repair_time.setText(null);
+            repair_edit.setEnabled(false);
+            repair_tacv.setVisibility(View.INVISIBLE);
+            connectData();
+        }else {  //创建时使用
+            repair_time.setOnClickListener(RepairMakeActivity.this);
+            repair_button_ok.setOnClickListener(this);
+            repair_make_take.setOnClickListener(this);
+            repair_make_add.setOnClickListener(this);
+            initDatePicker();
+        }
+
     }
 
     @Override
@@ -223,6 +247,176 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         }.start();
     }
 
+    private void connectData(){
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功,消息界面");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //查找信息
+                        String sql_connect = "select * from repair where repair_id = '" +
+                                intent_data_id +
+                                "'";
+                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+                        resultSet.next();
+                        time = resultSet.getString("repair_select_time");
+                        spinner = resultSet.getString("repair_leixing");
+                        content = resultSet.getString("repair_content");
+                        Blob picture1 = resultSet.getBlob("repair_picture1");
+                        Blob picture2 = resultSet.getBlob("repair_picture2");
+                        Blob picture3 = resultSet.getBlob("repair_picture3");
+                        Blob picture4 = resultSet.getBlob("repair_picture4");
+                        Blob picture5 = resultSet.getBlob("repair_picture5");
+                        Blob picture6 = resultSet.getBlob("repair_picture6");
+                        if(picture1 != null){
+                            InputStream inputStream1 = picture1.getBinaryStream();
+                            Bitmap bitmap1 = DealBitmap.InputToBitmap(inputStream1);
+                            ImageGetPath.add(bitmap1);
+                        }
+                        if(picture2 != null){
+                            InputStream inputStream2 = picture2.getBinaryStream();
+                            Bitmap bitmap2 = DealBitmap.InputToBitmap(inputStream2);
+                            ImageGetPath.add(bitmap2);
+                        }
+                        if(picture3 != null){
+                            InputStream inputStream3 = picture3.getBinaryStream();
+                            Bitmap bitmap3 = DealBitmap.InputToBitmap(inputStream3);
+                            ImageGetPath.add(bitmap3);
+                        }
+                        if(picture4 != null){
+                            InputStream inputStream4 = picture4.getBinaryStream();
+                            Bitmap bitmap4 = DealBitmap.InputToBitmap(inputStream4);
+                            ImageGetPath.add(bitmap4);
+                        }
+                        if(picture5 != null){
+                            InputStream inputStream5 = picture5.getBinaryStream();
+                            Bitmap bitmap5 = DealBitmap.InputToBitmap(inputStream5);
+                            ImageGetPath.add(bitmap5);
+                        }
+                        if(picture6 != null){
+                            InputStream inputStream6 = picture6.getBinaryStream();
+                            Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
+                            ImageGetPath.add(bitmap6);
+                        }
+                        System.out.println(ImageGetPath);
+                        Message message = new Message();
+                        message.what = UPDATE_REPM;
+                        handler_rep.sendMessage(message);
+                        resultSet.close();
+                        JDBCTools.releaseConnection(stmt,conn);
+                    }else {
+                        Log.d("调试", "连接失败,消息界面");
+                        Toast toast = Toast.makeText(RepairMakeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }.start();
+    }
+
+    private Handler handler_rep = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            switch (msg.what){
+                case UPDATE_REPM:{
+                    repair_time.setText(time);
+                    initSpinner(repair_spinner,spinner);
+                    repair_edit.setText(content,null);
+                    for(int i = 0; i<ImageGetPath.size(); i++){
+                        showLoadImage(ImageGetPath.get(i));
+                    }
+                    updateLoad();
+                    break;
+                }
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+
+    private void initSpinner(Spinner spinner,String s){
+        ArrayList<String> spinners = new ArrayList<>();
+        spinners.add(s);
+        //设置ArrayAdapter内置的item样式-这里是单行显示样式
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinners);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        //设置Adapter了
+        spinner.setAdapter(adapter);
+        spinner.setEnabled(false);
+    }
+
+
+    /*
+  * 加载图片
+  * */
+    private void showImage(String image_Path){
+        File file = new File(image_Path);
+        compressWithLs(file);
+        ImageAdapter first = new ImageAdapter(ImageDatas);
+        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
+        ImageData.add(image_Path);
+        ImageDatas.add(item_image);
+        update();
+    }
+
+    private void update(){
+        repair_rv.setLayoutManager(new GridLayoutManager(this,3));
+        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
+        repair_rv.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(RepairMakeActivity.this,ShowImage.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("image_select_name",ImageData.get(position));
+                bundle.putInt("image_select_id",0);
+                bundle.putInt("image_select_new",intent_data_id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /*
+   * 加载图片
+   * */
+    private void showLoadImage(Bitmap bitmap){
+        ImageAdapter first = new ImageAdapter(ImageDatas);
+        ImageAdapter.Item_Image item_image = first.new Item_Image(bitmap);
+        ImageDatas.add(item_image);
+    }
+
+    //加载网络图片的大图
+    private void updateLoad(){
+        repair_rv.setLayoutManager(new GridLayoutManager(this,3));
+        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
+        repair_rv.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(RepairMakeActivity.this,ShowImage.class);
+                Bundle bundle = new Bundle();
+                int pos = position+1;
+                bundle.putString("select_fenlei","repair");
+                bundle.putString("image_select_name","repair_picture"+pos);
+                bundle.putInt("image_select_id",1);
+                bundle.putInt("image_select_new",intent_data_id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
+
+
     //调用相机拍照
     private void take_photo(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -313,37 +507,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                 break;
 
         }
-    }
-
-    /*
-   * 加载图片
-   * */
-    private void showImage(String image_Path){
-        File file = new File(image_Path);
-        compressWithLs(file);
-        ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
-        ImageData.add(image_Path);
-        ImageDatas.add(item_image);
-        update();
-    }
-
-    private void update(){
-        repair_rv.setLayoutManager(new GridLayoutManager(this,3));
-        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
-        repair_rv.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(RepairMakeActivity.this,ShowImage.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("image_select_name",ImageData.get(position));
-                bundle.putInt("image_select_id",0);
-                bundle.putInt("image_select_new",intent_data_id);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
     }
 
     /**
