@@ -52,14 +52,14 @@
                     android:id="@+id/minefragment_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="正在加载"
+                    android:text="名字"
                     android:textSize="25sp"
                     android:textColor="@color/colorBlack"/>
                 <TextView
                     android:id="@+id/minefragment_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="正在加载"
+                    android:text="住址"
                     android:maxLines="2"
                     android:textSize="20sp"/>
             </LinearLayout>

@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,6 +43,7 @@ public class SocietyMakeComplaint extends BaseFragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private SocietyComplaintItemAdapter mSocietyComplaintItemAdapter;
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public static final int UPDATE_COM = 1;
 
     ArrayList<String> society_com_content = new ArrayList<String>();
@@ -66,18 +68,20 @@ public class SocietyMakeComplaint extends BaseFragment {
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
-
         } else {
             //关闭加载框
-
         }
     }
 
     @Override
     protected void onFragmentFirstVisible() {
         //去服务器下载数据
-        society_com_image = new ArrayList<>();
-        society_com_content = new ArrayList<>();
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         connectData();
     }
 
@@ -85,6 +89,13 @@ public class SocietyMakeComplaint extends BaseFragment {
         mRecyclerView = (RecyclerView)view.findViewById(R.id.society_complaint_rec);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.society_complaint_sr);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                connectData();
+            }
+        });
     }
 
     //异步更新SPinner
@@ -98,6 +109,12 @@ public class SocietyMakeComplaint extends BaseFragment {
                     initData();
                     setAdapter();
                     setItemClick();
+                    mSwipeRefreshLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
                     break;
                 }
                 default:
@@ -111,6 +128,8 @@ public class SocietyMakeComplaint extends BaseFragment {
         new Thread(){
             public void run(){
                 try{
+                    society_com_image = new ArrayList<>();
+                    society_com_content = new ArrayList<>();
                     Looper.prepare();
                     Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确

@@ -42,13 +42,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
                 android:background="@color/colorGray_White"/>
+                <LinearLayout
+                    android:id="@+id/society_find_page_li"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="5dp"
+                    android:background="@color/colorWhite">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="2dp"
+                        android:background="@color/colorWhite">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/society_find_page_image"
+                            android:layout_width="20dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center" />
+                        <TextView
+                            android:id="@+id/society_find_page_yezhu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:layout_gravity="center"
+                            android:paddingLeft="5dp"
+                            android:background="@color/colorWhite"
+                            android:textColor="@color/colorBlack"/>
+                    </LinearLayout>
+                </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:orientation="horizontal"
                 android:paddingLeft="15dp"
                 android:paddingRight="5dp"
-                android:background="@drawable/bottom_lay">
+                android:background="@color/colorWhite">
 
                 <TextView
                     android:text="物品名称:"
@@ -107,7 +137,7 @@
                         android:textSize="17sp"
                         android:hint="输入内容"
                         android:textColor="@color/colorBlack"
-                        android:minLines="4"
+                        android:minLines="3"
                         android:gravity="left|top"
                         android:theme="@style/MyEditText" />
                     <android.support.v7.widget.RecyclerView
@@ -115,18 +145,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     </android.support.v7.widget.RecyclerView>
+                    <TextView
+                        android:paddingRight="20dp"
+                        android:id="@+id/society_find_page_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="01月24日"
+                        android:textColor="@color/colorGray_1"
+                        android:gravity="right"
+                        android:visibility="invisible"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
-            <TextView
-                android:paddingRight="20dp"
-                android:id="@+id/society_find_page_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="01月24日"
-                android:textColor="@color/colorGray_1"
-                android:gravity="right"
-                android:visibility="invisible"/>
         </LinearLayout>
     </ScrollView>
     <android.support.v7.widget.CardView

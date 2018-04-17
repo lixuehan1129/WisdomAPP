@@ -42,14 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private NoScollViewPager viewPager;
     private MenuItem menuItem;
     private BottomNavigationView bottomNavigationView;
-    private String user_phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
-        user_phone = SharePreferences.getString(MainActivity.this, AppConstants.USER_PHONE);
         findView(); //初始化布局
         startFragment();//执行点击或滑动
         setQuanXian();

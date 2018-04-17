@@ -75,18 +75,18 @@ public class CodeActivity extends AppCompatActivity {
         }
         String time = getTime();
         if(sex.equals("男")){
-            user_number = "0";
-        }else if(sex.equals("女")){
             user_number = "1";
+        }else if(sex.equals("女")){
+            user_number = "0";
         }
+            String setContent = user_number + " " + user_name + " " + model + " " + time + " " + user_address;
+            String md5Content = md5(setContent);
+            String newContent = user_number + "," + user_name + "," + model + "," + time + "," + user_address + ","
+                    + md5Content.substring(md5Content.length()-8);
+            System.out.println(newContent);
+            Bitmap bitmap = QRCodeUtil.createQRCodeBitmap(newContent,640,640);
+            imageView.setImageBitmap(bitmap);
 
-        String setContent = user_number + " " + user_name + " " + model + " " + time + " " + user_address;
-        String md5Content = md5(setContent);
-        String newContent = user_number + "," + user_name + "," + model + "," + time + "," + user_address + ","
-                + md5Content.substring(md5Content.length()-8);
-        System.out.println(newContent);
-        Bitmap bitmap = QRCodeUtil.createQRCodeBitmap(newContent,640,640);
-        imageView.setImageBitmap(bitmap);
     }
 
     //获取系统时间，并进行格式转换

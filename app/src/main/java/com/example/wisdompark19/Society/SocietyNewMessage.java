@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.Mine.MineLoginActivity;
 import com.example.wisdompark19.Mine.MineRegistAddActivity;
 import com.example.wisdompark19.R;
@@ -53,6 +55,7 @@ public class SocietyNewMessage extends BaseFragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private NoticeItemAdapter mNoticeItemAdapter;
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public static final int UPDATE_CONNECT = 1;
 
 
@@ -65,12 +68,6 @@ public class SocietyNewMessage extends BaseFragment {
     @Override
     public void onStart(){
         super.onStart();
-//        card_message_tell = new ArrayList<>();
-//        card_message_content = new ArrayList<>();
-//        card_message_time = new ArrayList<>();
-//        card_message_image = new ArrayList<>();
-//        card_message_id = new ArrayList<>();
-//        connectData();
     }
 
     @Override
@@ -78,16 +75,6 @@ public class SocietyNewMessage extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.society_new_message, container, false);
         findView(view);
-
-//        card_message_tell = new ArrayList<>();
-//        card_message_content = new ArrayList<>();
-//        card_message_time = new ArrayList<>();
-//        card_message_image = new ArrayList<>();
-//        card_message_id = new ArrayList<>();
-//        connectData();
-//        initData();
-//        setAdapter();
-//        setItemClick();
         return view;
     }
 
@@ -95,21 +82,21 @@ public class SocietyNewMessage extends BaseFragment {
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
             //更新界面数据，如果数据还在下载中，就显示加载框
-//            initData();
-//            setAdapter();
-//            setItemClick();
-            System.out.println("第一次出现1111");
         } else {
             //关闭加载框
-
         }
     }
 
     @Override
     protected void onFragmentFirstVisible() {
         //去服务器下载数据
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         connectData();
-        System.out.println("第一次出现");
     }
 
     //异步更新SPinner
@@ -123,6 +110,12 @@ public class SocietyNewMessage extends BaseFragment {
                     initData();
                     setAdapter();
                     setItemClick();
+                    mSwipeRefreshLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
                     break;
                 }
                 default:
@@ -200,25 +193,29 @@ public class SocietyNewMessage extends BaseFragment {
             card_message_tell.add(title);
         }
         card_message_content.add(content);
-        card_message_time.add(StringToString(time));
+        card_message_time.add(TimeChange.StringToString(time));
         card_message_id.add(id);
     }
-    //时间格式转换
-    private String StringToString(String time){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = formatter.parse(time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return new SimpleDateFormat("yyyy-MM-dd").format(date);
-    }
+
 
     private void findView(View view){
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.society_new_message_sr);
         mRecyclerView = (RecyclerView)view.findViewById(R.id.rv_notice_item);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                connectData();
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        // TODO Auto-generated method stub
+//                        mSwipeRefreshLayout.setRefreshing(false);
+//                    }
+//                }, 6000);
+            }
+        });
     }
 
     private void initData(){

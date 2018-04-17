@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class SocietyMemberCheck extends BaseFragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private SocietyMemberAdapter mSocietyMemberAdapter;
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public static final int UPDATE_MEM = 1;
 
     ArrayList<Bitmap> member_image = new ArrayList<>();
@@ -61,23 +63,33 @@ public class SocietyMemberCheck extends BaseFragment {
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
             //更新界面数据，如果数据还在下载中，就显示加载框
-
         } else {
-
         }
     }
 
     @Override
     protected void onFragmentFirstVisible() {
         //去服务器下载数据
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         connectData();
-        System.out.println("第一次出现");
     }
 
     private void findView(View view){
         mRecyclerView = (RecyclerView)view.findViewById(R.id.society_member_rec);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.society_member_sr);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                connectData();
+            }
+        });
     }
 
     private Handler handler_mem = new Handler(new Handler.Callback() {
@@ -90,6 +102,12 @@ public class SocietyMemberCheck extends BaseFragment {
                     initData();
                     setAdapter();
                     setItemClick();
+                    mSwipeRefreshLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
                     break;
                 }
                 default:

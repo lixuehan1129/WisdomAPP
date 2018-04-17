@@ -72,20 +72,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         return view;
     }
 
-//    @Override
-//    protected void onFragmentVisibleChange(boolean isVisible) {
-//        if (isVisible) {
-//            findView(getView());
-//        }
-//    }
-//
-//    @Override
-//    protected void onFragmentFirstVisible() {
-//        //去服务器下载数据
-//    }
-
     private void findView(View view){
-
         minefragment_picture = (CircleImageView)view.findViewById(R.id.minefragment_picture);
         minefragment_name = (TextView)view.findViewById(R.id.minefragment_name);
         minefragment_address = (TextView)view.findViewById(R.id.minefragment_address);
@@ -94,7 +81,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         minefragment_recode = (TextView)view.findViewById(R.id.minefragment_recode);
         minefragment_setting = (TextView)view.findViewById(R.id.minefragment_setting);
         minefragment_back = (TextView)view.findViewById(R.id.minefragment_back);
-
         String imageBase64 = SharePreferences.getString(getActivity(),AppConstants.USER_PICTURE);
         Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
         if(user_bitmap != null){
@@ -104,9 +90,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         }
         minefragment_name.setText(SharePreferences.getString(getActivity(),AppConstants.USER_NAME));//姓名
         minefragment_address.setText(SharePreferences.getString(getActivity(),AppConstants.USER_ADDRESS));//地址
-
-
-
         minefragment_phone.setOnClickListener(this);
         minefragment_ziliao.setOnClickListener(this);
         minefragment_recode.setOnClickListener(this);
@@ -118,8 +101,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.minefragment_phone:{
-                Toast toast=Toast.makeText(getActivity(), minefragment_phone.getText(), Toast.LENGTH_SHORT);
-                toast.show();
+
                 break;
             }
             case R.id.minefragment_ziliao:{
@@ -161,12 +143,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //清楚缓存s
-//                        SharePreferences.putString(getActivity(), AppConstants.USER_PHONE," ");
-//                        SharePreferences.putString(getActivity(), AppConstants.USER_NAME," ");
-//                        SharePreferences.putString(getActivity(), AppConstants.USER_ADDRESS," ");
-//                        SharePreferences.putString(getActivity(), AppConstants.USER_SORT," ");
-//                        SharePreferences.putString(getActivity(), AppConstants.USER_PICTURE," ");
                         SharePreferences.clear(getActivity());
                         Intent intent = new Intent(getActivity(),MineLoginActivity.class);
                         intent.putExtra("put_data_login","登录");
@@ -177,7 +153,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 });
         // 显示

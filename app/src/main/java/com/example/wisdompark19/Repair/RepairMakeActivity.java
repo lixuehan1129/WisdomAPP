@@ -109,7 +109,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         findView();
     }
 
-
     private void findView(){
         repair_name = (TextView)findViewById(R.id.repair_name);
         repair_add = (TextView)findViewById(R.id.repair_add);
@@ -145,7 +144,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             repair_make_add.setOnClickListener(this);
             initDatePicker();
         }
-
     }
 
     @Override
@@ -353,8 +351,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         spinner.setAdapter(adapter);
         spinner.setEnabled(false);
     }
-
-
     /*
   * 加载图片
   * */
@@ -415,7 +411,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             }
         });
     }
-
 
     //调用相机拍照
     private void take_photo(){

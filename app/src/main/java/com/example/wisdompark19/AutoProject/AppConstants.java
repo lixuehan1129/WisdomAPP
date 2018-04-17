@@ -1,9 +1,6 @@
 package com.example.wisdompark19.AutoProject;
 
 
-import android.graphics.Bitmap;
-
-import java.io.InputStream;
 
 /*
 *

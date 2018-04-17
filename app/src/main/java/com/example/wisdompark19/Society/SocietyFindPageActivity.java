@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
@@ -74,12 +76,18 @@ public class SocietyFindPageActivity extends AppCompatActivity {
     private ImageView society_find_page_take;
     private ImageView society_find_page_add;
     private CardView society_find_page_tacv;
+    private LinearLayout mLinearLayout;
+    private TextView mTextView;
+    private CircleImageView mCircleImageView;
     private String title;
     private String content;
     private String time;
     private String phone;
     private int intent_data_id;
     public static final int UPDATE_FIND = 1;
+    public static final int UPDATE_YEZHU = 2;
+    private String yezhu;
+    private Bitmap bitmap = null;
 
 
     @Override
@@ -101,16 +109,20 @@ public class SocietyFindPageActivity extends AppCompatActivity {
     }
 
     private void findView(){
-        society_find_page_time = (TextView)findViewById(R.id.society_find_page_time);
-        society_find_page_ok = (Button)findViewById(R.id.society_find_page_ok);
+        society_find_page_time = (TextView) findViewById(R.id.society_find_page_time);
+        society_find_page_ok = (Button) findViewById(R.id.society_find_page_ok);
         society_find_page_title = (EditText) findViewById(R.id.society_find_page_name);
-        society_find_page_content = (EditText)findViewById(R.id.society_find_page_neirong);
+        society_find_page_content = (EditText) findViewById(R.id.society_find_page_neirong);
         society_find_page_rv = (RecyclerView) findViewById(R.id.society_find_page_rv);
+        mLinearLayout = (LinearLayout) findViewById(R.id.society_find_page_li);
+        mTextView = (TextView) findViewById(R.id.society_find_page_yezhu);
+        mCircleImageView = (CircleImageView) findViewById(R.id.society_find_page_image);
         society_find_page_take = (ImageView) findViewById(R.id.society_find_page_take);
         society_find_page_add = (ImageView) findViewById(R.id.society_find_page_add);
         society_find_page_tacv = (CardView) findViewById(R.id.society_find_page_tacv);
 
-        if(mes_select == 1){
+        if(mes_select == 1){//进入
+            mLinearLayout.getLayoutParams().height = mLinearLayout.getLayoutParams().WRAP_CONTENT;
             society_find_page_ok.setVisibility(View.INVISIBLE);
             society_find_page_tacv.setVisibility(View.INVISIBLE);
             society_find_page_time.setVisibility(View.VISIBLE);
@@ -122,8 +134,10 @@ public class SocietyFindPageActivity extends AppCompatActivity {
             ImageGetPath = new ArrayList<>();
             ImageDatas = new ArrayList<>();
             ImagePath = new ArrayList<>();
+            getUser();
             getData();
-        }else {
+        }else {//创建
+            mLinearLayout.getLayoutParams().height = 0;
             ImageDatas = new ArrayList<>();
             ImagePath = new ArrayList<>();
             ImageData = new ArrayList<>();
@@ -186,12 +200,62 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                     updateLoad();
                     break;
                 }
+                case UPDATE_YEZHU:{
+                    mTextView.setText(yezhu);
+                    if(bitmap != null){
+                        mCircleImageView.setImageBitmap(bitmap);
+                    }else {
+                        mCircleImageView.setImageResource(R.mipmap.ic_launcher_round);
+                    }
+                    break;
+                }
                 default:
                     break;
             }
             return false;
         }
     });
+
+    private void getUser(){
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功,失物界面");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //查找信息
+                        String sql_connect = "select * from user where user_phone = '" +
+                                phone +
+                                "'";
+                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+                        resultSet.next();
+                        yezhu = resultSet.getString("user_name") + "(" +
+                                phone + ")";
+                        Blob blob = resultSet.getBlob("user_picture");
+                        if(blob != null){
+                            InputStream inputStream = blob.getBinaryStream();
+                            bitmap = DealBitmap.InputToBitmap(inputStream);
+                        }
+                        Message message = new Message();
+                        message.what = UPDATE_YEZHU;
+                        handler_find.sendMessage(message);
+                        resultSet.close();
+                        JDBCTools.releaseConnection(stmt,conn);
+                    }else {
+                        Log.d("调试", "连接失败，失物招领");
+                        Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }.start();
+    }
 
     private void getData(){
         new Thread(){

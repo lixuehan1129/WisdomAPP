@@ -53,6 +53,11 @@
                     android:text="01月24日"
                     android:textColor="@color/colorGray_1"
                     android:gravity="right" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="invisible"
+                    android:id="@+id/card_message_id"/>
             </LinearLayout>
     </android.support.v7.widget.CardView>
 

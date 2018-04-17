@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,6 +48,7 @@ public class SocietyFindThing extends BaseFragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private SocietyFindAdapter mSocietyFindAdapter;
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public static final int UPDATE_FIND = 1;
 
     ArrayList<Bitmap> society_find_image1 = new ArrayList<>();
@@ -78,24 +80,20 @@ public class SocietyFindThing extends BaseFragment {
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
-
         } else {
             //关闭加载框
-
         }
     }
 
     @Override
     protected void onFragmentFirstVisible() {
         //去服务器下载数据
-        society_find_id = new ArrayList<>();
-        society_find_phone = new ArrayList<>();
-        society_find_time = new ArrayList<>();
-        society_find_image1 = new ArrayList<>();
-        society_find_image2 = new ArrayList<>();
-        society_find_image3 = new ArrayList<>();
-        society_find_content = new ArrayList<>();
-        society_find_title = new ArrayList<>();
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         connectData();
     }
 
@@ -103,6 +101,13 @@ public class SocietyFindThing extends BaseFragment {
         mRecyclerView = (RecyclerView)view.findViewById(R.id.society_find_rec);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.society_find_sr);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                connectData();
+            }
+        });
     }
 
     //异步更新SPinner
@@ -116,6 +121,12 @@ public class SocietyFindThing extends BaseFragment {
                     initData();
                     setAdapter();
                     setItemClick();
+                    mSwipeRefreshLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
                     break;
                 }
                 default:
@@ -129,6 +140,14 @@ public class SocietyFindThing extends BaseFragment {
         new Thread(){
             public void run(){
                 try{
+                    society_find_id = new ArrayList<>();
+                    society_find_phone = new ArrayList<>();
+                    society_find_time = new ArrayList<>();
+                    society_find_image1 = new ArrayList<>();
+                    society_find_image2 = new ArrayList<>();
+                    society_find_image3 = new ArrayList<>();
+                    society_find_content = new ArrayList<>();
+                    society_find_title = new ArrayList<>();
                     Looper.prepare();
                     Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
