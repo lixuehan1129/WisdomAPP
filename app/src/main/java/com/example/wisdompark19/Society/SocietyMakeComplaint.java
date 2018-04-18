@@ -1,11 +1,16 @@
 package com.example.wisdompark19.Society;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +44,9 @@ import java.util.List;
 
 public class SocietyMakeComplaint extends BaseFragment {
 
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
     private List<SocietyComplaintItemAdapter.Society_Com_Item> Data;
     private RecyclerView.LayoutManager mLayoutManager;
     private SocietyComplaintItemAdapter mSocietyComplaintItemAdapter;
@@ -60,7 +68,33 @@ public class SocietyMakeComplaint extends BaseFragment {
         setItemClick();
         return view;
     }
-
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        findView(getView());
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_CON);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                mSwipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
+                connectData();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
+    }
     @Override
     public void onStart(){
         super.onStart();

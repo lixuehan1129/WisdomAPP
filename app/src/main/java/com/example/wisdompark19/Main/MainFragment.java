@@ -1,7 +1,10 @@
 package com.example.wisdompark19.Main;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -56,6 +60,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainFragment extends BaseFragment {
 
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
     public static final int UPDATE_ROLL = 1;
     private GridView mGridView;
     private TextView textView;
@@ -101,6 +108,28 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_CON);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                findView(getView());
+                getData();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
+    }
+
+    @Override
     public void onStart(){
         super.onStart();
     }
@@ -111,26 +140,15 @@ public class MainFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.mainfragment, null);
         findView(view); //界面
         initGridData();
-        getData();
-//        initRollData();
-//        initRollNotice();
         return view;
     }
 
-//    @Override
-//    protected void onFragmentVisibleChange(boolean isVisible) {
-//        if (isVisible) {
-//            findView(getView());
-//            initGridData();
-//            initRollData();
-//            initRollNotice();
-//        }
-//    }
-//
-//    @Override
-//    protected void onFragmentFirstVisible() {
-//        //去服务器下载数据
-//    }
+    @Override
+    protected void onFragmentFirstVisible() {
+        //去服务器下载数据
+        textView.getLayoutParams().height = textView.getLayoutParams().WRAP_CONTENT;
+        getData();
+    }
 
 
     //初始化界面
@@ -261,8 +279,10 @@ public class MainFragment extends BaseFragment {
             // TODO Auto-generated method stub
             switch (msg.what){
                 case UPDATE_ROLL:{
-                    textView.getLayoutParams().height = 0;
-                    initRollNotice();
+                    if(card_message_content.size() > 0){
+                        textView.getLayoutParams().height = 0;
+                        initRollNotice();
+                    }
                     break;
                 }
                 default:

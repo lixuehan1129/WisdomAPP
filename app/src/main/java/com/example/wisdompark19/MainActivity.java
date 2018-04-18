@@ -1,7 +1,10 @@
 package com.example.wisdompark19;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -11,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,12 +26,15 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Main.MainFragment;
 import com.example.wisdompark19.Main.MapActivity;
+import com.example.wisdompark19.Mine.MineChangeActivity;
 import com.example.wisdompark19.Mine.MineFragment;
+import com.example.wisdompark19.Mine.MineLoginActivity;
 import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.BottomNavigationViewHelper;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
 import com.mysql.jdbc.Connection;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.DriverManager;
@@ -59,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         //默认 >3 的选中效果会影响ViewPager的滑动切换时的效果，故利用反射去掉
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView);
+        viewPager.setOffscreenPageLimit(2);
     }
 
     private void startFragment(){
@@ -144,11 +152,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            moveTaskToBack(false);
+           // moveTaskToBack(false);
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
-
     }
 
     private void createConnect(){
@@ -178,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.start();
-
     }
 
 }

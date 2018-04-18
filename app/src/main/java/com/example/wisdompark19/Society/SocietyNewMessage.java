@@ -1,13 +1,17 @@
 package com.example.wisdompark19.Society;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,7 +53,9 @@ import java.util.List;
 
 public class SocietyNewMessage extends BaseFragment {
 
-
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
     private static final String TAG = SocietyFragment.class.getSimpleName();
     private List<NoticeItemAdapter.Notice_item> Data;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -79,13 +85,33 @@ public class SocietyNewMessage extends BaseFragment {
     }
 
     @Override
-    protected void onFragmentVisibleChange(boolean isVisible) {
-        if (isVisible) {
-            //更新界面数据，如果数据还在下载中，就显示加载框
-        } else {
-            //关闭加载框
-        }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        findView(getView());
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_CON);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                mSwipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
+                connectData();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
+    }
+
 
     @Override
     protected void onFragmentFirstVisible() {

@@ -1,8 +1,11 @@
 package com.example.wisdompark19.Mine;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
@@ -43,16 +47,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class MineFragment extends BaseFragment implements View.OnClickListener {
-
-
-    private CircleImageView minefragment_picture;
-    private TextView minefragment_name;
-    private TextView minefragment_address;
-    private TextView minefragment_phone;
-    private TextView minefragment_ziliao;
-    private TextView minefragment_recode;
-    private TextView minefragment_setting;
-    private TextView minefragment_back;
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
 
     public static MineFragment newInstance(String info) {
         Bundle args = new Bundle();
@@ -62,25 +59,48 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         return mineFragment;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.minefragment, null);
         Toolbar mToolbar = (Toolbar)view.findViewById(R.id.minefragment_mainTool);
         mToolbar.setTitle("我的");
-        findView(view);
+      //  findView(view);
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        findView(getView());
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_CON);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                findView(getView());
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
+    }
+
     private void findView(View view){
-        minefragment_picture = (CircleImageView)view.findViewById(R.id.minefragment_picture);
-        minefragment_name = (TextView)view.findViewById(R.id.minefragment_name);
-        minefragment_address = (TextView)view.findViewById(R.id.minefragment_address);
-        minefragment_phone = (TextView)view.findViewById(R.id.minefragment_phone);
-        minefragment_ziliao = (TextView)view.findViewById(R.id.minefragment_ziliao);
-        minefragment_recode = (TextView)view.findViewById(R.id.minefragment_recode);
-        minefragment_setting = (TextView)view.findViewById(R.id.minefragment_setting);
-        minefragment_back = (TextView)view.findViewById(R.id.minefragment_back);
+        CircleImageView minefragment_picture = (CircleImageView) view.findViewById(R.id.minefragment_picture);
+        TextView minefragment_name = (TextView) view.findViewById(R.id.minefragment_name);
+        TextView minefragment_address = (TextView) view.findViewById(R.id.minefragment_address);
+        TextView minefragment_phone = (TextView) view.findViewById(R.id.minefragment_phone);
+        TextView minefragment_ziliao = (TextView) view.findViewById(R.id.minefragment_ziliao);
+        TextView minefragment_recode = (TextView) view.findViewById(R.id.minefragment_recode);
+        TextView minefragment_setting = (TextView) view.findViewById(R.id.minefragment_setting);
+        TextView minefragment_back = (TextView) view.findViewById(R.id.minefragment_back);
         String imageBase64 = SharePreferences.getString(getActivity(),AppConstants.USER_PICTURE);
         Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
         if(user_bitmap != null){
@@ -101,26 +121,32 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.minefragment_phone:{
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(SharePreferences.getString(getActivity(),AppConstants.USER_PHONE) +
+                "\n" + SharePreferences.getString(getActivity(),AppConstants.USER_ADDRESS))
+                        .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
+                            }
+                        }).show();
                 break;
             }
             case R.id.minefragment_ziliao:{
-                Toast toast=Toast.makeText(getActivity(), minefragment_ziliao.getText(), Toast.LENGTH_SHORT);
-                toast.show();
+                Intent intent = new Intent(getActivity(),MineChangeActivity.class);
+                startActivity(intent);
                 break;
             }
             case R.id.minefragment_recode:{
-                Toast toast=Toast.makeText(getActivity(), minefragment_recode.getText(), Toast.LENGTH_SHORT);
-                toast.show();
+                Intent intent = new Intent(getActivity(),MineRecodeActivity.class);
+                startActivity(intent);
                 break;
             }
             case R.id.minefragment_setting:{
-                Toast toast=Toast.makeText(getActivity(), minefragment_setting.getText(), Toast.LENGTH_SHORT);
-                toast.show();
-                Intent intent = new Intent(getActivity(),MineRegistAddActivity.class);
-                intent.putExtra("put_data_regist_add","17888836862");
-                intent.putExtra("put_data_regist_select","regist");
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(),MineRegistAddActivity.class);
+//                intent.putExtra("put_data_regist_add","17888836862");
+//                intent.putExtra("put_data_regist_select","regist");
+//                startActivity(intent);
                 break;
             }
             case R.id.minefragment_back:{
@@ -144,6 +170,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         SharePreferences.clear(getActivity());
+                        getActivity().finish();
                         Intent intent = new Intent(getActivity(),MineLoginActivity.class);
                         intent.putExtra("put_data_login","登录");
                         startActivity(intent);

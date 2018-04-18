@@ -47,13 +47,15 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="bbzCzxGHldVGCPxiDgVd4FiCuDrryQ3E" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".Main.PayActivity"></activity>
         <activity android:name=".Main.CodeActivity"></activity>
         <activity android:name=".Main.MapActivity"></activity>
@@ -68,6 +70,8 @@
         <activity android:name=".Mine.MineLoginActivity"></activity>
         <activity android:name=".Mine.MineRegistActivity"></activity>
         <activity android:name=".Mine.MineRegistAddActivity"></activity>
+        <activity android:name=".Mine.MineChangeActivity"></activity>
+        <activity android:name=".Mine.MineRecodeActivity"></activity>
         <activity android:name=".Society.SocietyMakeComplaintPage"></activity>
         <activity android:name=".ViewHelper.ShowImage"></activity>
 

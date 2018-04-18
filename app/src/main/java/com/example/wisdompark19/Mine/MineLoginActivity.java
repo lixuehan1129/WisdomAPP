@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -241,6 +242,22 @@ public class MineLoginActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    ///Android按返回键，程序进入后台运行，不关闭程序
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+          //  moveTaskToBack(false);
+            //方式二：返回手机的主屏幕
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     /*
    * 点击空白区域 Edittext失去焦点 关闭输入法

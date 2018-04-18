@@ -85,11 +85,8 @@ public class MineRegistActivity extends AppCompatActivity{
     private TextInputEditText user_regist_again;
     private Button user_regist_button;
 
-    public static final int UPDATE_DIALOG = 1;
-
     String user_phone;
     String user_password;
-    int user_sort = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){

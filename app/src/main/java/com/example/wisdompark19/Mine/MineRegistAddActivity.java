@@ -13,19 +13,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.wisdompark19.Adapter.RegistAddAdapter;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
@@ -34,7 +28,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -107,10 +100,7 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
         });
     }
 
-
-    //异步更新SPinner
     private Handler handler_community = new Handler(new Handler.Callback() {
-
         @Override
         public boolean handleMessage(Message msg) {
             // TODO Auto-generated method stub

@@ -1,10 +1,14 @@
 package com.example.wisdompark19.Society;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +39,9 @@ import java.util.TimerTask;
 
 public class SocietyFragment extends BaseFragment implements TabLayout.OnTabSelectedListener{
 
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private TabLayoutAdapter mTabLayoutAdapter;
@@ -61,7 +68,26 @@ public class SocietyFragment extends BaseFragment implements TabLayout.OnTabSele
         setMenu(mToolbar);
         return view;
     }
-
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+//        intentFilter = new IntentFilter();
+//        intentFilter.addAction(AppConstants.BROAD_CON);
+//        mReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent){
+//                //收到广播后所作的操作
+//
+//            }
+//        };
+//        broadcastManager.registerReceiver(mReceiver, intentFilter);
+//    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        broadcastManager.unregisterReceiver(mReceiver);
+//    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_society_select,menu);
