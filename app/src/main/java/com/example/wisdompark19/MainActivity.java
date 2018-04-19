@@ -3,10 +3,7 @@ package com.example.wisdompark19;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -14,30 +11,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.wisdompark19.Adapter.ViewPagerAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Main.MainFragment;
-import com.example.wisdompark19.Main.MapActivity;
-import com.example.wisdompark19.Mine.MineChangeActivity;
 import com.example.wisdompark19.Mine.MineFragment;
-import com.example.wisdompark19.Mine.MineLoginActivity;
 import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.BottomNavigationViewHelper;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
 import com.mysql.jdbc.Connection;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -88,13 +76,10 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     }
                 });
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
-
             @Override
             public void onPageSelected(int position) {
                 if (menuItem != null) {
@@ -105,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 menuItem = bottomNavigationView.getMenu().getItem(position);
                 menuItem.setChecked(true);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -139,14 +123,11 @@ public class MainActivity extends AppCompatActivity {
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.CAMERA);
         }
-
         if(!permissionList.isEmpty()){
             String[] permissions= permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
         }
     }
-
-
     //Android按返回键，程序进入后台运行，不关闭程序
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

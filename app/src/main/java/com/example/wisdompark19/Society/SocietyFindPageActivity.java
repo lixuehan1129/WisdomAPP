@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.wisdompark19.Adapter.ImageAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
+import com.example.wisdompark19.AutoProject.ForbidClickListener;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
@@ -165,9 +166,9 @@ public class SocietyFindPageActivity extends AppCompatActivity {
             }
         });
 
-        society_find_page_ok.setOnClickListener(new View.OnClickListener() {
+        society_find_page_ok.setOnClickListener(new ForbidClickListener() {
             @Override
-            public void onClick(View v) {
+            public void forbidClick(View v) {
                 if(society_find_page_content.getText().toString().isEmpty()){
                     Toast.makeText(SocietyFindPageActivity.this,"内容不能为空",Toast.LENGTH_LONG).show();
                 }else {
@@ -477,56 +478,57 @@ public class SocietyFindPageActivity extends AppCompatActivity {
             case camera:
                 if(data != null) {
                     ContentResolver cr = SocietyFindPageActivity.this.getContentResolver();
-                    Bitmap bitmap_camera = null;
-                    Uri uri_camera = data.getData();
-                    Bundle extras = null;
-                    try {
-                        if(data.getData() != null)
-                            //这个方法是根据Uri获取Bitmap图片的静态方法
-                            bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
-                            //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
-                        else
-                            extras = data.getExtras();
-                        bitmap_camera = extras.getParcelable("data");
-
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    FileOutputStream fileOutputStream = null;
-                    File file = null;
-                    try {
-                        // 获取 SD 卡根目录
-                        String saveDir = Environment.getExternalStorageDirectory() + "/IMG";
-                        // 新建目录
-                        File dir = new File(saveDir);
-                        if (! dir.exists()) dir.mkdir();
-                        // 生成文件名
-                        SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
-                        String filename = "IMG_" + (t.format(new Date())) + ".jpg";
-                        // 新建文件
-                        file = new File(saveDir, filename);
-                        // 打开文件输出流
-                        fileOutputStream = new FileOutputStream(file);
-                        // 生成图片文件
-                        bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-                        // 相片的完整路径
-                        System.out.println( file.getPath());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (fileOutputStream != null) {
-                            try {
-                                fileOutputStream.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    showImage(file.getPath());
+//                    Bitmap bitmap_camera = null;
+//                    Uri uri_camera = data.getData();
+//                    Bundle extras = null;
+//                    try {
+//                        if(data.getData() != null)
+//                            //这个方法是根据Uri获取Bitmap图片的静态方法
+//                            bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
+//                            //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
+//                        else
+//                            extras = data.getExtras();
+//                        bitmap_camera = extras.getParcelable("data");
+//
+//                    } catch (FileNotFoundException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                    }
+//                    FileOutputStream fileOutputStream = null;
+//                    File file = null;
+//                    try {
+//                        // 获取 SD 卡根目录
+//                        String saveDir = Environment.getExternalStorageDirectory() + "/IMG";
+//                        // 新建目录
+//                        File dir = new File(saveDir);
+//                        if (! dir.exists()) dir.mkdir();
+//                        // 生成文件名
+//                        SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+//                        String filename = "IMG_" + (t.format(new Date())) + ".jpg";
+//                        // 新建文件
+//                        file = new File(saveDir, filename);
+//                        // 打开文件输出流
+//                        fileOutputStream = new FileOutputStream(file);
+//                        // 生成图片文件
+//                        bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+//                        // 相片的完整路径
+//                        System.out.println( file.getPath());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    } finally {
+//                        if (fileOutputStream != null) {
+//                            try {
+//                                fileOutputStream.close();
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                    showImage(file.getPath());
+                    showImage(DealBitmap.getBitmap(cr,data));
                 }
                 break;
             case album:

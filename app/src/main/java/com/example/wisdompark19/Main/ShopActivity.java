@@ -1,6 +1,9 @@
 package com.example.wisdompark19.Main;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,10 +33,11 @@ public class ShopActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private ShopTradeItemAdapter mShopTradeItemAdapter;
     private RecyclerView mRecyclerView;
+    private Button shop_ok;
 
-    ArrayList<String> shop_trade_image = new ArrayList<String>(); // 上下滚动消息栏内容
+    ArrayList<String> shop_trade_image = new ArrayList<>(); // 上下滚动消息栏内容
     ArrayList<String> shop_trade_content = new ArrayList<String>();
-
+    ArrayList<String> shop_trade_price = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -40,7 +45,7 @@ public class ShopActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         Intent intent = getIntent();
         String intent_data = intent.getStringExtra("put_data_shop");
-        Toolbar toolbar = (Toolbar)findViewById(R.id.mainTool); //标题栏
+        Toolbar toolbar = (Toolbar)findViewById(R.id.shop_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
         back(toolbar);
@@ -53,9 +58,17 @@ public class ShopActivity extends AppCompatActivity {
     }
 
     private void findView(){
-        mRecyclerView = (RecyclerView)findViewById(R.id.shop_trade_rec);
+        shop_ok = (Button) findViewById(R.id.shop_ok);
+        mRecyclerView = (RecyclerView) findViewById(R.id.shop_trade_rec);
         mLayoutManager = new LinearLayoutManager(ShopActivity.this);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,3));
+        shop_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShopActivity.this,ShopAddActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void findData(){
@@ -118,3 +131,4 @@ public class ShopActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+

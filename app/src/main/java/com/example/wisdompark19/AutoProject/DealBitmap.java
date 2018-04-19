@@ -1,10 +1,17 @@
 package com.example.wisdompark19.AutoProject;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 
 /**
  * Created by 最美人间四月天 on 2018/4/10.
@@ -126,7 +136,6 @@ public class DealBitmap {
     /**
 
      * @param bitmap      原图
-     * @param edgeLength  希望得到的正方形部分的边长
      * @return  缩放截取正中部分后的位图。
      */
     public static Bitmap centerSquareScaleBitmap(Bitmap bitmap){
@@ -169,6 +178,59 @@ public class DealBitmap {
         }
 
         return result;
+    }
+
+    public static String getBitmap(ContentResolver cr,Intent data){
+        Bitmap bitmap_camera = null;
+        Uri uri_camera = data.getData();
+        Bundle extras = null;
+        try {
+            if(data.getData() != null)
+                //这个方法是根据Uri获取Bitmap图片的静态方法
+                bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
+                //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
+            else
+                extras = data.getExtras();
+            bitmap_camera = extras.getParcelable("data");
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        FileOutputStream fileOutputStream = null;
+        File file = null;
+        try {
+            // 获取 SD 卡根目录
+            String saveDir = Environment.getExternalStorageDirectory() + "/IMG";
+            // 新建目录
+            File dir = new File(saveDir);
+            if (! dir.exists()) dir.mkdir();
+            // 生成文件名
+            SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+            String filename = "IMG_" + (t.format(new Date())) + ".jpg";
+            // 新建文件
+            file = new File(saveDir, filename);
+            // 打开文件输出流
+            fileOutputStream = new FileOutputStream(file);
+            // 生成图片文件
+            bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            // 相片的完整路径
+            System.out.println( file.getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file.getPath();
     }
 
 }

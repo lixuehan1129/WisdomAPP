@@ -2,6 +2,8 @@ package com.example.wisdompark19.Adapter;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.wisdompark19.R;
 
+import java.lang.ref.PhantomReference;
 import java.util.List;
 
 
@@ -27,12 +30,13 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView shop_item_image;
         TextView shop_item_content;
+        TextView shop_item_price;
 
         public ViewHolder(View itemView) {
             super(itemView);
             shop_item_image = (ImageView)itemView.findViewById(R.id.shop_item_image);
             shop_item_content = (TextView)itemView.findViewById(R.id.shop_item_content);
-
+            shop_item_price = (TextView)itemView.findViewById(R.id.shop_item_price);
         }
     }
 
@@ -57,7 +61,7 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
         //这里的图片来源需要修改
         holder.shop_item_image.setImageResource(R.mipmap.ic_image_load);
         holder.shop_item_content.setText(shop_content);
-
+     //   holder.shop_item_price.setText(mShop_Trade_item.getShop_trade_price());
 
         //判断是否设置了监听
         //为View设置监听
@@ -90,6 +94,15 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
     public class Shop_Trade_item{
         private String shop_trade_image;
         private String shop_trade_content;
+//        private String shop_trade_price;
+//
+//        public String getShop_trade_price() {
+//            return shop_trade_price;
+//        }
+//
+//        public void setShop_trade_price(String shop_trade_price) {
+//            this.shop_trade_price = shop_trade_price;
+//        }
 
         public String getShop_trade_image() {
             return shop_trade_image;
@@ -110,6 +123,10 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
         public Shop_Trade_item(String shop_trade_image, String shop_trade_content){
             this.shop_trade_image = shop_trade_image;
             this.shop_trade_content = shop_trade_content;
+//            this.shop_trade_price = shop_trade_price;
         }
     }
 }
+
+
+
