@@ -31,9 +31,10 @@ public class PayActivity extends AppCompatActivity{
     private PayItemAdapter mPayItemAdapter;
     private RecyclerView mRecyclerView;
 
-    ArrayList<String> card_message_tell = new ArrayList<String>(); // 上下滚动消息栏内容
-    ArrayList<String> card_message_content = new ArrayList<String>();
-    ArrayList<String> card_message_time = new ArrayList<String>();
+    ArrayList<String> count_name = new ArrayList<String>(); // 上下滚动消息栏内容
+    ArrayList<String> count_fee = new ArrayList<String>();
+    ArrayList<String> count_time = new ArrayList<String>();
+    ArrayList<String> count_pay = new ArrayList<String>();
 
     ImageButton pay_water;
     ImageButton pay_electric;
@@ -98,45 +99,19 @@ public class PayActivity extends AppCompatActivity{
     }
 
     private void initRollData(){
-        card_message_tell.add("水费");
-        card_message_tell.add("电费");
-        card_message_tell.add("物业费");
-        card_message_tell.add("天然气");
-
-        card_message_content.add("50");
-        card_message_content.add("100");
-        card_message_content.add("100");
-        card_message_content.add("60");
-
-        card_message_time.add("1月3日");
-        card_message_time.add("1月3日");
-        card_message_time.add("1月3日");
-        card_message_time.add("1月3日");
-
-        card_message_tell.add("水费");
-        card_message_tell.add("电费");
-        card_message_tell.add("物业费");
-        card_message_tell.add("天然气");
-
-        card_message_content.add("50");
-        card_message_content.add("100");
-        card_message_content.add("100");
-        card_message_content.add("60");
-
-        card_message_time.add("2017年12月3日");
-        card_message_time.add("2017年12月3日");
-        card_message_time.add("2017年12月3日");
-        card_message_time.add("2017年12月3日");
+        count_name.add("物业费");
+        count_fee.add("100");
+        count_time.add("2018年4月22日");
+        count_pay.add("200");
     }
 
     private void initData(){
         Data = new ArrayList<>();
-        for(int i=0; i<8; i++){
+        for(int i=0; i<count_name.size(); i++){
             PayItemAdapter newData = new PayItemAdapter(Data);
-            PayItemAdapter.Pay_item pay_item = newData.new Pay_item(card_message_tell.get(i),
-                    card_message_content.get(i),card_message_time.get(i));
+            PayItemAdapter.Pay_item pay_item = newData.new Pay_item(count_name.get(i),
+                    count_fee.get(i),count_time.get(i),count_pay.get(i));
             Data.add(pay_item);
-            System.out.println(card_message_content.get(i));
         }
     }
 

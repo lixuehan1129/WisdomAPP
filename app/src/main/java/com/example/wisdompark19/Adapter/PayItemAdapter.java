@@ -26,12 +26,14 @@ public class PayItemAdapter extends RecyclerView.Adapter<PayItemAdapter.ViewHold
         TextView count_name;
         TextView count_fee;
         TextView count_time;
+        TextView count_pay;
 
         public ViewHolder(View itemView) {
             super(itemView);
              count_name = (TextView)itemView.findViewById(R.id.count_name);
              count_fee = (TextView)itemView.findViewById(R.id.count_fee);
              count_time = (TextView)itemView.findViewById(R.id.count_time);
+             count_pay = (TextView)itemView.findViewById(R.id.count_pay);
         }
     }
 
@@ -90,11 +92,13 @@ public class PayItemAdapter extends RecyclerView.Adapter<PayItemAdapter.ViewHold
         private String count_name;
         private String count_fee;
         private String count_time;
+        private String count_pay;
 
-        public Pay_item(String count_name,String count_fee,String count_time){
+        public Pay_item(String count_name, String count_fee, String count_time, String count_pay){
             this.count_name = count_name;
             this.count_fee = count_fee;
             this.count_time = count_time;
+            this.count_pay = count_pay;
         }
         public String getCount_name() {
             return count_name;
@@ -120,6 +124,12 @@ public class PayItemAdapter extends RecyclerView.Adapter<PayItemAdapter.ViewHold
             this.count_time = count_time;
         }
 
+        public String getCount_pay() {
+            return count_pay;
+        }
 
+        public void setCount_pay(String count_pay) {
+            this.count_pay = count_pay;
+        }
     }
 }

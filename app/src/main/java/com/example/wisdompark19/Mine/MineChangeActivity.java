@@ -84,10 +84,7 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
     private List<String> society_list = new ArrayList<>();
     private AlertDialog alertDialog;
     private String old;
-
-    private final int camera = 1;
-    private final int album = 2;
-    //调用系统相册-选择图片
+    private Uri photoUri;
     String touxiang_path = null;
     private int AREA_SELECT = 2;
     @Override
@@ -408,17 +405,6 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
         alertDialog.show();
     }
 
-    //调用相机拍照
-    private void take_photo(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, camera);
-    }
-    //调用系统相册
-    private void select_photo(){
-        Intent intent = new Intent(
-                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, album);
-    }
 
     //联网查询小区数据
     private void initSpinner(){
@@ -449,69 +435,54 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
             }
         }.start();
     }
+
+    //调用相机拍照
+    private void take_photo(){
+        // 获取 SD 卡根目录
+        String saveDir = Environment.getExternalStorageDirectory() + "/com.example.wisdom.park/";
+        // 新建目录
+        File dir = new File(saveDir);
+        if (! dir.exists()) {
+            dir.mkdirs();
+        }
+        // 生成文件名
+        SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+        String filename = "IMG_" + (t.format(new Date())) + ".jpg";
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoUri = Uri.fromFile(new File(saveDir + filename));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        System.out.println(photoUri);
+        startActivityForResult(intent, AppConstants.CAMERA);
+    }
+    //调用系统相册
+    private void select_photo(){
+        Intent intent = new Intent(
+                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, AppConstants.ALBUM);
+    }
+
     //从拍照或相册获取图片
     //找到图片路径
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case camera:
-                if(data != null) {
-                    ContentResolver cr = MineChangeActivity.this.getContentResolver();
-//                    Bitmap bitmap_camera = null;
-//                    Uri uri_camera = data.getData();
-//                    Bundle extras = null;
-//                    try {
-//                        if(data.getData() != null)
-//                            //这个方法是根据Uri获取Bitmap图片的静态方法
-//                            bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
-//                            //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
-//                        else
-//                            extras = data.getExtras();
-//                        bitmap_camera = extras.getParcelable("data");
-//
-//                    } catch (FileNotFoundException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                    } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                    }
-//                    FileOutputStream fileOutputStream = null;
-//                    File file = null;
-//                    try {
-//                        // 获取 SD 卡根目录
-//                        String saveDir = Environment.getExternalStorageDirectory() + "/IMG";
-//                        // 新建目录
-//                        File dir = new File(saveDir);
-//                        if (! dir.exists()) dir.mkdir();
-//                        // 生成文件名
-//                        SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
-//                        String filename = "IMG_" + (t.format(new Date())) + ".jpg";
-//                        // 新建文件
-//                        file = new File(saveDir, filename);
-//                        // 打开文件输出流
-//                        fileOutputStream = new FileOutputStream(file);
-//                        // 生成图片文件
-//                        bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-//                        // 相片的完整路径
-//                        System.out.println( file.getPath());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    } finally {
-//                        if (fileOutputStream != null) {
-//                            try {
-//                                fileOutputStream.close();
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                    showImage(file.getPath());
-                    showImage(DealBitmap.getBitmap(cr,data));
+            case AppConstants.CAMERA:{
+                System.out.println("111");
+                Uri uri = null;
+                if (data != null && data.getData() != null) {
+                    uri = data.getData();
                 }
+                if (uri == null) {
+                    if (photoUri != null) {
+                        uri = photoUri;
+                    }
+                }
+                System.out.println(uri);
+                showImage(DealBitmap.getRealFilePath(MineChangeActivity.this,uri));
                 break;
-            case album:
+            }
+            case AppConstants.ALBUM:
                 if (data != null) {
                     Uri uri = data.getData();
                     String imagePath;
@@ -519,7 +490,6 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                     showImage(imagePath);
                 }
                 break;
-
         }
     }
     /*

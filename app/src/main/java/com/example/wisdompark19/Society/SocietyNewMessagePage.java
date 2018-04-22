@@ -38,6 +38,7 @@ import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.ForbidClickListener;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.Mine.MineRegistActivity;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.ShowImage;
 import com.mysql.jdbc.Connection;
@@ -72,8 +73,7 @@ import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolute
 
 public class SocietyNewMessagePage extends AppCompatActivity {
 
-    private final int camera = 1;
-    private final int album = 2;
+    private Uri photoUri;
     private int mes_select;
     private List<ImageAdapter.Item_Image> ImageDatas;
     private List<String> ImagePath;
@@ -411,14 +411,27 @@ public class SocietyNewMessagePage extends AppCompatActivity {
 
     //调用相机拍照
     private void take_photo(){
+        // 获取 SD 卡根目录
+        String saveDir = Environment.getExternalStorageDirectory() + "/com.example.wisdom.park/";
+        // 新建目录
+        File dir = new File(saveDir);
+        if (! dir.exists()) {
+            dir.mkdirs();
+        }
+        // 生成文件名
+        SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+        String filename = "IMG_" + (t.format(new Date())) + ".jpg";
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, camera);
+        photoUri = Uri.fromFile(new File(saveDir + filename));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        System.out.println(photoUri);
+        startActivityForResult(intent, AppConstants.CAMERA);
     }
     //调用系统相册
     private void select_photo(){
         Intent intent = new Intent(
                 Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, album);
+        startActivityForResult(intent, AppConstants.ALBUM);
     }
 
     //从拍照或相册获取图片
@@ -427,13 +440,22 @@ public class SocietyNewMessagePage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case camera:
-                if(data != null) {
-                    ContentResolver cr = SocietyNewMessagePage.this.getContentResolver();
-                    showImage(DealBitmap.getBitmap(cr,data));
+            case AppConstants.CAMERA:{
+                System.out.println("111");
+                Uri uri = null;
+                if (data != null && data.getData() != null) {
+                    uri = data.getData();
                 }
+                if (uri == null) {
+                    if (photoUri != null) {
+                        uri = photoUri;
+                    }
+                }
+                System.out.println(uri);
+                showImage(DealBitmap.getRealFilePath(SocietyNewMessagePage.this,uri));
                 break;
-            case album:
+            }
+            case AppConstants.ALBUM:
                 if (data != null) {
                     Uri uri = data.getData();
                     String imagePath;
@@ -441,7 +463,6 @@ public class SocietyNewMessagePage extends AppCompatActivity {
                     showImage(imagePath);
                 }
                 break;
-
         }
     }
 

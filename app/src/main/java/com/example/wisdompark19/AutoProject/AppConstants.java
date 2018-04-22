@@ -1,9 +1,6 @@
 package com.example.wisdompark19.AutoProject;
 
 /*
-*
-* 是否初次启动变量
-*
 * */
 public class AppConstants {
     public static final String FIRST_OPEN = "first_open";
@@ -15,4 +12,7 @@ public class AppConstants {
     public static final String USER_SEX = "app_user_sex";
     public static final String USER_PICTURE = "app_user_picture";
     public static final String BROAD_CON = "android.intent.action.broadcast";
+
+    public static final int CAMERA = 1;
+    public static final int ALBUM = 2;
 }

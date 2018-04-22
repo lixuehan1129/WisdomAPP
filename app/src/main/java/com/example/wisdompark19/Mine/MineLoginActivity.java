@@ -1,13 +1,17 @@
 package com.example.wisdompark19.Mine;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -31,6 +35,7 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.MainActivity;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.SplashActivity;
 import com.mysql.jdbc.Connection;
 
 import java.io.ByteArrayOutputStream;
@@ -40,6 +45,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -70,6 +77,7 @@ public class MineLoginActivity extends AppCompatActivity {
         String intent_data = intent.getStringExtra("put_data_login");
         Toolbar toolbar = (Toolbar)findViewById(R.id.user_login_mainTool); //标题栏
         toolbar.setTitle("用户登录");  //标题栏名称
+        setQuanXian();
         findView();
         problem_jiaodian();
     }
@@ -275,4 +283,27 @@ public class MineLoginActivity extends AppCompatActivity {
         });
     }
 
+    private void setQuanXian(){
+        //获取权限
+        List<String> permissionList = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(MineLoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.VIBRATE)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.VIBRATE);
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.CAMERA);
+        }
+        if(!permissionList.isEmpty()){
+            String[] permissions= permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(MineLoginActivity.this,permissions,1);
+        }
+    }
 }

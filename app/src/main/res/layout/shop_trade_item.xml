@@ -11,7 +11,7 @@
             <ImageView
                 android:id="@+id/shop_item_image"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
+                android:layout_height="100dp"
                 android:background="@mipmap/ic_image_load" />
             <TextView
                 android:paddingTop="4dp"
@@ -19,6 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                android:maxLines="2"
                 android:layout_gravity="center"
                 android:textSize="12sp"
                 android:text="商品描述"/>

@@ -3,6 +3,7 @@ package com.example.wisdompark19.AutoProject;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -144,11 +145,9 @@ public class DealBitmap {
         {
             return  null;
         }
-
         Bitmap result = bitmap;
         int widthOrg = bitmap.getWidth();
         int heightOrg = bitmap.getHeight();
-
         if(widthOrg > edgeLength && heightOrg > edgeLength)
         {
             //压缩到一个最小长度是edgeLength的bitmap
@@ -156,18 +155,15 @@ public class DealBitmap {
             int scaledWidth = widthOrg > heightOrg ? longerEdge : edgeLength;
             int scaledHeight = widthOrg > heightOrg ? edgeLength : longerEdge;
             Bitmap scaledBitmap;
-
             try{
                 scaledBitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
             }
             catch(Exception e){
                 return null;
             }
-
             //从图中截取正中间的正方形部分。
             int xTopLeft = (scaledWidth - edgeLength) / 2;
             int yTopLeft = (scaledHeight - edgeLength) / 2;
-
             try{
                 result = Bitmap.createBitmap(scaledBitmap, xTopLeft, yTopLeft, edgeLength, edgeLength);
                 scaledBitmap.recycle();
@@ -176,7 +172,6 @@ public class DealBitmap {
                 return null;
             }
         }
-
         return result;
     }
 
@@ -192,7 +187,6 @@ public class DealBitmap {
             else
                 extras = data.getExtras();
             bitmap_camera = extras.getParcelable("data");
-
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -204,10 +198,10 @@ public class DealBitmap {
         File file = null;
         try {
             // 获取 SD 卡根目录
-            String saveDir = Environment.getExternalStorageDirectory() + "/IMG";
+            String saveDir = Environment.getExternalStorageDirectory() + "/com.example.wisdom.park/IMG";
             // 新建目录
             File dir = new File(saveDir);
-            if (! dir.exists()) dir.mkdir();
+            if (! dir.exists()) dir.mkdirs();
             // 生成文件名
             SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
             String filename = "IMG_" + (t.format(new Date())) + ".jpg";
@@ -218,7 +212,7 @@ public class DealBitmap {
             // 生成图片文件
             bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
             // 相片的完整路径
-            System.out.println( file.getPath());
+            System.out.println("FFFF"+file.getPath());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -231,6 +225,29 @@ public class DealBitmap {
             }
         }
         return file.getPath();
+    }
+
+    public static String getRealFilePath( final Context context, final Uri uri ) {
+        if ( null == uri ) return null;
+        final String scheme = uri.getScheme();
+        String data = null;
+        if ( scheme == null )
+            data = uri.getPath();
+        else if ( ContentResolver.SCHEME_FILE.equals( scheme ) ) {
+            data = uri.getPath();
+        } else if ( ContentResolver.SCHEME_CONTENT.equals( scheme ) ) {
+            Cursor cursor = context.getContentResolver().query( uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null );
+            if ( null != cursor ) {
+                if ( cursor.moveToFirst() ) {
+                    int index = cursor.getColumnIndex( MediaStore.Images.ImageColumns.DATA );
+                    if ( index > -1 ) {
+                        data = cursor.getString( index );
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return data;
     }
 
 }

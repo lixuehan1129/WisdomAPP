@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.R;
 
 import java.lang.ref.PhantomReference;
@@ -56,12 +57,13 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         Shop_Trade_item mShop_Trade_item = mDataSet.get(position);
-        String shop_image = mShop_Trade_item.getShop_trade_image();
+        Bitmap shop_image = mShop_Trade_item.getShop_trade_image();
+
         String shop_content = mShop_Trade_item.getShop_trade_content();
         //这里的图片来源需要修改
-        holder.shop_item_image.setImageResource(R.mipmap.ic_image_load);
+        holder.shop_item_image.setImageBitmap(DealBitmap.centerSquareScaleBitmap(shop_image));
         holder.shop_item_content.setText(shop_content);
-     //   holder.shop_item_price.setText(mShop_Trade_item.getShop_trade_price());
+        holder.shop_item_price.setText(mShop_Trade_item.getShop_trade_price());
 
         //判断是否设置了监听
         //为View设置监听
@@ -92,23 +94,23 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
     }
 
     public class Shop_Trade_item{
-        private String shop_trade_image;
+        private Bitmap shop_trade_image;
         private String shop_trade_content;
-//        private String shop_trade_price;
-//
-//        public String getShop_trade_price() {
-//            return shop_trade_price;
-//        }
-//
-//        public void setShop_trade_price(String shop_trade_price) {
-//            this.shop_trade_price = shop_trade_price;
-//        }
+        private String shop_trade_price;
 
-        public String getShop_trade_image() {
+        public String getShop_trade_price() {
+            return shop_trade_price;
+        }
+
+        public void setShop_trade_price(String shop_trade_price) {
+            this.shop_trade_price = shop_trade_price;
+        }
+
+        public Bitmap getShop_trade_image() {
             return shop_trade_image;
         }
 
-        public void setShop_trade_image(String shop_trade_image) {
+        public void setShop_trade_image(Bitmap shop_trade_image) {
             this.shop_trade_image = shop_trade_image;
         }
 
@@ -120,10 +122,11 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
             this.shop_trade_content = shop_trade_content;
         }
 
-        public Shop_Trade_item(String shop_trade_image, String shop_trade_content){
+        public Shop_Trade_item(Bitmap shop_trade_image, String shop_trade_content,
+                               String shop_trade_price){
             this.shop_trade_image = shop_trade_image;
             this.shop_trade_content = shop_trade_content;
-//            this.shop_trade_price = shop_trade_price;
+            this.shop_trade_price = shop_trade_price;
         }
     }
 }
