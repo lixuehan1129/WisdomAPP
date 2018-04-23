@@ -61,13 +61,13 @@ public class SocietyFindAdapter extends RecyclerView.Adapter<SocietyFindAdapter.
         Bitmap bitmap2 = society_find_item.getShop_trade_image2();
         Bitmap bitmap3 = society_find_item.getShop_trade_image3();
         if(bitmap1 != null){
-            holder.shop_item_image1.setImageBitmap(DealBitmap.centerSquareScaleBitmap(bitmap1));
+            holder.shop_item_image1.setImageBitmap(DealBitmap.ImageCrop(bitmap1,true));
         }
         if(bitmap2 != null){
-            holder.shop_item_image2.setImageBitmap(DealBitmap.centerSquareScaleBitmap(bitmap2));
+            holder.shop_item_image2.setImageBitmap(DealBitmap.ImageCrop(bitmap2,true));
         }
         if(bitmap3 != null){
-            holder.shop_item_image3.setImageBitmap(DealBitmap.centerSquareScaleBitmap(bitmap3));
+            holder.shop_item_image3.setImageBitmap(DealBitmap.ImageCrop(bitmap3,true));
         }
         holder.shop_item_content.setText(society_find_item.getShop_trade_content());
 

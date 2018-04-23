@@ -168,7 +168,7 @@ public class SocietyNewMessage extends BaseFragment {
                         //查找信息
                         String sql_connect = "select * from newmessage where newmessage_area = '" +
                                 SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by newmessage_id desc";
+                                "' order by newmessage_id desc limit 5";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         List<String> content_name = new ArrayList<>();
                         while (resultSet.next()){

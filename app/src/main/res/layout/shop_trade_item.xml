@@ -11,8 +11,7 @@
             <ImageView
                 android:id="@+id/shop_item_image"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@mipmap/ic_image_load" />
+                android:layout_height="100dp" />
             <TextView
                 android:paddingTop="4dp"
                 android:id="@+id/shop_item_content"

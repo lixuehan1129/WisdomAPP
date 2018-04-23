@@ -191,7 +191,7 @@ public class SocietyFindThing extends BaseFragment {
                         //查找信息
                         String sql_connect = "select * from shiwu where shiwu_area = '" +
                                 SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by shiwu_id desc";
+                                "' order by shiwu_id desc limit 5";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         while (resultSet.next()){
                             Blob picture1 = resultSet.getBlob("shiwu_picture1");

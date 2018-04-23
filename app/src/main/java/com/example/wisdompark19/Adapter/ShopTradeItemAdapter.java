@@ -61,7 +61,7 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
 
         String shop_content = mShop_Trade_item.getShop_trade_content();
         //这里的图片来源需要修改
-        holder.shop_item_image.setImageBitmap(DealBitmap.centerSquareScaleBitmap(shop_image));
+        holder.shop_item_image.setImageBitmap(DealBitmap.ImageCrop(shop_image,true));
         holder.shop_item_content.setText(shop_content);
         holder.shop_item_price.setText(mShop_Trade_item.getShop_trade_price());
 

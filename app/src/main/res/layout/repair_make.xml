@@ -179,7 +179,6 @@
                         android:textSize="15sp"
                         android:hint="输入内容"
                         android:textColor="@color/colorBlack"
-                        android:minLines="5"
                         android:gravity="left|top"
                         android:theme="@style/MyEditText" />
                     <android.support.v7.widget.RecyclerView

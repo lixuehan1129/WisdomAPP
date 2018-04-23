@@ -42,7 +42,9 @@ public class RepairActivity extends AppCompatActivity {
     public static final int UPDATE_REP = 1;
 
     ArrayList<String> repair_check_content = new ArrayList<String>();
+    ArrayList<String> repair_check_user = new ArrayList<String>();
     ArrayList<Integer> repair_check_id = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -56,10 +58,6 @@ public class RepairActivity extends AppCompatActivity {
         back(toolbar);
         findView();
         connectData();
-//        findData();
-//        initData();
-//        setAdapter();
-//        setItemClick();
     }
 
     private void findView(){
@@ -108,13 +106,22 @@ public class RepairActivity extends AppCompatActivity {
                         Log.d("调试", "连接成功,报修管理");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
                         //查找信息
-                        String sql_connect = "select * from repair where repair_area = '" +
-                                SharePreferences.getString(RepairActivity.this, AppConstants.USER_AREA) +
-                                "' order by repair_time";
+                        String sql_connect;
+                        if(SharePreferences.getInt(RepairActivity.this, AppConstants.USER_SORT) == 0){
+                            sql_connect = "select * from repair where repair_area = '" +
+                                    SharePreferences.getString(RepairActivity.this, AppConstants.USER_AREA) +
+                                    "' order by repair_time order by repair_id desc";
+                        }else {
+                            sql_connect = "select * from repair where repair_name = '" +
+                                    SharePreferences.getString(RepairActivity.this, AppConstants.USER_NAME) +
+                                    "' order by repair_time order by repair_id desc";
+                        }
+
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         while (resultSet.next()){
                             findData(resultSet.getString("repair_content"),
-                                     resultSet.getInt("repair_id"));
+                                     resultSet.getInt("repair_id"),
+                                     resultSet.getString("repair_phone"));
                         }
                         Message message = new Message();
                         message.what = UPDATE_REP;
@@ -134,9 +141,10 @@ public class RepairActivity extends AppCompatActivity {
             }
         }.start();
     }
-    private void findData(String content,int id){
+    private void findData(String content,int id,String user){
         repair_check_content.add(content);
         repair_check_id.add(id);
+        repair_check_user.add(user);
     }
 
     private void initData(){
@@ -164,6 +172,7 @@ public class RepairActivity extends AppCompatActivity {
                 Intent intent = new Intent(RepairActivity.this,RepairMakeActivity.class);
                 intent.putExtra("repair_check",1);
                 intent.putExtra("repair_check_image",repair_check_id.get(position));
+                intent.putExtra("repair_user",repair_check_user.get(position));
                 startActivity(intent);
             }
         });

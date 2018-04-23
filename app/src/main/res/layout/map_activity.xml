@@ -16,20 +16,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <!--<TextView-->
-    <!--android:id="@+id/test_text"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="地图"-->
-    <!--android:textSize="20dp"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent" />-->
     <com.baidu.mapapi.map.MapView
         android:id="@+id/baidu_map"
         android:layout_width="fill_parent"

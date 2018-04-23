@@ -175,57 +175,133 @@ public class DealBitmap {
         return result;
     }
 
-    public static String getBitmap(ContentResolver cr,Intent data){
-        Bitmap bitmap_camera = null;
-        Uri uri_camera = data.getData();
-        Bundle extras = null;
-        try {
-            if(data.getData() != null)
-                //这个方法是根据Uri获取Bitmap图片的静态方法
-                bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
-                //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
-            else
-                extras = data.getExtras();
-            bitmap_camera = extras.getParcelable("data");
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    /**
+     * 按正方形裁切图片
+     */
+    public static Bitmap ImageCrop(Bitmap bitmap, boolean isRecycled)
+    {
+
+        if (bitmap == null)
+        {
+            return null;
         }
-        FileOutputStream fileOutputStream = null;
-        File file = null;
-        try {
-            // 获取 SD 卡根目录
-            String saveDir = Environment.getExternalStorageDirectory() + "/com.example.wisdom.park/IMG";
-            // 新建目录
-            File dir = new File(saveDir);
-            if (! dir.exists()) dir.mkdirs();
-            // 生成文件名
-            SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
-            String filename = "IMG_" + (t.format(new Date())) + ".jpg";
-            // 新建文件
-            file = new File(saveDir, filename);
-            // 打开文件输出流
-            fileOutputStream = new FileOutputStream(file);
-            // 生成图片文件
-            bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-            // 相片的完整路径
-            System.out.println("FFFF"+file.getPath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+
+        int w = bitmap.getWidth(); // 得到图片的宽，高
+        int h = bitmap.getHeight();
+
+        int wh = w > h ? h : w;// 裁切后所取的正方形区域边长
+
+        int retX = w > h ? (w - h) / 2 : 0;// 基于原图，取正方形左上角x坐标
+        int retY = w > h ? 0 : (h - w) / 2;
+
+        Bitmap bmp = Bitmap.createBitmap(bitmap, retX, retY, wh, wh, null,
+                false);
+        if (isRecycled && bitmap != null && !bitmap.equals(bmp)
+                && !bitmap.isRecycled())
+        {
+            bitmap.recycle();
+            bitmap = null;
         }
-        return file.getPath();
+
+        // 下面这句是关键
+        return bmp;// Bitmap.createBitmap(bitmap, retX, retY, wh, wh, null,
+        // false);
     }
+
+    /**
+     * 按长方形裁切图片
+     *
+     * @param bitmap
+     * @return
+     */
+    public static Bitmap ImageCropWithRect(Bitmap bitmap)
+    {
+        if (bitmap == null)
+        {
+            return null;
+        }
+
+        int w = bitmap.getWidth(); // 得到图片的宽，高
+        int h = bitmap.getHeight();
+
+        int nw = 100, nh = 130, retX, retY;
+        if (w > h)
+        {
+//            nw = h / 2;
+//            nh = h;
+            retX = (w - nw) / 2;
+            retY = 0;
+        } else
+        {
+//            nw = w / 2;
+//            nh = w;
+            retX = w / 4;
+            retY = (h - w) / 2;
+        }
+
+        // 下面这句是关键
+        Bitmap bmp = Bitmap.createBitmap(bitmap, retX, retY, nw, nh, null,
+                false);
+        if (bitmap != null && !bitmap.equals(bmp) && !bitmap.isRecycled())
+        {
+            bitmap.recycle();
+            bitmap = null;
+        }
+        return bmp;// Bitmap.createBitmap(bitmap, retX, retY, nw, nh, null,
+        // false);
+    }
+
+//    public static String getBitmap(ContentResolver cr,Intent data){
+//        Bitmap bitmap_camera = null;
+//        Uri uri_camera = data.getData();
+//        Bundle extras = null;
+//        try {
+//            if(data.getData() != null)
+//                //这个方法是根据Uri获取Bitmap图片的静态方法
+//                bitmap_camera = MediaStore.Images.Media.getBitmap(cr, uri_camera);
+//                //这里是有些拍照后的图片是直接存放到Bundle中的所以我们可以从这里面获取Bitmap图片
+//            else
+//                extras = data.getExtras();
+//            bitmap_camera = extras.getParcelable("data");
+//        } catch (FileNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        FileOutputStream fileOutputStream = null;
+//        File file = null;
+//        try {
+//            // 获取 SD 卡根目录
+//            String saveDir = Environment.getExternalStorageDirectory() + "/com.example.wisdom.park/IMG";
+//            // 新建目录
+//            File dir = new File(saveDir);
+//            if (! dir.exists()) dir.mkdirs();
+//            // 生成文件名
+//            SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+//            String filename = "IMG_" + (t.format(new Date())) + ".jpg";
+//            // 新建文件
+//            file = new File(saveDir, filename);
+//            // 打开文件输出流
+//            fileOutputStream = new FileOutputStream(file);
+//            // 生成图片文件
+//            bitmap_camera.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+//            // 相片的完整路径
+//            System.out.println("FFFF"+file.getPath());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (fileOutputStream != null) {
+//                try {
+//                    fileOutputStream.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        return file.getPath();
+//    }
 
     public static String getRealFilePath( final Context context, final Uri uri ) {
         if ( null == uri ) return null;

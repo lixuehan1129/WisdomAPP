@@ -92,6 +92,8 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private String time;
     private String spinner;
     private String content;
+    private String name,user;
+    private Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -100,6 +102,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         Intent intent = getIntent();
         mes_select = intent.getIntExtra("repair_check",1);
         intent_data_id = intent.getIntExtra("repair_check_image",0);
+        name = intent.getStringExtra("repair_user");
         Toolbar toolbar = (Toolbar)findViewById(R.id.repair_make_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle("报修");
@@ -120,27 +123,39 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         repair_tacv = (CardView)findViewById(R.id.repair_make_tacv);
         repair_make_take = (ImageView)findViewById(R.id.repair_make_take);
         repair_make_add = (ImageView)findViewById(R.id.repair_make_add);
-        String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
-        Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
-        repair_image.setImageBitmap(user_bitmap);
-        String name = SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_NAME) +
-                "(" + SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_PHONE) +
-                ")";
-        repair_name.setText(name);
-        repair_add.setText(SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_ADDRESS));
+
 
         if(mes_select == 1){ //第二次进入时使用
             repair_button_ok.setVisibility(View.INVISIBLE);
             repair_time.setEnabled(false);
             repair_time.setText(null);
+            repair_edit.setMinLines(2);
             repair_edit.setEnabled(false);
             repair_tacv.setVisibility(View.INVISIBLE);
+            if(name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
+                String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
+                Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
+                repair_image.setImageBitmap(user_bitmap);
+                String name1 = SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_NAME) +
+                        "(" + SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_PHONE) +
+                        ")";
+                repair_name.setText(name1);
+            }
             connectData();
         }else {  //创建时使用
+            String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
+            Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
+            repair_image.setImageBitmap(user_bitmap);
+            String name = SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_NAME) +
+                    "(" + SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_PHONE) +
+                    ")";
+            repair_name.setText(name);
+            repair_add.setText(SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_ADDRESS));
             repair_time.setOnClickListener(RepairMakeActivity.this);
             repair_button_ok.setOnClickListener(this);
             repair_make_take.setOnClickListener(this);
             repair_make_add.setOnClickListener(this);
+            repair_edit.setMinLines(3);
             initDatePicker();
         }
     }
@@ -298,11 +313,25 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                             Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
                             ImageGetPath.add(bitmap6);
                         }
+                        resultSet.close();
+                        if(!name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
+                            String sql_user = "select * from user where user_phone = '" +
+                                    name +
+                                    "'" ;
+                            ResultSet resultSet1 = stmt.executeQuery(sql_user);
+                            resultSet1.next();
+                            user = name + "(" + resultSet1.getString("user_phone") + ")";
+                            Blob blob = resultSet1.getBlob("user_picture");
+                            if(blob != null){
+                                InputStream inputStream = blob.getBinaryStream();
+                                bitmap = DealBitmap.InputToBitmap(inputStream);
+                            }
+                        }
                         System.out.println(ImageGetPath);
                         Message message = new Message();
                         message.what = UPDATE_REPM;
                         handler_rep.sendMessage(message);
-                        resultSet.close();
+
                         JDBCTools.releaseConnection(stmt,conn);
                     }else {
                         Log.d("调试", "连接失败,消息界面");
@@ -329,6 +358,14 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                     repair_edit.setText(content,null);
                     for(int i = 0; i<ImageGetPath.size(); i++){
                         showLoadImage(ImageGetPath.get(i));
+                    }
+                    if(!name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
+                        if(bitmap != null){
+                            repair_image.setImageBitmap(bitmap);
+                        }else {
+                            repair_image.setImageResource(R.mipmap.ic_launcher_round);
+                        }
+                        repair_name.setText(name);
                     }
                     updateLoad();
                     break;
