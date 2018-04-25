@@ -36,10 +36,7 @@ import java.util.HashMap;
  */
 
 public class ShowImage extends AppCompatActivity {
-    public static final int UPDATE_SHOW = 1;
     private DragImageView img;
-    private Bitmap bitmap;
-    private InputStream inputStream;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,29 +46,12 @@ public class ShowImage extends AppCompatActivity {
         RelativeLayout back = (RelativeLayout)this.findViewById(R.id.back_act);
         img = (DragImageView)this.findViewById(R.id.large_image);
         Bundle bundle = this.getIntent().getExtras();
-        String image_select_name = bundle.getString("image_select_name");
-        int image_select_id = bundle.getInt("image_select_id");
-        int image_selece_new = bundle.getInt("image_select_new");
-        String select_fenlei = bundle.getString("select_fenlei");
+        String Image_select = bundle.getString("image_select_name");
 
-        if(image_select_id == 0){
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = false;//加载到内存中
-            Bitmap bm = BitmapFactory.decodeFile(image_select_name,options);
-            img.setImageBitmap(bm);
-        }else if(image_select_id == 1){
-            getPicture(image_selece_new,image_select_name,select_fenlei);
-        }else {
-            Toast.makeText(this, "图片加载出现错误",Toast.LENGTH_SHORT).show();
-            ShowImage.this.finish();
-        }
-
-//       Bitmap bitmap = DealBitmap.StringToBitmap(image_select);
-//        img.setImageBitmap(bitmap);
-//        img.setImageBitmap(StringToBitmap(Image_select));
-//        Toast toast = Toast.makeText(this, "点击图片即可返回",Toast.LENGTH_SHORT);
-//        toast.setGravity(Gravity.BOTTOM, 0, 0);
-//        toast.show();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = false;//加载到内存中
+        Bitmap bm = BitmapFactory.decodeFile(Image_select,options);
+        img.setImageBitmap(bm);
 
         back.setOnClickListener(new View.OnClickListener() { // 点击返回
             public void onClick(View paramView) {
@@ -82,70 +62,6 @@ public class ShowImage extends AppCompatActivity {
         });
 
     }
-
-    private void getPicture(final int intent_data_id, final String picture_name,
-                            final String select_fenlei){
-        new Thread(){
-            public void run(){
-                try{
-                    Looper.prepare();
-                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试", "连接成功,图片界面");
-                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-                        //查找信息
-                        String id = select_fenlei + "_id";
-                        String sql_connect = "select * from " +
-                                select_fenlei +
-                                " where " +
-                                id +
-                                " = '" +
-                                intent_data_id +
-                                "'";
-                        ResultSet resultSet = stmt.executeQuery(sql_connect);
-                        resultSet.next();
-                        Blob picture = resultSet.getBlob(picture_name);
-                        if(picture != null){
-                            inputStream = picture.getBinaryStream();
-                        }
-                        Message message = new Message();
-                        message.what = UPDATE_SHOW;
-                        handler_show.sendMessage(message);
-                        resultSet.close();
-                        JDBCTools.releaseConnection(stmt,conn);
-                    }else {
-                        Log.d("调试", "连接失败,消息界面");
-                        Toast toast = Toast.makeText(ShowImage.this, "请检查网络", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }.start();
-    }
-
-    //异步更新
-    private Handler handler_show = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            switch (msg.what){
-                case UPDATE_SHOW:{
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = false;//加载到内存中
-                    Bitmap mBitmap = BitmapFactory.decodeStream(inputStream,null,options);
-                    img.setImageBitmap(mBitmap.copy(Bitmap.Config.ARGB_8888, true));
-                    break;
-                }
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
 
     //显示图片时隐藏状态栏
     private void full(boolean enable) {

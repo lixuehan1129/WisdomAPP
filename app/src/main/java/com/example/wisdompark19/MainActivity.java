@@ -1,8 +1,10 @@
 package com.example.wisdompark19;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -17,15 +19,18 @@ import android.view.MenuItem;
 
 import com.example.wisdompark19.Adapter.ViewPagerAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Main.MainFragment;
 import com.example.wisdompark19.Mine.MineFragment;
 import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.BottomNavigationViewHelper;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
 import com.mysql.jdbc.Connection;
 
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -156,11 +161,28 @@ public class MainActivity extends AppCompatActivity {
                                 SharePreferences.getString(MainActivity.this,AppConstants.USER_PHONE) +
                                 "'"; //要执行的sql语句
                         ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
+                   //     SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                         while (rs.next()) {
                             int user_sort = rs.getInt("user_sort");
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_SORT);
                             SharePreferences.putInt(MainActivity.this,AppConstants.USER_SORT,user_sort);
+//                            ContentValues values = new ContentValues();
+//                            values.put("user_id",rs.getInt("user_id"));
+//                            values.put("user_name",rs.getString("user_name"));
+//                            values.put("user_phone",rs.getString("user_phone"));
+//                            values.put("user_address",rs.getString("user_address"));
+//                            values.put("user_sort",rs.getInt("user_sort"));
+//                            values.put("user_sex",rs.getString("user_sex"));
+//                            Blob picture = rs.getBlob("user_picture");
+//                            if(picture != null){
+//                                values.put("user_picture", DealBitmap.compressImage(picture));
+//                            }else {
+//                                values.put("user_picture", (String) null);
+//                            }
+//                            sqLiteDatabase.insert("user",null,values);
                         }
+//                        sqLiteDatabase.close();
+//                        Log.d("调试","接入用户");
                     }else{
                         Log.d("调试","连接失败");
                     }

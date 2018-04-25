@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.R;
 
@@ -57,11 +59,17 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         Shop_Trade_item mShop_Trade_item = mDataSet.get(position);
-        Bitmap shop_image = mShop_Trade_item.getShop_trade_image();
-
+        String shop_image = mShop_Trade_item.getShop_trade_image();
         String shop_content = mShop_Trade_item.getShop_trade_content();
         //这里的图片来源需要修改
-        holder.shop_item_image.setImageBitmap(DealBitmap.ImageCrop(shop_image,true));
+        if(shop_image != null){
+            Glide.with(mContext)
+                    .load(shop_image)
+                    .asBitmap()  //不可加载动图
+                    .dontAnimate()//取消淡入淡出动画
+                    .thumbnail(0.1f) //先加载十分之一作为缩略图
+                    .into(holder.shop_item_image);
+        }
         holder.shop_item_content.setText(shop_content);
         holder.shop_item_price.setText(mShop_Trade_item.getShop_trade_price());
 
@@ -94,7 +102,7 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
     }
 
     public class Shop_Trade_item{
-        private Bitmap shop_trade_image;
+        private String shop_trade_image;
         private String shop_trade_content;
         private String shop_trade_price;
 
@@ -106,11 +114,11 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
             this.shop_trade_price = shop_trade_price;
         }
 
-        public Bitmap getShop_trade_image() {
+        public String getShop_trade_image() {
             return shop_trade_image;
         }
 
-        public void setShop_trade_image(Bitmap shop_trade_image) {
+        public void setShop_trade_image(String shop_trade_image) {
             this.shop_trade_image = shop_trade_image;
         }
 
@@ -122,7 +130,7 @@ public class ShopTradeItemAdapter extends RecyclerView.Adapter<ShopTradeItemAdap
             this.shop_trade_content = shop_trade_content;
         }
 
-        public Shop_Trade_item(Bitmap shop_trade_image, String shop_trade_content,
+        public Shop_Trade_item(String shop_trade_image, String shop_trade_content,
                                String shop_trade_price){
             this.shop_trade_image = shop_trade_image;
             this.shop_trade_content = shop_trade_content;

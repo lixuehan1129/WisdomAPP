@@ -1,8 +1,11 @@
 package com.example.wisdompark19.Repair;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +43,7 @@ import com.example.wisdompark19.Main.ShopAddActivity;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.Society.SocietyNewMessagePage;
 import com.example.wisdompark19.ViewHelper.CustomDatePicker;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.ShowImage;
 import com.mysql.jdbc.Connection;
 
@@ -71,14 +75,16 @@ import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolute
  */
 
 public class RepairMakeActivity extends AppCompatActivity implements View.OnClickListener{
+
     private Uri photoUri;
     private int mes_select;
+    private int intent_data_id = 0;
+    private DataBaseHelper dataBaseHelper;
     private List<ImageAdapter.Item_Image> ImageDatas = new ArrayList<>();
     private List<String> ImagePath = new ArrayList<>();
     private List<String> ImageData = new ArrayList<>();
-    private List<Bitmap> ImageGetPath = new ArrayList<>();
-    private int intent_data_id = 0;
-    public static final int UPDATE_REPM = 1;
+//    private List<Bitmap> ImageGetPath = new ArrayList<>();
+//    public static final int UPDATE_REPM = 1;
 
     private TextView repair_time, repair_name, repair_add;
     private CircleImageView repair_image;
@@ -92,7 +98,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private String time;
     private String spinner;
     private String content;
-    private String name,user;
+    private String user,add;
     private Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -102,7 +108,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         Intent intent = getIntent();
         mes_select = intent.getIntExtra("repair_check",1);
         intent_data_id = intent.getIntExtra("repair_check_image",0);
-        name = intent.getStringExtra("repair_user");
         Toolbar toolbar = (Toolbar)findViewById(R.id.repair_make_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle("报修");
@@ -123,8 +128,10 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         repair_tacv = (CardView)findViewById(R.id.repair_make_tacv);
         repair_make_take = (ImageView)findViewById(R.id.repair_make_take);
         repair_make_add = (ImageView)findViewById(R.id.repair_make_add);
-
-
+        dataBaseHelper = new DataBaseHelper(RepairMakeActivity.this,AppConstants.SQL_VISION);
+        ImageDatas = new ArrayList<>();
+        ImagePath = new ArrayList<>();
+        ImageData = new ArrayList<>();
         if(mes_select == 1){ //第二次进入时使用
             repair_button_ok.setVisibility(View.INVISIBLE);
             repair_time.setEnabled(false);
@@ -132,16 +139,17 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             repair_edit.setMinLines(2);
             repair_edit.setEnabled(false);
             repair_tacv.setVisibility(View.INVISIBLE);
-            if(name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
-                String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
-                Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
-                repair_image.setImageBitmap(user_bitmap);
-                String name1 = SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_NAME) +
-                        "(" + SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_PHONE) +
-                        ")";
-                repair_name.setText(name1);
-            }
-            connectData();
+            getData();
+//            if(name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
+//                String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
+//                Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
+//                repair_image.setImageBitmap(user_bitmap);
+//                String name1 = SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_NAME) +
+//                        "(" + SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_PHONE) +
+//                        ")";
+//                repair_name.setText(name1);
+//            }
+//            connectData();
         }else {  //创建时使用
             String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
             Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
@@ -199,6 +207,69 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    //本地数据
+    @SuppressLint("SetTextI18n")
+    private void getData(){
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query("repair",null,"repair_id = ?",new String[]{String.valueOf(intent_data_id)},
+                null,null,null);
+        if(cursor.moveToFirst()){
+            String phone = cursor.getString(cursor.getColumnIndex("repair_phone"));
+            Cursor cursor_phone = sqLiteDatabase.query("user",null,
+                    "user_phone = ?",new String[]{phone},null,null,null);
+            if(cursor_phone != null){
+                if(cursor_phone.moveToFirst()){
+                    Bitmap picture = null;
+                    //查找成员头像
+                    byte[] bytes = null;
+                    if(cursor_phone.moveToFirst()){
+                        bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
+                        if(bytes != null){
+                            picture = DealBitmap.byteToBit(bytes);
+                            if(picture != null){
+                                repair_image.setImageBitmap(picture);
+                            }else {
+                                repair_image.setImageResource(R.mipmap.ic_launcher_round);
+                            }
+                        }
+                    }
+                    repair_name.setText(cursor.getString(cursor.getColumnIndex("user_name")) +
+                    "(" + phone + ")");
+                    repair_add.setText(cursor.getString(cursor.getColumnIndex("user_address")));
+                }
+                cursor_phone.close();
+            }
+            initSpinner(repair_spinner,cursor.getString(cursor.getColumnIndex("repair_title")));
+            repair_edit.setText(cursor.getString(cursor.getColumnIndex("repair_content")));
+            repair_time.setText(cursor.getString(cursor.getColumnIndex("repair_time")));
+            String picture1 = cursor.getString(cursor.getColumnIndex("repair_picture1"));
+            String picture2 = cursor.getString(cursor.getColumnIndex("repair_picture2"));
+            String picture3 = cursor.getString(cursor.getColumnIndex("repair_picture3"));
+            String picture4 = cursor.getString(cursor.getColumnIndex("repair_picture4"));
+            String picture5 = cursor.getString(cursor.getColumnIndex("repair_picture5"));
+            String picture6 = cursor.getString(cursor.getColumnIndex("repair_picture6"));
+            if(picture1 != null){
+                showImage(picture1);
+            }
+            if(picture2 != null){
+                showImage(picture2);
+            }
+            if(picture3 != null){
+                showImage(picture3);
+            }
+            if(picture4 != null){
+                showImage(picture4);
+            }
+            if(picture5 != null){
+                showImage(picture5);
+            }
+            if(picture6 != null){
+                showImage(picture6);
+            }
+        }
+    }
+
+    //上传数据
     private void UpdateData(){
         new Thread(){
             public void run(){
@@ -259,125 +330,127 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         }.start();
     }
 
-    private void connectData(){
-        new Thread(){
-            public void run(){
-                try{
-                    Looper.prepare();
-                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试", "连接成功,消息界面");
-                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-                        //查找信息
-                        String sql_connect = "select * from repair where repair_id = '" +
-                                intent_data_id +
-                                "'";
-                        ResultSet resultSet = stmt.executeQuery(sql_connect);
-                        resultSet.next();
-                        time = resultSet.getString("repair_select_time");
-                        spinner = resultSet.getString("repair_leixing");
-                        content = resultSet.getString("repair_content");
-                        Blob picture1 = resultSet.getBlob("repair_picture1");
-                        Blob picture2 = resultSet.getBlob("repair_picture2");
-                        Blob picture3 = resultSet.getBlob("repair_picture3");
-                        Blob picture4 = resultSet.getBlob("repair_picture4");
-                        Blob picture5 = resultSet.getBlob("repair_picture5");
-                        Blob picture6 = resultSet.getBlob("repair_picture6");
-                        if(picture1 != null){
-                            InputStream inputStream1 = picture1.getBinaryStream();
-                            Bitmap bitmap1 = DealBitmap.InputToBitmap(inputStream1);
-                            ImageGetPath.add(bitmap1);
-                        }
-                        if(picture2 != null){
-                            InputStream inputStream2 = picture2.getBinaryStream();
-                            Bitmap bitmap2 = DealBitmap.InputToBitmap(inputStream2);
-                            ImageGetPath.add(bitmap2);
-                        }
-                        if(picture3 != null){
-                            InputStream inputStream3 = picture3.getBinaryStream();
-                            Bitmap bitmap3 = DealBitmap.InputToBitmap(inputStream3);
-                            ImageGetPath.add(bitmap3);
-                        }
-                        if(picture4 != null){
-                            InputStream inputStream4 = picture4.getBinaryStream();
-                            Bitmap bitmap4 = DealBitmap.InputToBitmap(inputStream4);
-                            ImageGetPath.add(bitmap4);
-                        }
-                        if(picture5 != null){
-                            InputStream inputStream5 = picture5.getBinaryStream();
-                            Bitmap bitmap5 = DealBitmap.InputToBitmap(inputStream5);
-                            ImageGetPath.add(bitmap5);
-                        }
-                        if(picture6 != null){
-                            InputStream inputStream6 = picture6.getBinaryStream();
-                            Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
-                            ImageGetPath.add(bitmap6);
-                        }
-                        resultSet.close();
-                        if(!name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
-                            String sql_user = "select * from user where user_phone = '" +
-                                    name +
-                                    "'" ;
-                            ResultSet resultSet1 = stmt.executeQuery(sql_user);
-                            resultSet1.next();
-                            user = name + "(" + resultSet1.getString("user_phone") + ")";
-                            Blob blob = resultSet1.getBlob("user_picture");
-                            if(blob != null){
-                                InputStream inputStream = blob.getBinaryStream();
-                                bitmap = DealBitmap.InputToBitmap(inputStream);
-                            }
-                        }
-                        System.out.println(ImageGetPath);
-                        Message message = new Message();
-                        message.what = UPDATE_REPM;
-                        handler_rep.sendMessage(message);
+//    private void connectData(){
+//        new Thread(){
+//            public void run(){
+//                try{
+//                    Looper.prepare();
+//                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+//                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+//                        Log.d("调试", "连接成功,消息界面");
+//                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+//                        //查找信息
+//                        String sql_connect = "select * from repair where repair_id = '" +
+//                                intent_data_id +
+//                                "'";
+//                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+//                        resultSet.next();
+//                        time = resultSet.getString("repair_select_time");
+//                        spinner = resultSet.getString("repair_leixing");
+//                        content = resultSet.getString("repair_content");
+//                        Blob picture1 = resultSet.getBlob("repair_picture1");
+//                        Blob picture2 = resultSet.getBlob("repair_picture2");
+//                        Blob picture3 = resultSet.getBlob("repair_picture3");
+//                        Blob picture4 = resultSet.getBlob("repair_picture4");
+//                        Blob picture5 = resultSet.getBlob("repair_picture5");
+//                        Blob picture6 = resultSet.getBlob("repair_picture6");
+//                        if(picture1 != null){
+//                            InputStream inputStream1 = picture1.getBinaryStream();
+//                            Bitmap bitmap1 = DealBitmap.InputToBitmap(inputStream1);
+//                            ImageGetPath.add(bitmap1);
+//                        }
+//                        if(picture2 != null){
+//                            InputStream inputStream2 = picture2.getBinaryStream();
+//                            Bitmap bitmap2 = DealBitmap.InputToBitmap(inputStream2);
+//                            ImageGetPath.add(bitmap2);
+//                        }
+//                        if(picture3 != null){
+//                            InputStream inputStream3 = picture3.getBinaryStream();
+//                            Bitmap bitmap3 = DealBitmap.InputToBitmap(inputStream3);
+//                            ImageGetPath.add(bitmap3);
+//                        }
+//                        if(picture4 != null){
+//                            InputStream inputStream4 = picture4.getBinaryStream();
+//                            Bitmap bitmap4 = DealBitmap.InputToBitmap(inputStream4);
+//                            ImageGetPath.add(bitmap4);
+//                        }
+//                        if(picture5 != null){
+//                            InputStream inputStream5 = picture5.getBinaryStream();
+//                            Bitmap bitmap5 = DealBitmap.InputToBitmap(inputStream5);
+//                            ImageGetPath.add(bitmap5);
+//                        }
+//                        if(picture6 != null){
+//                            InputStream inputStream6 = picture6.getBinaryStream();
+//                            Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
+//                            ImageGetPath.add(bitmap6);
+//                        }
+//                        resultSet.close();
+//                        if(!name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
+//                            String sql_user = "select * from user where user_phone = '" +
+//                                    name +
+//                                    "'" ;
+//                            ResultSet resultSet1 = stmt.executeQuery(sql_user);
+//                            resultSet1.next();
+//                            user = resultSet1.getString("user_name") + "(" + name + ")";
+//                            add = resultSet1.getString("user_address");
+//                            Blob blob = resultSet1.getBlob("user_picture");
+//                            if(blob != null){
+//                                InputStream inputStream = blob.getBinaryStream();
+//                                bitmap = DealBitmap.InputToBitmap(inputStream);
+//                            }
+//                        }
+//                        System.out.println(ImageGetPath);
+//                        Message message = new Message();
+//                        message.what = UPDATE_REPM;
+//                        handler_rep.sendMessage(message);
+//
+//                        JDBCTools.releaseConnection(stmt,conn);
+//                    }else {
+//                        Log.d("调试", "连接失败,消息界面");
+//                        Toast toast = Toast.makeText(RepairMakeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    }
+//
+//                }catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                Looper.loop();
+//            }
+//        }.start();
+//    }
+//
+//    private Handler handler_rep = new Handler(new Handler.Callback() {
+//        @Override
+//        public boolean handleMessage(Message msg) {
+//            // TODO Auto-generated method stub
+//            switch (msg.what){
+//                case UPDATE_REPM:{
+//                    repair_time.setText(time);
+//                    initSpinner(repair_spinner,spinner);
+//                    repair_edit.setText(content,null);
+//                    for(int i = 0; i<ImageGetPath.size(); i++){
+//                        showLoadImage(ImageGetPath.get(i));
+//                    }
+//                    if(!name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
+//                        if(bitmap != null){
+//                            repair_image.setImageBitmap(bitmap);
+//                        }else {
+//                            repair_image.setImageResource(R.mipmap.ic_launcher_round);
+//                        }
+//                        repair_name.setText(user);
+//                        repair_add.setText(add);
+//                    }
+//                    updateLoad();
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//            return false;
+//        }
+//    });
 
-                        JDBCTools.releaseConnection(stmt,conn);
-                    }else {
-                        Log.d("调试", "连接失败,消息界面");
-                        Toast toast = Toast.makeText(RepairMakeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }.start();
-    }
-
-    private Handler handler_rep = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            switch (msg.what){
-                case UPDATE_REPM:{
-                    repair_time.setText(time);
-                    initSpinner(repair_spinner,spinner);
-                    repair_edit.setText(content,null);
-                    for(int i = 0; i<ImageGetPath.size(); i++){
-                        showLoadImage(ImageGetPath.get(i));
-                    }
-                    if(!name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
-                        if(bitmap != null){
-                            repair_image.setImageBitmap(bitmap);
-                        }else {
-                            repair_image.setImageResource(R.mipmap.ic_launcher_round);
-                        }
-                        repair_name.setText(name);
-                    }
-                    updateLoad();
-                    break;
-                }
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
-
-    private void initSpinner(Spinner spinner,String s){
+    private void initSpinner(Spinner spinner, String s){
         ArrayList<String> spinners = new ArrayList<>();
         spinners.add(s);
         //设置ArrayAdapter内置的item样式-这里是单行显示样式
@@ -392,9 +465,13 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
   * */
     private void showImage(String image_Path){
         File file = new File(image_Path);
-        compressWithLs(file);
+        if(mes_select == 1){
+            ImagePath.add(image_Path);
+        }else {
+            compressWithLs(file);
+        }
         ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
+        ImageAdapter.Item_Image item_image = first.new Item_Image(image_Path);
         ImageData.add(image_Path);
         ImageDatas.add(item_image);
         update();
@@ -410,8 +487,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                 Intent intent = new Intent(RepairMakeActivity.this,ShowImage.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("image_select_name",ImageData.get(position));
-                bundle.putInt("image_select_id",0);
-                bundle.putInt("image_select_new",intent_data_id);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -421,32 +496,32 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     /*
    * 加载图片
    * */
-    private void showLoadImage(Bitmap bitmap){
-        ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(bitmap);
-        ImageDatas.add(item_image);
-    }
-
-    //加载网络图片的大图
-    private void updateLoad(){
-        repair_rv.setLayoutManager(new GridLayoutManager(this,3));
-        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
-        repair_rv.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(RepairMakeActivity.this,ShowImage.class);
-                Bundle bundle = new Bundle();
-                int pos = position+1;
-                bundle.putString("select_fenlei","repair");
-                bundle.putString("image_select_name","repair_picture"+pos);
-                bundle.putInt("image_select_id",1);
-                bundle.putInt("image_select_new",intent_data_id);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-    }
+//    private void showLoadImage(Bitmap bitmap){
+//        ImageAdapter first = new ImageAdapter(ImageDatas);
+//        ImageAdapter.Item_Image item_image = first.new Item_Image(bitmap);
+//        ImageDatas.add(item_image);
+//    }
+//
+//    //加载网络图片的大图
+//    private void updateLoad(){
+//        repair_rv.setLayoutManager(new GridLayoutManager(this,3));
+//        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
+//        repair_rv.setAdapter(mAdapter);
+//        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                Intent intent = new Intent(RepairMakeActivity.this,ShowImage.class);
+//                Bundle bundle = new Bundle();
+//                int pos = position+1;
+//                bundle.putString("select_fenlei","repair");
+//                bundle.putString("image_select_name","repair_picture"+pos);
+//                bundle.putInt("image_select_id",1);
+//                bundle.putInt("image_select_new",intent_data_id);
+//                intent.putExtras(bundle);
+//                startActivity(intent);
+//            }
+//        });
+//    }
 
     //获取系统时间，并进行格式转换
     private String getTime(){

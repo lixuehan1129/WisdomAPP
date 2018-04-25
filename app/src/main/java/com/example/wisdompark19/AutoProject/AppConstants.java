@@ -11,8 +11,15 @@ public class AppConstants {
     public static final String USER_AREA = "app_user_area";
     public static final String USER_SEX = "app_user_sex";
     public static final String USER_PICTURE = "app_user_picture";
+
     public static final String BROAD_CON = "android.intent.action.broadcast";
+    public static final String BROAD_MES = "android.intent.action.broadcast.mes";
+    public static final String BROAD_FIND = "android.intent.action.broadcast.find";
+    public static final String BROAD_REPAIR = "android.intent.action.broadcast.repair";
+    public static final String BROAD_SHOP = "android.intent.action.broadcast.shop";
 
     public static final int CAMERA = 1;
     public static final int ALBUM = 2;
+
+    public static final int SQL_VISION = 1;
 }

@@ -151,8 +151,6 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         });
-        System.out.println(user_sex_select);
-
     }
 
     @Override
@@ -337,7 +335,6 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                             Intent intent_broad = new Intent(AppConstants.BROAD_CON);
                             LocalBroadcastManager.getInstance(MineChangeActivity.this).sendBroadcast(intent_broad);
                             MineChangeActivity.this.finish();
-
                     } else {
                         Log.d("调试", "连接失败");
                         Toast toast=Toast.makeText(MineChangeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
@@ -373,7 +370,6 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                 if(select_item[0] == null){
                     if(mine_change_society.getText().toString().equals(society_list.get(0))){
                         Toast.makeText(MineChangeActivity.this,"已经选择该社区", Toast.LENGTH_SHORT).show();
-                        System.out.println("222");
                     }else {
                         mine_change_society.setText(society_list.get(0));
                         AREA_SELECT = 0; //选择了一个社区。
@@ -381,7 +377,6 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                 }else {
                     if(mine_change_society.getText().toString().equals(select_item[0])){
                         Toast.makeText(MineChangeActivity.this,"已经选择该社区", Toast.LENGTH_SHORT).show();
-                        System.out.println("2221");
                     }else {
                         mine_change_society.setText(select_item[0]);
                         AREA_SELECT = 0; //选择了一个社区。

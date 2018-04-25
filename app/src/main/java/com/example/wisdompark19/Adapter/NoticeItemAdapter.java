@@ -2,6 +2,8 @@ package com.example.wisdompark19.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.wisdompark19.R;
 
 import java.util.List;
@@ -64,7 +67,13 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         String card_message_time = mNotice_item.getCard_message_time();
         Bitmap url = mNotice_item.getCard_message_image();
         if(url!=null){
-           holder.card_message_image.setImageBitmap(url);
+//            Glide.with(mContext)
+//                    .load(url)
+//                    .placeholder(R.mipmap.ic_launcher_round)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .override(100,100)
+//                    .into(holder.card_message_image);
+            holder.card_message_image.setImageBitmap(url);
         }else {
             holder.card_message_image.setImageResource(R.mipmap.ic_launcher_round);
         }

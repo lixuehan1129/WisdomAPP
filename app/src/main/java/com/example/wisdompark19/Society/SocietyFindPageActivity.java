@@ -1,7 +1,10 @@
 package com.example.wisdompark19.Society;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
@@ -33,6 +37,7 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Mine.MineRegistActivity;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.ShowImage;
 import com.mysql.jdbc.Connection;
 
@@ -63,12 +68,13 @@ import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolute
 
 public class SocietyFindPageActivity extends AppCompatActivity {
 
+    private DataBaseHelper dataBaseHelper;
     private Uri photoUri;
     private int mes_select;
     private List<ImageAdapter.Item_Image> ImageDatas;
     private List<String> ImagePath;
     private List<String> ImageData;
-    private List<Bitmap> ImageGetPath;
+//    private List<Bitmap> ImageGetPath;
     private Button society_find_page_ok;
     private EditText society_find_page_title;
     private EditText society_find_page_content;
@@ -80,13 +86,13 @@ public class SocietyFindPageActivity extends AppCompatActivity {
     private LinearLayout mLinearLayout;
     private TextView mTextView;
     private CircleImageView mCircleImageView;
-    private String title;
-    private String content;
-    private String time;
-    private String phone;
+//    private String title;
+//    private String content;
+//    private String time;
+//    private String phone;
     private int intent_data_id;
-    public static final int UPDATE_FIND = 1;
-    public static final int UPDATE_YEZHU = 2;
+//    public static final int UPDATE_FIND = 1;
+//    public static final int UPDATE_YEZHU = 2;
     private String yezhu;
     private Bitmap bitmap = null;
 
@@ -99,10 +105,10 @@ public class SocietyFindPageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         intent_data_id = intent.getIntExtra("put_data_find_id",0);
         mes_select = intent.getIntExtra("put_data_find_select",1);
-        title = intent.getStringExtra("put_data_find_title");
-        content = intent.getStringExtra("put_data_find_content");
-        time = intent.getStringExtra("put_data_find_time");
-        phone = intent.getStringExtra("put_data_find_phone");
+//        title = intent.getStringExtra("put_data_find_title");
+//        content = intent.getStringExtra("put_data_find_content");
+//        time = intent.getStringExtra("put_data_find_time");
+//        phone = intent.getStringExtra("put_data_find_phone");
         Toolbar toolbar = (Toolbar)findViewById(R.id.society_find_page_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle("失物招领");
@@ -122,7 +128,10 @@ public class SocietyFindPageActivity extends AppCompatActivity {
         society_find_page_take = (ImageView) findViewById(R.id.society_find_page_take);
         society_find_page_add = (ImageView) findViewById(R.id.society_find_page_add);
         society_find_page_tacv = (CardView) findViewById(R.id.society_find_page_tacv);
-
+        dataBaseHelper = new DataBaseHelper(SocietyFindPageActivity.this,AppConstants.SQL_VISION);
+        ImageDatas = new ArrayList<>();
+        ImagePath = new ArrayList<>();
+        ImageData = new ArrayList<>();
         if(mes_select == 1){//进入
             mLinearLayout.getLayoutParams().height = mLinearLayout.getLayoutParams().WRAP_CONTENT;
             society_find_page_ok.setVisibility(View.INVISIBLE);
@@ -130,19 +139,14 @@ public class SocietyFindPageActivity extends AppCompatActivity {
             society_find_page_time.setVisibility(View.VISIBLE);
             society_find_page_title.setEnabled(false);
             society_find_page_content.setEnabled(false);
-            society_find_page_title.setText(title);
-            society_find_page_content.setText(content);
-            society_find_page_time.setText(time);
-            ImageGetPath = new ArrayList<>();
-            ImageDatas = new ArrayList<>();
-            ImagePath = new ArrayList<>();
-            getUser();
+//            society_find_page_title.setText(title);
+//            society_find_page_content.setText(content);
+//            society_find_page_time.setText(time);
+//            ImageGetPath = new ArrayList<>();
+//            getUser();
             getData();
         }else {//创建
             mLinearLayout.getLayoutParams().height = 0;
-            ImageDatas = new ArrayList<>();
-            ImagePath = new ArrayList<>();
-            ImageData = new ArrayList<>();
         }
 
         society_find_page_take.setOnClickListener(new View.OnClickListener() {
@@ -190,146 +194,205 @@ public class SocietyFindPageActivity extends AppCompatActivity {
     }
 
     //异步更新
-    private Handler handler_find = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            switch (msg.what){
-                case UPDATE_FIND:{
-                    for(int i = 0; i<ImageGetPath.size(); i++){
-                        showLoadImage(ImageGetPath.get(i));
-                    }
-                    updateLoad();
-                    break;
-                }
-                case UPDATE_YEZHU:{
-                    mTextView.setText(yezhu);
-                    if(bitmap != null){
-                        mCircleImageView.setImageBitmap(bitmap);
-                    }else {
-                        mCircleImageView.setImageResource(R.mipmap.ic_launcher_round);
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
+//    private Handler handler_find = new Handler(new Handler.Callback() {
+//        @Override
+//        public boolean handleMessage(Message msg) {
+//            // TODO Auto-generated method stub
+//            switch (msg.what){
+//                case UPDATE_FIND:{
+//                    for(int i = 0; i<ImageGetPath.size(); i++){
+//                        showLoadImage(ImageGetPath.get(i));
+//                    }
+//                    updateLoad();
+//                    break;
+//                }
+//                case UPDATE_YEZHU:{
+//                    mTextView.setText(yezhu);
+//                    if(bitmap != null){
+//                        mCircleImageView.setImageBitmap(bitmap);
+//                    }else {
+//                        mCircleImageView.setImageResource(R.mipmap.ic_launcher_round);
+//                    }
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//            return false;
+//        }
+//    });
 
-    private void getUser(){
-        new Thread(){
-            public void run(){
-                try{
-                    Looper.prepare();
-                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试", "连接成功,失物界面");
-                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-                        //查找信息
-                        String sql_connect = "select * from user where user_phone = '" +
-                                phone +
-                                "'";
-                        ResultSet resultSet = stmt.executeQuery(sql_connect);
-                        resultSet.next();
-                        yezhu = resultSet.getString("user_name") + "(" +
-                                phone + ")";
-                        Blob blob = resultSet.getBlob("user_picture");
-                        if(blob != null){
-                            InputStream inputStream = blob.getBinaryStream();
-                            bitmap = DealBitmap.InputToBitmap(inputStream);
-                        }
-                        Message message = new Message();
-                        message.what = UPDATE_YEZHU;
-                        handler_find.sendMessage(message);
-                        resultSet.close();
-                        JDBCTools.releaseConnection(stmt,conn);
-                    }else {
-                        Log.d("调试", "连接失败，失物招领");
-                        Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
+//    private void getUser(){
+//        new Thread(){
+//            public void run(){
+//                try{
+//                    Looper.prepare();
+//                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+//                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+//                        Log.d("调试", "连接成功,失物界面");
+//                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+//                        //查找信息
+//                        String sql_connect = "select * from user where user_phone = '" +
+//                                phone +
+//                                "'";
+//                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+//                        resultSet.next();
+//                        yezhu = resultSet.getString("user_name") + "(" +
+//                                phone + ")";
+//                        Blob blob = resultSet.getBlob("user_picture");
+//                        if(blob != null){
+//                            InputStream inputStream = blob.getBinaryStream();
+//                            bitmap = DealBitmap.InputToBitmap(inputStream);
+//                        }
+//                        Message message = new Message();
+//                        message.what = UPDATE_YEZHU;
+//                        handler_find.sendMessage(message);
+//                        resultSet.close();
+//                        JDBCTools.releaseConnection(stmt,conn);
+//                    }else {
+//                        Log.d("调试", "连接失败，失物招领");
+//                        Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    }
+//
+//                }catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                Looper.loop();
+//            }
+//        }.start();
+//    }
 
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }.start();
-    }
-
+    //从本地读取数据
+    @SuppressLint("SetTextI18n")
     private void getData(){
-        new Thread(){
-            public void run(){
-                try{
-                    Looper.prepare();
-                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试", "连接成功,消息界面");
-                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-                        //查找信息
-                        String sql_connect = "select * from shiwu where shiwu_id = '" +
-                                intent_data_id +
-                                "'";
-                        ResultSet resultSet = stmt.executeQuery(sql_connect);
-                        resultSet.next();
-                        Blob picture1 = resultSet.getBlob("shiwu_picture1");
-                        Blob picture2 = resultSet.getBlob("shiwu_picture2");
-                        Blob picture3 = resultSet.getBlob("shiwu_picture3");
-                        Blob picture4 = resultSet.getBlob("shiwu_picture4");
-                        Blob picture5 = resultSet.getBlob("shiwu_picture5");
-                        Blob picture6 = resultSet.getBlob("shiwu_picture6");
-                        if(picture1 != null){
-                            InputStream inputStream1 = picture1.getBinaryStream();
-                            Bitmap bitmap1 = DealBitmap.InputToBitmap(inputStream1);
-                            ImageGetPath.add(bitmap1);
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query("shiwu",null,"shiwu_id = ?",new String[]{String.valueOf(intent_data_id)},
+                null,null,null);
+        if(cursor.moveToFirst()){
+            String name = cursor.getString(cursor.getColumnIndex("shiwu_name"));
+            String phone = cursor.getString(cursor.getColumnIndex("shiwu_phone"));
+            mTextView.setText(name + "(" + phone + ")");
+            Cursor cursor_phone = sqLiteDatabase.query("user",null,
+                    "user_phone = ?",new String[]{phone},null,null,null);
+            if(cursor_phone != null){
+                if(cursor_phone.moveToFirst()){
+                    Bitmap picture = null;
+                    //查找成员头像
+                    byte[] bytes = null;
+                    if(cursor_phone.moveToFirst()){
+                        bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
+                        if(bytes != null){
+                            picture = DealBitmap.byteToBit(bytes);
+                            if(picture != null){
+                                mCircleImageView.setImageBitmap(picture);
+                            }else {
+                                mCircleImageView.setImageResource(R.mipmap.ic_launcher_round);
+                            }
                         }
-                        if(picture2 != null){
-                            InputStream inputStream2 = picture2.getBinaryStream();
-                            Bitmap bitmap2 = DealBitmap.InputToBitmap(inputStream2);
-                            ImageGetPath.add(bitmap2);
-                        }
-                        if(picture3 != null){
-                            InputStream inputStream3 = picture3.getBinaryStream();
-                            Bitmap bitmap3 = DealBitmap.InputToBitmap(inputStream3);
-                            ImageGetPath.add(bitmap3);
-                        }
-                        if(picture4 != null){
-                            InputStream inputStream4 = picture4.getBinaryStream();
-                            Bitmap bitmap4 = DealBitmap.InputToBitmap(inputStream4);
-                            ImageGetPath.add(bitmap4);
-                        }
-                        if(picture5 != null){
-                            InputStream inputStream5 = picture5.getBinaryStream();
-                            Bitmap bitmap5 = DealBitmap.InputToBitmap(inputStream5);
-                            ImageGetPath.add(bitmap5);
-                        }
-                        if(picture6 != null){
-                            InputStream inputStream6 = picture6.getBinaryStream();
-                            Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
-                            ImageGetPath.add(bitmap6);
-                        }
-                        System.out.println(ImageGetPath);
-                        Message message = new Message();
-                        message.what = UPDATE_FIND;
-                        handler_find.sendMessage(message);
-                        resultSet.close();
-                        JDBCTools.releaseConnection(stmt,conn);
-                    }else {
-                        Log.d("调试", "连接失败,消息界面");
-                        Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
-                        toast.show();
                     }
-
-                }catch (SQLException e) {
-                    e.printStackTrace();
                 }
-                Looper.loop();
+                cursor_phone.close();
             }
-        }.start();
+            society_find_page_title.setText(cursor.getString(cursor.getColumnIndex("shiwu_title")));
+            society_find_page_content.setText(cursor.getString(cursor.getColumnIndex("shiwu_content")));
+            society_find_page_time.setText(cursor.getString(cursor.getColumnIndex("shiwu_time")));
+            String picture1 = cursor.getString(cursor.getColumnIndex("shiwu_picture1"));
+            String picture2 = cursor.getString(cursor.getColumnIndex("shiwu_picture2"));
+            String picture3 = cursor.getString(cursor.getColumnIndex("shiwu_picture3"));
+            String picture4 = cursor.getString(cursor.getColumnIndex("shiwu_picture4"));
+            String picture5 = cursor.getString(cursor.getColumnIndex("shiwu_picture5"));
+            String picture6 = cursor.getString(cursor.getColumnIndex("shiwu_picture6"));
+            if(picture1 != null){
+                showImage(picture1);
+            }
+            if(picture2 != null){
+                showImage(picture2);
+            }
+            if(picture3 != null){
+                showImage(picture3);
+            }
+            if(picture4 != null){
+                showImage(picture4);
+            }
+            if(picture5 != null){
+                showImage(picture5);
+            }
+            if(picture6 != null){
+                showImage(picture6);
+            }
+        }
+//        new Thread(){
+//            public void run(){
+//                try{
+//                    Looper.prepare();
+//                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+//                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+//                        Log.d("调试", "连接成功,消息界面");
+//                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+//                        //查找信息
+//                        String sql_connect = "select * from shiwu where shiwu_id = '" +
+//                                intent_data_id +
+//                                "'";
+//                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+//                        resultSet.next();
+//                        Blob picture1 = resultSet.getBlob("shiwu_picture1");
+//                        Blob picture2 = resultSet.getBlob("shiwu_picture2");
+//                        Blob picture3 = resultSet.getBlob("shiwu_picture3");
+//                        Blob picture4 = resultSet.getBlob("shiwu_picture4");
+//                        Blob picture5 = resultSet.getBlob("shiwu_picture5");
+//                        Blob picture6 = resultSet.getBlob("shiwu_picture6");
+//                        if(picture1 != null){
+//                            InputStream inputStream1 = picture1.getBinaryStream();
+//                            Bitmap bitmap1 = DealBitmap.InputToBitmap(inputStream1);
+//                            ImageGetPath.add(bitmap1);
+//                        }
+//                        if(picture2 != null){
+//                            InputStream inputStream2 = picture2.getBinaryStream();
+//                            Bitmap bitmap2 = DealBitmap.InputToBitmap(inputStream2);
+//                            ImageGetPath.add(bitmap2);
+//                        }
+//                        if(picture3 != null){
+//                            InputStream inputStream3 = picture3.getBinaryStream();
+//                            Bitmap bitmap3 = DealBitmap.InputToBitmap(inputStream3);
+//                            ImageGetPath.add(bitmap3);
+//                        }
+//                        if(picture4 != null){
+//                            InputStream inputStream4 = picture4.getBinaryStream();
+//                            Bitmap bitmap4 = DealBitmap.InputToBitmap(inputStream4);
+//                            ImageGetPath.add(bitmap4);
+//                        }
+//                        if(picture5 != null){
+//                            InputStream inputStream5 = picture5.getBinaryStream();
+//                            Bitmap bitmap5 = DealBitmap.InputToBitmap(inputStream5);
+//                            ImageGetPath.add(bitmap5);
+//                        }
+//                        if(picture6 != null){
+//                            InputStream inputStream6 = picture6.getBinaryStream();
+//                            Bitmap bitmap6 = DealBitmap.InputToBitmap(inputStream6);
+//                            ImageGetPath.add(bitmap6);
+//                        }
+//                        System.out.println(ImageGetPath);
+//                        Message message = new Message();
+//                        message.what = UPDATE_FIND;
+//                        handler_find.sendMessage(message);
+//                        resultSet.close();
+//                        JDBCTools.releaseConnection(stmt,conn);
+//                    }else {
+//                        Log.d("调试", "连接失败,消息界面");
+//                        Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    }
+//
+//                }catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                Looper.loop();
+//            }
+//        }.start();
     }
 
+    //上传数据
     private void UpdateData(){
         new Thread(){
             public void run(){
@@ -339,7 +402,6 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
                         Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-
                         //上传
                         java.sql.PreparedStatement preparedStatement = null;
                         String newmessage_sql_insert = "insert into shiwu (shiwu_name,shiwu_phone,shiwu_area,shiwu_time," +
@@ -374,7 +436,9 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
-                        finish();
+                        Intent intent_broad = new Intent(AppConstants.BROAD_MES);
+                        LocalBroadcastManager.getInstance(SocietyFindPageActivity.this).sendBroadcast(intent_broad);
+                        SocietyFindPageActivity.this.finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
@@ -391,41 +455,45 @@ public class SocietyFindPageActivity extends AppCompatActivity {
     /*
   * 加载图片
   * */
-    private void showLoadImage(Bitmap bitmap){
-        ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(bitmap);
-        ImageDatas.add(item_image);
-    }
+//    private void showLoadImage(Bitmap bitmap){
+//        ImageAdapter first = new ImageAdapter(ImageDatas);
+//        ImageAdapter.Item_Image item_image = first.new Item_Image(bitmap);
+//        ImageDatas.add(item_image);
+//    }
 
     //加载网络图片的大图
-    private void updateLoad(){
-        society_find_page_rv.setLayoutManager(new GridLayoutManager(this,3));
-        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
-        society_find_page_rv.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(SocietyFindPageActivity.this,ShowImage.class);
-                Bundle bundle = new Bundle();
-                int pos = position+1;
-                bundle.putString("select_fenlei","shiwu");
-                bundle.putString("image_select_name","shiwu_picture"+pos);
-                bundle.putInt("image_select_id",1);
-                bundle.putInt("image_select_new",intent_data_id);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-    }
+//    private void updateLoad(){
+//        society_find_page_rv.setLayoutManager(new GridLayoutManager(this,3));
+//        ImageAdapter mAdapter = new ImageAdapter(ImageDatas);
+//        society_find_page_rv.setAdapter(mAdapter);
+//        mAdapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                Intent intent = new Intent(SocietyFindPageActivity.this,ShowImage.class);
+//                Bundle bundle = new Bundle();
+//                int pos = position+1;
+//                bundle.putString("select_fenlei","shiwu");
+//                bundle.putString("image_select_name","shiwu_picture"+pos);
+//                bundle.putInt("image_select_id",1);
+//                bundle.putInt("image_select_new",intent_data_id);
+//                intent.putExtras(bundle);
+//                startActivity(intent);
+//            }
+//        });
+//    }
 
     /*
     * 加载图片
     * */
     private void showImage(String image_Path){
         File file = new File(image_Path);
-        compressWithLs(file);
+        if(mes_select == 1){
+            ImagePath.add(image_Path);
+        }else {
+            compressWithLs(file);
+        }
         ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
+        ImageAdapter.Item_Image item_image = first.new Item_Image(image_Path);
         ImageData.add(image_Path);
         ImageDatas.add(item_image);
         update();
@@ -442,8 +510,6 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                 Intent intent = new Intent(SocietyFindPageActivity.this,ShowImage.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("image_select_name",ImageData.get(position));
-                bundle.putInt("image_select_id",0);
-                bundle.putInt("image_select_new",9);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -453,9 +519,8 @@ public class SocietyFindPageActivity extends AppCompatActivity {
 
     //获取系统时间，并进行格式转换
     private String getTime(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = simpleDateFormat.format(new Date());
-        return dateString;
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(new Date());
     }
 
     //调用相机拍照

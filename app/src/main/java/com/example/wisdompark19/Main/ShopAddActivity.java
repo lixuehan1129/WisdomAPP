@@ -258,7 +258,7 @@ public class ShopAddActivity extends AppCompatActivity {
         File file = new File(image_Path);
         compressWithLs(file);
         ImageAdapter first = new ImageAdapter(ImageDatas);
-        ImageAdapter.Item_Image item_image = first.new Item_Image(DealBitmap.UriToBitmap(image_Path));
+        ImageAdapter.Item_Image item_image = first.new Item_Image(image_Path);
         ImageData.add(image_Path);
         ImageDatas.add(item_image);
         update();

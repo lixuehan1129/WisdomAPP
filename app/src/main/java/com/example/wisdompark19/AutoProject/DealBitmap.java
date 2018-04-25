@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,7 +40,9 @@ public class DealBitmap {
      * 压缩图片（质量压缩）
      * @param
      */
-    public static String compressImage(Bitmap bitmap) {
+    public static String compressImage(Blob blob, String s) throws SQLException {
+        InputStream inputStream = blob.getBinaryStream();
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
         int options = 100;
@@ -47,10 +52,17 @@ public class DealBitmap {
             bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
             long length = baos.toByteArray().length;
         }
+        // 获取 SD 卡根目录
+        String saveDir = Environment.getExternalStorageDirectory() + "/com.example.wisdom.park/IMG/";
+        // 新建目录
+        File dir = new File(saveDir);
+        if (! dir.exists()) {
+            dir.mkdirs();
+        }
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         Date date = new Date(System.currentTimeMillis());
-        String filename = format.format(date);
-        File file = new File(Environment.getExternalStorageDirectory(),filename+".png");
+        String filename = format.format(date) + s;
+        File file = new File(saveDir,filename+".png");
         try {
             FileOutputStream fos = new FileOutputStream(file);
             try {
@@ -91,6 +103,10 @@ public class DealBitmap {
         return bitmap;
     }
 
+    public static Bitmap byteToBit(byte[] bytes){
+        Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return b;
+    }
     public static Bitmap BitmapYasuo(Bitmap bitmap){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
@@ -102,6 +118,36 @@ public class DealBitmap {
             long length = baos.toByteArray().length;
         }
         return bitmap;
+    }
+    /**
+     * 把Blob类型转换为byte数组类型
+     *
+     * @param blob
+     * @return
+     */
+    public static byte[] blobToBytes(Blob blob) {
+        BufferedInputStream is = null;
+        try {
+            is = new BufferedInputStream(blob.getBinaryStream());
+            byte[] bytes = new byte[(int) blob.length()];
+            int len = bytes.length;
+            int offset = 0;
+            int read = 0;
+            while (offset < len
+                    && (read = is.read(bytes, offset, len - offset)) >= 0) {
+                offset += read;
+            }
+            return bytes;
+        } catch (Exception e) {
+            return null;
+        } finally {
+            try {
+                is.close();
+                is = null;
+            } catch (IOException e) {
+                return null;
+            }
+        }
     }
 
     public static String BitmapToString(Bitmap bitmap){

@@ -42,7 +42,8 @@
                     android:paddingBottom="10dp"
                     android:layout_width="100dp"
                     android:paddingRight="10dp"
-                    android:layout_height="100dp" />
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop"/>
                 <ImageView
                     android:layout_weight="1"
                     android:id="@+id/society_find_item_image2"
@@ -50,7 +51,8 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="10dp"
                     android:paddingRight="10dp"
-                    android:layout_height="100dp" />
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop"/>
                 <ImageView
                     android:layout_weight="1"
                     android:id="@+id/society_find_item_image3"
@@ -58,13 +60,15 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="10dp"
                     android:paddingRight="10dp"
-                    android:layout_height="100dp" />
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop"/>
                 <ImageView
                     android:layout_weight="1"
                     android:layout_width="100dp"
                     android:paddingTop="2dp"
                     android:paddingBottom="10dp"
-                    android:layout_height="100dp" />
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop"/>
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

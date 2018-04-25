@@ -1,11 +1,14 @@
 package com.example.wisdompark19.Society;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,6 +32,7 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.BaseFragment;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
 import java.io.InputStream;
@@ -48,6 +52,7 @@ public class SocietyMemberCheck extends BaseFragment {
     private LocalBroadcastManager broadcastManager;
     private IntentFilter intentFilter;
     private BroadcastReceiver mReceiver;
+    private DataBaseHelper dataBaseHelper;
     private List<SocietyMemberAdapter.Item_member> Data;
     private RecyclerView.LayoutManager mLayoutManager;
     private SocietyMemberAdapter mSocietyMemberAdapter;
@@ -72,23 +77,23 @@ public class SocietyMemberCheck extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         findView(getView());
-        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        intentFilter = new IntentFilter();
-        intentFilter.addAction(AppConstants.BROAD_CON);
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent){
-                //收到广播后所作的操作
-                mSwipeRefreshLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSwipeRefreshLayout.setRefreshing(true);
-                    }
-                });
-                connectData();
-            }
-        };
-        broadcastManager.registerReceiver(mReceiver, intentFilter);
+//        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+//        intentFilter = new IntentFilter();
+//        intentFilter.addAction(AppConstants.BROAD_CON);
+//        mReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent){
+//                //收到广播后所作的操作
+//                mSwipeRefreshLayout.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mSwipeRefreshLayout.setRefreshing(true);
+//                    }
+//                });
+//                connectData();
+//            }
+//        };
+//        broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
     @Override
     public void onDestroy() {
@@ -105,14 +110,15 @@ public class SocietyMemberCheck extends BaseFragment {
 
     @Override
     protected void onFragmentFirstVisible() {
+        LocalData();
         //去服务器下载数据
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
-        connectData();
+//        mSwipeRefreshLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mSwipeRefreshLayout.setRefreshing(true);
+//            }
+//        });
+//        connectData();
     }
 
     private void findView(View view){
@@ -120,83 +126,108 @@ public class SocietyMemberCheck extends BaseFragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.society_member_sr);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                connectData();
-            }
-        });
+        dataBaseHelper = new DataBaseHelper(getActivity(),AppConstants.SQL_VISION);
+//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                connectData();
+//            }
+//        });
     }
 
-    private Handler handler_mem = new Handler(new Handler.Callback() {
-
-        @Override
-        public boolean handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            switch (msg.what){
-                case UPDATE_MEM:{
-                    initData();
-                    setAdapter();
-                    setItemClick();
-                    mSwipeRefreshLayout.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
-                    break;
-                }
-                default:
-                    break;
+    private void LocalData(){
+        member_image = new ArrayList<>();
+        member_name = new ArrayList<>();
+        member_phone = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase.query("user",null,
+                null,null,null,null,"user_sort");
+        while (cursor.moveToNext()){
+            Bitmap picture = null;
+            byte[] bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
+            if(bytes != null){
+                picture = DealBitmap.byteToBit(bytes);
             }
-            return false;
+            String name = cursor.getString(cursor.getColumnIndex("user_name"));
+            String phone = cursor.getString(cursor.getColumnIndex("user_phone"));
+            findData(picture,name,phone);
         }
-    });
-
-    private void connectData(){
-        new Thread(){
-            public void run(){
-                try{
-                    member_image = new ArrayList<>();
-                    member_name = new ArrayList<>();
-                    member_phone = new ArrayList<>();
-                    Looper.prepare();
-                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试", "连接成功,成员列表");
-                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-                        //查找信息
-                        String sql_connect = "select * from user where user_area = '" +
-                                SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by user_sort";
-                        ResultSet resultSet = stmt.executeQuery(sql_connect);
-                        while (resultSet.next()){
-                            Bitmap user_picture = null;
-                            Blob blob = resultSet.getBlob("user_picture");
-                            if(blob != null){
-                                user_picture = DealBitmap.InputToBitmap(blob.getBinaryStream());
-                            }
-                            findData(user_picture,resultSet.getString("user_name"),
-                                    resultSet.getString("user_phone"));
-                        }
-                        Message message = new Message();
-                        message.what = UPDATE_MEM;
-                        handler_mem.sendMessage(message);
-                        resultSet.close();
-                        JDBCTools.releaseConnection(stmt,conn);
-                    }else {
-                        Log.d("调试", "连接失败,成员列表");
-                        Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }.start();
+        cursor.close();
+        sqLiteDatabase.close();
+        initData();
+        setAdapter();
+        setItemClick();
     }
+
+//    private Handler handler_mem = new Handler(new Handler.Callback() {
+//
+//        @Override
+//        public boolean handleMessage(Message msg) {
+//            // TODO Auto-generated method stub
+//            switch (msg.what){
+//                case UPDATE_MEM:{
+//                    initData();
+//                    setAdapter();
+//                    setItemClick();
+//                    mSwipeRefreshLayout.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mSwipeRefreshLayout.setRefreshing(false);
+//                        }
+//                    });
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//            return false;
+//        }
+//    });
+//
+//    private void connectData(){
+//        new Thread(){
+//            public void run(){
+//                try{
+//                    member_image = new ArrayList<>();
+//                    member_name = new ArrayList<>();
+//                    member_phone = new ArrayList<>();
+//                    Looper.prepare();
+//                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+//                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+//                        Log.d("调试", "连接成功,成员列表");
+//                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+//                        //查找信息
+//                        String sql_connect = "select * from user where user_area = '" +
+//                                SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
+//                                "' order by user_sort";
+//                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+//                        while (resultSet.next()){
+//                            Bitmap user_picture = null;
+//                            Blob blob = resultSet.getBlob("user_picture");
+//                            if(blob != null){
+//                                user_picture = DealBitmap.InputToBitmap(blob.getBinaryStream());
+//                            }
+//                            findData(user_picture,resultSet.getString("user_name"),
+//                                    resultSet.getString("user_phone"));
+//                        }
+//                        Message message = new Message();
+//                        message.what = UPDATE_MEM;
+//                        handler_mem.sendMessage(message);
+//                        resultSet.close();
+//                        JDBCTools.releaseConnection(stmt,conn);
+//                    }else {
+//                        Log.d("调试", "连接失败,成员列表");
+//                        Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    }
+//
+//                }catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                Looper.loop();
+//            }
+//        }.start();
+//    }
 
     private void findData(Bitmap bitmap, String name, String phone){
         member_image.add(bitmap);
