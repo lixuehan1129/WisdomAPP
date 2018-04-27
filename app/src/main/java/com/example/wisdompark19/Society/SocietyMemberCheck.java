@@ -3,6 +3,7 @@ package com.example.wisdompark19.Society;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -77,48 +78,42 @@ public class SocietyMemberCheck extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         findView(getView());
-//        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
-//        intentFilter = new IntentFilter();
-//        intentFilter.addAction(AppConstants.BROAD_CON);
-//        mReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent){
-//                //收到广播后所作的操作
-//                mSwipeRefreshLayout.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mSwipeRefreshLayout.setRefreshing(true);
-//                    }
-//                });
-//                connectData();
-//            }
-//        };
-//        broadcastManager.registerReceiver(mReceiver, intentFilter);
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_CON);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                mSwipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
+                connectData();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         broadcastManager.unregisterReceiver(mReceiver);
     }
-//    @Override
-//    protected void onFragmentVisibleChange(boolean isVisible) {
-//        if (isVisible) {
-//            //更新界面数据，如果数据还在下载中，就显示加载框
-//        } else {
-//        }
-//    }
 
     @Override
     protected void onFragmentFirstVisible() {
         LocalData();
         //去服务器下载数据
-//        mSwipeRefreshLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mSwipeRefreshLayout.setRefreshing(true);
-//            }
-//        });
-//        connectData();
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+        connectData();
     }
 
     private void findView(View view){
@@ -127,12 +122,12 @@ public class SocietyMemberCheck extends BaseFragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.society_member_sr);
         dataBaseHelper = new DataBaseHelper(getActivity(),AppConstants.SQL_VISION);
-//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                connectData();
-//            }
-//        });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                connectData();
+            }
+        });
     }
 
     private void LocalData(){
@@ -141,7 +136,9 @@ public class SocietyMemberCheck extends BaseFragment {
         member_phone = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
         @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase.query("user",null,
-                null,null,null,null,"user_sort");
+                "user_area = ?",new String[]{
+                        SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
+                },null,null,"user_sort");
         while (cursor.moveToNext()){
             Bitmap picture = null;
             byte[] bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
@@ -159,75 +156,96 @@ public class SocietyMemberCheck extends BaseFragment {
         setItemClick();
     }
 
-//    private Handler handler_mem = new Handler(new Handler.Callback() {
-//
-//        @Override
-//        public boolean handleMessage(Message msg) {
-//            // TODO Auto-generated method stub
-//            switch (msg.what){
-//                case UPDATE_MEM:{
-//                    initData();
-//                    setAdapter();
-//                    setItemClick();
-//                    mSwipeRefreshLayout.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mSwipeRefreshLayout.setRefreshing(false);
-//                        }
-//                    });
-//                    break;
-//                }
-//                default:
-//                    break;
-//            }
-//            return false;
-//        }
-//    });
-//
-//    private void connectData(){
-//        new Thread(){
-//            public void run(){
-//                try{
-//                    member_image = new ArrayList<>();
-//                    member_name = new ArrayList<>();
-//                    member_phone = new ArrayList<>();
-//                    Looper.prepare();
-//                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-//                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-//                        Log.d("调试", "连接成功,成员列表");
-//                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-//                        //查找信息
-//                        String sql_connect = "select * from user where user_area = '" +
-//                                SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-//                                "' order by user_sort";
-//                        ResultSet resultSet = stmt.executeQuery(sql_connect);
-//                        while (resultSet.next()){
-//                            Bitmap user_picture = null;
-//                            Blob blob = resultSet.getBlob("user_picture");
-//                            if(blob != null){
-//                                user_picture = DealBitmap.InputToBitmap(blob.getBinaryStream());
-//                            }
-//                            findData(user_picture,resultSet.getString("user_name"),
-//                                    resultSet.getString("user_phone"));
-//                        }
-//                        Message message = new Message();
-//                        message.what = UPDATE_MEM;
-//                        handler_mem.sendMessage(message);
-//                        resultSet.close();
-//                        JDBCTools.releaseConnection(stmt,conn);
-//                    }else {
-//                        Log.d("调试", "连接失败,成员列表");
-//                        Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                    }
-//
-//                }catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//                Looper.loop();
-//            }
-//        }.start();
-//    }
+    private Handler handler_mem = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            switch (msg.what){
+                case UPDATE_MEM:{
+                    LocalData();
+                    mSwipeRefreshLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                    break;
+                }
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+
+    private void connectData(){
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功,成员列表");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //查找信息
+                        String sql_connect = "select * from user where user_area = '" +
+                                SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
+                                "' order by user_sort";
+                        ResultSet resultSet = stmt.executeQuery(sql_connect);
+                        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getWritableDatabase();
+                        while (resultSet.next()){
+                            if(member_phone.contains(resultSet.getString("user_phone"))){
+                                ContentValues values = new ContentValues();
+                                values.put("user_name",resultSet.getString("user_name"));
+                                values.put("user_address",resultSet.getString("user_address"));
+                                values.put("user_area",resultSet.getString("user_area"));
+                                values.put("user_sort",resultSet.getInt("user_sort"));
+                                values.put("user_sex",resultSet.getString("user_sex"));
+                                Blob picture = resultSet.getBlob("user_picture");
+                                if(picture != null){
+                                    values.put("user_picture", DealBitmap.blobToBytes(picture));
+                                }else {
+                                    values.put("user_picture", (byte[]) null);
+                                }
+                                sqLiteDatabase.update("user",values,"user_phone = ?",
+                                        new String[]{resultSet.getString("user_phone")});
+                            }else {
+                                ContentValues values = new ContentValues();
+                                values.put("user_id",resultSet.getInt("user_id"));
+                                values.put("user_name",resultSet.getString("user_name"));
+                                values.put("user_phone",resultSet.getString("user_phone"));
+                                values.put("user_address",resultSet.getString("user_address"));
+                                values.put("user_area",resultSet.getString("user_area"));
+                                values.put("user_sort",resultSet.getInt("user_sort"));
+                                values.put("user_sex",resultSet.getString("user_sex"));
+                                Blob picture = resultSet.getBlob("user_picture");
+                                if(picture != null){
+                                    values.put("user_picture", DealBitmap.blobToBytes(picture));
+                                }else {
+                                    values.put("user_picture", (byte[]) null);
+                                }
+                                sqLiteDatabase.insert("user",null,values);
+                            }
+                        }
+                        sqLiteDatabase.close();
+                        Message message = new Message();
+                        message.what = UPDATE_MEM;
+                        handler_mem.sendMessage(message);
+                        resultSet.close();
+                        JDBCTools.releaseConnection(stmt,conn);
+                    }else {
+                        Log.d("调试", "连接失败,成员列表");
+                        Toast toast = Toast.makeText(getActivity(), "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }.start();
+    }
 
     private void findData(Bitmap bitmap, String name, String phone){
         member_image.add(bitmap);

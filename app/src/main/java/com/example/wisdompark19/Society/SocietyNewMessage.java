@@ -149,7 +149,9 @@ public class SocietyNewMessage extends BaseFragment {
         card_message_image = new ArrayList<>();
         card_message_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query("newmessage",null,null,null,null,null,"newmessage_id desc");
+        Cursor cursor = sqLiteDatabase.query("newmessage",null,"newmessage_area = ?",new String[]{
+                SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
+        },null,null,"newmessage_id desc");
         while (cursor.moveToNext()){
             //从本地数据库读取
             String phone = cursor.getString(cursor.getColumnIndex("newmessage_phone"));
@@ -157,17 +159,13 @@ public class SocietyNewMessage extends BaseFragment {
             String content = cursor.getString(cursor.getColumnIndex("newmessage_content"));
             String time = cursor.getString(cursor.getColumnIndex("newmessage_time"));
             int id = cursor.getInt(cursor.getColumnIndex("newmessage_id"));
-            String phone_che = "\"" + phone + "\"";
-            System.out.println(phone_che);
             Cursor cursor_phone = sqLiteDatabase.query("user",null,
-                    "user_name = ?",new String[]{"李学翰"},null,null,null);
+                    "user_phone = ?",new String[]{phone},null,null,null);
             Bitmap picture = null;
-            System.out.println(cursor_phone.getCount());
             if(cursor_phone != null){
                 while (cursor_phone.moveToNext()){
                     //查找成员头像
                     byte[] bytes = null;
-                    System.out.println(cursor_phone.getString(cursor_phone.getColumnIndex("user_phone")));
                     bytes = cursor_phone.getBlob(cursor_phone.getColumnIndex("user_picture"));
                     if(bytes != null){
                         picture = DealBitmap.byteToBit(bytes);
@@ -175,7 +173,6 @@ public class SocietyNewMessage extends BaseFragment {
                 }
                 cursor_phone.close();
             }
-
             initRollData(title,content,time,id,picture);
         }
         cursor.close();
@@ -226,7 +223,7 @@ public class SocietyNewMessage extends BaseFragment {
                         //查找信息
                         String sql_connect = "select * from newmessage where newmessage_area = '" +
                                 SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by newmessage_id desc";
+                                "' order by newmessage_id desc limit 10";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
 //                        List<String> content_name = new ArrayList<>();
                         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
@@ -239,6 +236,7 @@ public class SocietyNewMessage extends BaseFragment {
                                 values.put("newmessage_phone",resultSet.getString("newmessage_phone"));
                                 values.put("newmessage_time",resultSet.getString("newmessage_time"));
                                 values.put("newmessage_title",resultSet.getString("newmessage_title"));
+                                values.put("newmessage_area",resultSet.getString("newmessage_area"));
                                 values.put("newmessage_content",resultSet.getString("newmessage_content"));
                                 Blob picture1 = resultSet.getBlob("newmessage_picture1");
                                 if(picture1 != null){

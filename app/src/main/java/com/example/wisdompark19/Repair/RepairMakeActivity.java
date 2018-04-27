@@ -218,24 +218,22 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             Cursor cursor_phone = sqLiteDatabase.query("user",null,
                     "user_phone = ?",new String[]{phone},null,null,null);
             if(cursor_phone != null){
-                if(cursor_phone.moveToFirst()){
+                while (cursor_phone.moveToNext()){
                     Bitmap picture = null;
                     //查找成员头像
                     byte[] bytes = null;
-                    if(cursor_phone.moveToFirst()){
-                        bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
-                        if(bytes != null){
-                            picture = DealBitmap.byteToBit(bytes);
-                            if(picture != null){
-                                repair_image.setImageBitmap(picture);
-                            }else {
-                                repair_image.setImageResource(R.mipmap.ic_launcher_round);
-                            }
+                    bytes = cursor_phone.getBlob(cursor_phone.getColumnIndex("user_picture"));
+                    if(bytes != null){
+                        picture = DealBitmap.byteToBit(bytes);
+                        if(picture != null){
+                            repair_image.setImageBitmap(picture);
+                        }else {
+                            repair_image.setImageResource(R.mipmap.ic_launcher_round);
                         }
                     }
-                    repair_name.setText(cursor.getString(cursor.getColumnIndex("user_name")) +
+                    repair_name.setText(cursor_phone.getString(cursor_phone.getColumnIndex("user_name")) +
                     "(" + phone + ")");
-                    repair_add.setText(cursor.getString(cursor.getColumnIndex("user_address")));
+                    repair_add.setText(cursor_phone.getString(cursor_phone.getColumnIndex("user_address")));
                 }
                 cursor_phone.close();
             }
@@ -267,6 +265,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                 showImage(picture6);
             }
         }
+        sqLiteDatabase.close();
     }
 
     //上传数据

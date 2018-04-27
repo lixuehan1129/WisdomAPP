@@ -112,7 +112,9 @@ public class RepairActivity extends AppCompatActivity {
         repair_check_content = new ArrayList<>();
         repair_check_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query("repair",null,null,null,null,null,"repair_id desc");
+        Cursor cursor = sqLiteDatabase.query("repair",null,"repair_area = ?",new String[]{
+                SharePreferences.getString(this,AppConstants.USER_AREA)
+        },null,null,"repair_id desc");
         while (cursor.moveToNext()){
             //从本地数据库读取
             String content = cursor.getString(cursor.getColumnIndex("repair_content"));
@@ -167,11 +169,11 @@ public class RepairActivity extends AppCompatActivity {
                         if(SharePreferences.getInt(RepairActivity.this, AppConstants.USER_SORT) == 0){
                             sql_connect = "select * from repair where repair_area = '" +
                                     SharePreferences.getString(RepairActivity.this, AppConstants.USER_AREA) +
-                                    "' order by repair_time desc";
+                                    "' order by repair_time desc limit 10";
                         }else {
                             sql_connect = "select * from repair where repair_name = '" +
                                     SharePreferences.getString(RepairActivity.this, AppConstants.USER_NAME) +
-                                    "' order by repair_time desc";
+                                    "' order by repair_time desc limit 10";
                         }
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
@@ -183,6 +185,7 @@ public class RepairActivity extends AppCompatActivity {
                                 values.put("repair_name",resultSet.getString("repair_name"));
                                 values.put("repair_phone",resultSet.getString("repair_phone"));
                                 values.put("repair_time",resultSet.getString("repair_time"));
+                                values.put("repair_area",resultSet.getString("repair_area"));
                                 values.put("repair_title",resultSet.getString("repair_leixing"));
                                 values.put("repair_content",resultSet.getString("repair_content"));
                                 Blob picture1 = resultSet.getBlob("repair_picture1");
@@ -273,8 +276,6 @@ public class RepairActivity extends AppCompatActivity {
         mRepairCheckAdapter.setmOnItemClickListener(new RepairCheckAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(RepairActivity.this, repair_check_content.get(position), Toast.LENGTH_SHORT);
-                toast.show();
                 Intent intent = new Intent(RepairActivity.this,RepairMakeActivity.class);
                 intent.putExtra("repair_check",1);
                 intent.putExtra("repair_check_image",repair_check_id.get(position));

@@ -3,6 +3,7 @@ package com.example.wisdompark19.Society;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -77,7 +78,6 @@ public class SocietyMakeComplaintPage extends AppCompatActivity {
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
                         Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
-
                         //上传
                         java.sql.PreparedStatement preparedStatement = null;
                         String newmessage_sql_insert = "insert into tucao (tucao_name,tucao_phone,tucao_area,tucao_time," +
@@ -91,6 +91,8 @@ public class SocietyMakeComplaintPage extends AppCompatActivity {
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
+                        Intent intent_broad = new Intent(AppConstants.BROAD_COM);
+                        LocalBroadcastManager.getInstance(SocietyMakeComplaintPage.this).sendBroadcast(intent_broad);
                         finish();
                     }else {
                         Log.d("调试", "连接失败");
@@ -111,8 +113,6 @@ public class SocietyMakeComplaintPage extends AppCompatActivity {
         String dateString = simpleDateFormat.format(new Date());
         return dateString;
     }
-
-
 
     //返回注销事件
     private void back(Toolbar toolbar){

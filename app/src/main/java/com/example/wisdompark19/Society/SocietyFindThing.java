@@ -158,7 +158,9 @@ public class SocietyFindThing extends BaseFragment {
         society_find_id = new ArrayList<>();
 
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query("shiwu",null,null,null,null,null,"shiwu_id desc");
+        Cursor cursor = sqLiteDatabase.query("shiwu",null,"shiwu_area = ?",new String[]{
+                SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
+        },null,null,"shiwu_id desc");
         while (cursor.moveToNext()){
             String bitmap1 = cursor.getString(cursor.getColumnIndex("shiwu_picture1"));
             String bitmap2 = cursor.getString(cursor.getColumnIndex("shiwu_picture2"));
@@ -218,7 +220,7 @@ public class SocietyFindThing extends BaseFragment {
                         //查找信息
                         String sql_connect = "select * from shiwu where shiwu_area = '" +
                                 SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by shiwu_id";
+                                "' order by shiwu_id limit 5";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                         while (resultSet.next()){
@@ -230,6 +232,7 @@ public class SocietyFindThing extends BaseFragment {
                                 values.put("shiwu_phone",resultSet.getString("shiwu_phone"));
                                 values.put("shiwu_time",resultSet.getString("shiwu_time"));
                                 values.put("shiwu_title",resultSet.getString("shiwu_title"));
+                                values.put("shiwu_area",resultSet.getString("shiwu_area"));
                                 values.put("shiwu_content",resultSet.getString("shiwu_content"));
                                 Blob picture1 = resultSet.getBlob("shiwu_picture1");
                                 if(picture1 != null){
@@ -338,8 +341,6 @@ public class SocietyFindThing extends BaseFragment {
         mSocietyFindAdapter.setmOnItemClickListener(new SocietyFindAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(getActivity(), society_find_content.get(position), Toast.LENGTH_SHORT);
-                toast.show();
                 Intent intent = new Intent(getActivity(),SocietyFindPageActivity.class);
                 intent.putExtra("put_data_find_id",society_find_id.get(position));
                 intent.putExtra("put_data_find_select",1);

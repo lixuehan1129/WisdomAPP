@@ -28,6 +28,8 @@ import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.BottomNavigationViewHelper;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.mysql.jdbc.Connection;
 
 import java.sql.Blob;
@@ -36,6 +38,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         findView(); //初始化布局
+        init();
         startFragment();//执行点击或滑动
         setQuanXian();
         createConnect();
@@ -161,37 +166,30 @@ public class MainActivity extends AppCompatActivity {
                                 SharePreferences.getString(MainActivity.this,AppConstants.USER_PHONE) +
                                 "'"; //要执行的sql语句
                         ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-                   //     SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                         while (rs.next()) {
                             int user_sort = rs.getInt("user_sort");
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_SORT);
                             SharePreferences.putInt(MainActivity.this,AppConstants.USER_SORT,user_sort);
-//                            ContentValues values = new ContentValues();
-//                            values.put("user_id",rs.getInt("user_id"));
-//                            values.put("user_name",rs.getString("user_name"));
-//                            values.put("user_phone",rs.getString("user_phone"));
-//                            values.put("user_address",rs.getString("user_address"));
-//                            values.put("user_sort",rs.getInt("user_sort"));
-//                            values.put("user_sex",rs.getString("user_sex"));
-//                            Blob picture = rs.getBlob("user_picture");
-//                            if(picture != null){
-//                                values.put("user_picture", DealBitmap.compressImage(picture));
-//                            }else {
-//                                values.put("user_picture", (String) null);
-//                            }
-//                            sqLiteDatabase.insert("user",null,values);
                         }
-//                        sqLiteDatabase.close();
-//                        Log.d("调试","接入用户");
+                        rs.close();
+                        JDBCTools.releaseConnection(stmt,conn);
                     }else{
                         Log.d("调试","连接失败");
                     }
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                     Looper.loop();
                 }
             }
         }.start();
+    }
+
+    private void init(){
+        Stetho.initializeWithDefaults(this);
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
     }
 
 }

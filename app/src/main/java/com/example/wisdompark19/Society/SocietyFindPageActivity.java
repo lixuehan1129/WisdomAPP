@@ -280,15 +280,13 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                     Bitmap picture = null;
                     //查找成员头像
                     byte[] bytes = null;
-                    if(cursor_phone.moveToFirst()){
-                        bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
-                        if(bytes != null){
-                            picture = DealBitmap.byteToBit(bytes);
-                            if(picture != null){
-                                mCircleImageView.setImageBitmap(picture);
-                            }else {
-                                mCircleImageView.setImageResource(R.mipmap.ic_launcher_round);
-                            }
+                    bytes = cursor_phone.getBlob(cursor_phone.getColumnIndex("user_picture"));
+                    if(bytes != null){
+                        picture = DealBitmap.byteToBit(bytes);
+                        if(picture != null){
+                            mCircleImageView.setImageBitmap(picture);
+                        }else {
+                            mCircleImageView.setImageResource(R.mipmap.ic_launcher_round);
                         }
                     }
                 }
@@ -322,6 +320,7 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                 showImage(picture6);
             }
         }
+        sqLiteDatabase.close();
 //        new Thread(){
 //            public void run(){
 //                try{
@@ -436,7 +435,7 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
-                        Intent intent_broad = new Intent(AppConstants.BROAD_MES);
+                        Intent intent_broad = new Intent(AppConstants.BROAD_FIND);
                         LocalBroadcastManager.getInstance(SocietyFindPageActivity.this).sendBroadcast(intent_broad);
                         SocietyFindPageActivity.this.finish();
                     }else {

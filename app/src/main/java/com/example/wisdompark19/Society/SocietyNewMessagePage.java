@@ -299,6 +299,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
             }
         }
         cursor.close();
+        sqLiteDatabase.close();
 //        new Thread(){
 //            public void run(){
 //                try{

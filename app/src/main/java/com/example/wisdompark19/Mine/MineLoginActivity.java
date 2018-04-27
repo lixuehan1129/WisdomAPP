@@ -206,13 +206,13 @@ public class MineLoginActivity extends AppCompatActivity {
                                     ResultSet rs = stmt.executeQuery(sql_user);
                                     SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                                     while (rs.next()){
-                                        System.out.println("有没有保存用户");
-                                        if(!user_id.contains(rs.getString("user_name"))){
+                                        if(!user_id.contains(rs.getString("user_phone"))){
                                             ContentValues values = new ContentValues();
                                             values.put("user_id",rs.getInt("user_id"));
                                             values.put("user_name",rs.getString("user_name"));
                                             values.put("user_phone",rs.getString("user_phone"));
                                             values.put("user_address",rs.getString("user_address"));
+                                            values.put("user_area",rs.getString("user_area"));
                                             values.put("user_sort",rs.getInt("user_sort"));
                                             values.put("user_sex",rs.getString("user_sex"));
                                             Blob picture = rs.getBlob("user_picture");
@@ -224,6 +224,7 @@ public class MineLoginActivity extends AppCompatActivity {
                                             sqLiteDatabase.insert("user",null,values);
                                         }
                                     }
+                                    sqLiteDatabase.close();
                                     rs.close();
                                     JDBCTools.releaseConnection(stmt,conn);
                                     Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
@@ -237,8 +238,6 @@ public class MineLoginActivity extends AppCompatActivity {
                                     Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                 }
-
-
                             }
                             else {
                                 Toast toast = Toast.makeText(MineLoginActivity.this, "密码错误", Toast.LENGTH_SHORT);

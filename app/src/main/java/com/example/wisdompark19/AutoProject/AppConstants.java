@@ -15,6 +15,7 @@ public class AppConstants {
     public static final String BROAD_CON = "android.intent.action.broadcast";
     public static final String BROAD_MES = "android.intent.action.broadcast.mes";
     public static final String BROAD_FIND = "android.intent.action.broadcast.find";
+    public static final String BROAD_COM = "android.intent.action.broadcast.com";
     public static final String BROAD_REPAIR = "android.intent.action.broadcast.repair";
     public static final String BROAD_SHOP = "android.intent.action.broadcast.shop";
 

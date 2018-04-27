@@ -104,7 +104,9 @@ public class ShopActivity extends AppCompatActivity {
         shop_trade_image = new ArrayList<>();
         shop_trade_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query("shop",null,null,null,null,null,"shop_id desc");
+        Cursor cursor = sqLiteDatabase.query("shop",null,"shop_area = ?",new String[]{
+                SharePreferences.getString(this,AppConstants.USER_AREA)
+        },null,null,"shop_id desc");
         while (cursor.moveToNext()){
             //从本地数据库读取
             String bitmap = cursor.getString(cursor.getColumnIndex("shop_picture1"));
@@ -132,7 +134,7 @@ public class ShopActivity extends AppCompatActivity {
                         //查找信息
                         String sql_connect = "select * from shop where shop_area = '" +
                                 SharePreferences.getString(ShopActivity.this, AppConstants.USER_AREA) +
-                                "' order by shop_id desc";
+                                "' order by shop_id desc limit 10";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                         while (resultSet.next()){
@@ -144,6 +146,7 @@ public class ShopActivity extends AppCompatActivity {
                                 values.put("shop_phone",resultSet.getString("shop_phone"));
                                 values.put("shop_time",resultSet.getString("shop_time"));
                                 values.put("shop_title",resultSet.getString("shop_title"));
+                                values.put("shop_area",resultSet.getString("shop_area"));
                                 values.put("shop_content",resultSet.getString("shop_content"));
                                 values.put("shop_price",resultSet.getString("shop_price"));
                                 Blob picture1 = resultSet.getBlob("shop_picture1");
@@ -267,8 +270,6 @@ public class ShopActivity extends AppCompatActivity {
         mShopTradeItemAdapter.setmOnItemClickListener(new ShopTradeItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(ShopActivity.this, shop_trade_title.get(position), Toast.LENGTH_SHORT);
-                toast.show();
                 Intent intent = new Intent(ShopActivity.this,ShopPageActivity.class);
                 intent.putExtra("put_data",shop_trade_title.get(position));
                 startActivity(intent);

@@ -20,6 +20,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "user_name text, "
             + "user_phone text, "
             + "user_address text, "
+            + "user_area integer, "
             + "user_sort integer, "
             + "user_sex text, "
             + "user_picture blob)";
@@ -28,6 +29,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "id integer primary key autoincrement, "
             + "newmessage_id integer, "
             + "newmessage_name text, "
+            + "newmessage_area text, "
             + "newmessage_phone text, "
             + "newmessage_time text, "
             + "newmessage_title text, "
@@ -44,6 +46,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "shiwu_id integer, "
             + "shiwu_name text, "
             + "shiwu_phone text, "
+            + "shiwu_area text, "
             + "shiwu_time text, "
             + "shiwu_title text, "
             + "shiwu_content text, "
@@ -58,6 +61,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "id integer primary key autoincrement, "
             + "tucao_id integer, "
             + "tucao_name text, "
+            + "tucao_area text, "
             + "tucao_phone text, "
             + "tucao_time text, "
             + "tucao_content text)";
@@ -68,6 +72,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "repair_name text, "
             + "repair_phone text, "
             + "repair_time text, "
+            + "repair_area text, "
             + "repair_title text, " //报修类型
             + "repair_content text, "
             + "repair_picture1 text, "
@@ -85,6 +90,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "shop_time text, "
             + "shop_title text, "
             + "shop_content text, "
+            + "shop_area text, "
             + "shop_price text, "
             + "shop_picture1 text, "
             + "shop_picture2 text, "

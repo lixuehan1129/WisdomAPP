@@ -1,9 +1,12 @@
 package com.example.wisdompark19.Society;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +31,7 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.BaseFragment;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
 import java.io.InputStream;
@@ -47,6 +51,7 @@ public class SocietyMakeComplaint extends BaseFragment {
     private LocalBroadcastManager broadcastManager;
     private IntentFilter intentFilter;
     private BroadcastReceiver mReceiver;
+    private DataBaseHelper dataBaseHelper;
     private List<SocietyComplaintItemAdapter.Society_Com_Item> Data;
     private RecyclerView.LayoutManager mLayoutManager;
     private SocietyComplaintItemAdapter mSocietyComplaintItemAdapter;
@@ -56,6 +61,7 @@ public class SocietyMakeComplaint extends BaseFragment {
 
     ArrayList<String> society_com_content = new ArrayList<String>();
     ArrayList<Bitmap> society_com_image = new ArrayList<>();
+    ArrayList<Integer> society_com_id = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +80,7 @@ public class SocietyMakeComplaint extends BaseFragment {
         findView(getView());
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
         intentFilter = new IntentFilter();
-        intentFilter.addAction(AppConstants.BROAD_CON);
+        intentFilter.addAction(AppConstants.BROAD_COM);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent){
@@ -109,6 +115,7 @@ public class SocietyMakeComplaint extends BaseFragment {
 
     @Override
     protected void onFragmentFirstVisible() {
+        LocalData();
         //去服务器下载数据
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -120,6 +127,7 @@ public class SocietyMakeComplaint extends BaseFragment {
     }
 
     private void findView(View view){
+        dataBaseHelper = new DataBaseHelper(getActivity(),AppConstants.SQL_VISION);
         mRecyclerView = (RecyclerView)view.findViewById(R.id.society_complaint_rec);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -132,6 +140,43 @@ public class SocietyMakeComplaint extends BaseFragment {
         });
     }
 
+    private void LocalData(){
+        society_com_content = new ArrayList<>();
+        society_com_image = new ArrayList<>();
+        society_com_id = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query("tucao",null,"tucao_area = ?",new String[]{
+                SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
+        },null,null,"tucao_id desc");
+        while (cursor.moveToNext()){
+            //从本地数据库读取
+            int id = cursor.getInt(cursor.getColumnIndex("tucao_id"));
+            String phone = cursor.getString(cursor.getColumnIndex("tucao_phone"));
+            String content = cursor.getString(cursor.getColumnIndex("tucao_content"));
+            Cursor cursor_phone = sqLiteDatabase.query("user",null,
+                    "user_phone = ?",new String[]{phone},null,null,null);
+            Bitmap picture = null;
+            if(cursor_phone != null){
+                while (cursor_phone.moveToNext()){
+                    //查找成员头像
+                    byte[] bytes = null;
+                    bytes = cursor_phone.getBlob(cursor_phone.getColumnIndex("user_picture"));
+                    if(bytes != null){
+                        picture = DealBitmap.byteToBit(bytes);
+                    }
+                }
+                cursor_phone.close();
+            }
+            findData(content,picture,id);
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+        //执行事件
+        initData();
+        setAdapter();
+        setItemClick();
+    }
+
     //异步更新SPinner
     private Handler handler_find = new Handler(new Handler.Callback() {
 
@@ -140,9 +185,10 @@ public class SocietyMakeComplaint extends BaseFragment {
             // TODO Auto-generated method stub
             switch (msg.what){
                 case UPDATE_COM:{
-                    initData();
-                    setAdapter();
-                    setItemClick();
+                    LocalData();
+//                    initData();
+//                    setAdapter();
+//                    setItemClick();
                     mSwipeRefreshLayout.post(new Runnable() {
                         @Override
                         public void run() {
@@ -172,30 +218,23 @@ public class SocietyMakeComplaint extends BaseFragment {
                         //查找信息
                         String sql_connect = "select * from tucao where tucao_area = '" +
                                 SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by tucao_id desc";
+                                "' order by tucao_id desc limit 10";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
-                        List<String> content_name = new ArrayList<>();
+                        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                         while (resultSet.next()){
-                            content_name.add(resultSet.getString("tucao_phone"));
-                            findData(resultSet.getString("tucao_content"));
-                        }
-                        resultSet.close();
-                        for(int i = 0; i<content_name.size(); i++){
-                            String sql_content_name = "select * from user where user_phone = '" +
-                                    content_name.get(i) +
-                                    "'";
-                            ResultSet resultSet_content_name = stmt.executeQuery(sql_content_name);
-                            resultSet_content_name.next();
-                            Bitmap picture_path = null;
-                            System.out.println(content_name.get(i));
-                            Blob content_picture = resultSet_content_name.getBlob("user_picture");
-                            if(content_picture != null){
-                                InputStream inputStream = content_picture.getBinaryStream();
-                                picture_path = DealBitmap.InputToBitmap(inputStream);
+                            if(!society_com_id.contains(resultSet.getInt("tucao_id"))){
+                                ContentValues values = new ContentValues();
+                                values.put("tucao_id",resultSet.getInt("tucao_id"));
+                                values.put("tucao_name",resultSet.getString("tucao_name"));
+                                values.put("tucao_area",resultSet.getString("tucao_area"));
+                                values.put("tucao_phone",resultSet.getString("tucao_phone"));
+                                values.put("tucao_time",resultSet.getString("tucao_time"));
+                                values.put("tucao_content",resultSet.getString("tucao_content"));
+                                sqLiteDatabase.insert("tucao",null,values);
                             }
-                            society_com_image.add(picture_path); //发布者头像
-                            resultSet_content_name.close();
                         }
+                        sqLiteDatabase.close();
+                        resultSet.close();
                         Message message = new Message();
                         message.what = UPDATE_COM;
                         handler_find.sendMessage(message);
@@ -214,8 +253,10 @@ public class SocietyMakeComplaint extends BaseFragment {
         }.start();
     }
 
-    private void findData(String content){
+    private void findData(String content, Bitmap bitmap,int id){
         society_com_content.add(content);
+        society_com_image.add(bitmap);
+        society_com_id.add(id);
     }
 
     private void initData(){
