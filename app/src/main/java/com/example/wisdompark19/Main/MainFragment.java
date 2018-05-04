@@ -2,24 +2,14 @@ package com.example.wisdompark19.Main;
 
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,28 +22,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.example.wisdompark19.Adapter.FunctionListAdapter;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
-import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.AutoProject.TimeChange;
-import com.example.wisdompark19.MainActivity;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.Repair.RepairActivity;
 import com.example.wisdompark19.Society.SocietyNewMessagePage;
 import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
-import com.mysql.jdbc.Connection;
 
-import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,7 +54,9 @@ public class MainFragment extends BaseFragment {
     private GridView mGridView;
     private TextView textView;
     private int mCurrPos;
-    ArrayList<String> card_message_tell = new ArrayList<String>(); // 上下滚动消息栏内容
+    private SliderLayout sliderLayout;
+    private ArrayList<Integer> shop_url = new ArrayList<Integer>();
+     // 上下滚动消息栏内容
     ArrayList<String> card_message_content = new ArrayList<String>();
     ArrayList<String> card_message_time = new ArrayList<String>();
     ArrayList<Integer> card_message_id = new ArrayList<>();
@@ -83,7 +70,6 @@ public class MainFragment extends BaseFragment {
             R.mipmap.ic_main_repair,
             R.mipmap.ic_main_code,
             R.mipmap.ic_main_more,
-            0,
             0
 
     };
@@ -95,7 +81,6 @@ public class MainFragment extends BaseFragment {
             "报修管理",
             "通行二维码",
             "更多",
-            null,
             null
     };
 
@@ -129,6 +114,7 @@ public class MainFragment extends BaseFragment {
         //去服务器下载数据
         textView.getLayoutParams().height = textView.getLayoutParams().WRAP_CONTENT;
         LocalData();
+        initRoll();
 //        getData();
     }
 
@@ -142,12 +128,51 @@ public class MainFragment extends BaseFragment {
         viewFlipper = (ViewFlipper)view.findViewById(R.id.roll_flipper);
         textView = (TextView)view.findViewById(R.id.roll_vis);
         dataBaseHelper = new DataBaseHelper(getActivity(),AppConstants.SQL_VISION);
+        sliderLayout = (SliderLayout)view.findViewById(R.id.main_slider);
     }
+
+    private void initRoll(){
+        shop_url = new ArrayList<Integer>();
+        shop_url.add(R.mipmap.ic_top1);
+        shop_url.add(R.mipmap.ic_top2);
+        shop_url.add(R.mipmap.ic_top3);
+        shop_url.add(R.mipmap.ic_top4);
+        rollPicture();
+    }
+    //图片滚动
+    private void rollPicture(){
+        for (int i=0; i<shop_url.size(); i++){
+            DefaultSliderView textSliderView = new DefaultSliderView(getActivity());
+            textSliderView
+                    .image(shop_url.get(i))
+                    .setScaleType(BaseSliderView.ScaleType.Fit);  //图片缩放类型
+            textSliderView.bundle(new Bundle());
+            sliderLayout.addSlider(textSliderView); //添加页面
+        }
+        sliderLayout.setDuration(8000);
+        sliderLayout.addOnPageChangeListener(onPageChangeListener);
+    }
+
+
+
+    //页面改变监听
+    private ViewPagerEx.OnPageChangeListener onPageChangeListener=new ViewPagerEx.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+        @Override
+        public void onPageSelected(int position) {
+            Log.d("ansen", "Page Changed: " + position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {}
+    };
 
     private void initGridData(){
         ArrayList<HashMap<String, Object>> lstImageItem = new ArrayList<HashMap<String, Object>>();
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 8; i++) {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("ItemImage", mImages[i]);// 添加图像资源的ID
             map.put("ItemText", mContent[i]);// 按序号做ItemText
@@ -191,7 +216,7 @@ public class MainFragment extends BaseFragment {
                     }break;
                     case 5:{
                         Intent intent = new Intent(getActivity(),CodeActivity.class);
-                        intent.putExtra("put_data_code","通行二维码");
+                        intent.putExtra("put_data_code","通行证");
                         startActivity(intent);
                     }break;
                     case 6:{
@@ -276,7 +301,6 @@ public class MainFragment extends BaseFragment {
 //    });
 
     private void LocalData(){
-        card_message_tell = new ArrayList<>();
         card_message_content = new ArrayList<>();
         card_message_time = new ArrayList<>();
         card_message_image = new ArrayList<>();
@@ -288,7 +312,6 @@ public class MainFragment extends BaseFragment {
         while (cursor.moveToNext()){
             //从本地数据库读取
             String phone = cursor.getString(cursor.getColumnIndex("newmessage_phone"));
-            String title = cursor.getString(cursor.getColumnIndex("newmessage_title"));
             String content = cursor.getString(cursor.getColumnIndex("newmessage_content"));
             String time = cursor.getString(cursor.getColumnIndex("newmessage_time"));
             int id = cursor.getInt(cursor.getColumnIndex("newmessage_id"));
@@ -306,7 +329,7 @@ public class MainFragment extends BaseFragment {
                 }
                 cursor_phone.close();
             }
-            initRollData(title,content,time,id,picture);
+            initRollData(content,time,id,picture);
         }
         cursor.close();
         sqLiteDatabase.close();
@@ -316,9 +339,8 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    private void initRollData(String tell, String content, String time, int id, Bitmap bitmap){
+    private void initRollData(String content, String time, int id, Bitmap bitmap){
         // 滚动消息栏的显示内容
-        card_message_tell.add(tell);
         card_message_content.add(content);
         card_message_time.add(TimeChange.StringToString(time));
         card_message_id.add(id);
@@ -342,7 +364,7 @@ public class MainFragment extends BaseFragment {
             }
         };
         Timer timer = new Timer();
-        timer.schedule(task, 0, 7000);
+        timer.schedule(task, 0, 9000);
     }
 
     private void moveNext() {
@@ -354,19 +376,17 @@ public class MainFragment extends BaseFragment {
 
     // 将titleList 文本添加到 textView 中
     private void setView(int curr, int next) {
-        View noticeView = getLayoutInflater().inflate(R.layout.notice_item, null);
-        CardView cardView = (CardView)noticeView.findViewById(R.id.card_message);
-        final CircleImageView card_message_image_tv = (CircleImageView)cardView.findViewById(R.id.card_message_image);
-        final TextView card_message_tell_tv = (TextView)cardView.findViewById(R.id.card_message_tell);
-        final TextView card_message_content_tv = (TextView)cardView.findViewById(R.id.card_message_content);
-        final TextView card_message_time_tv = (TextView)cardView.findViewById(R.id.card_message_time);
-        final TextView card_message_id_tv = (TextView)cardView.findViewById(R.id.card_message_id);
+        View noticeView = getLayoutInflater().inflate(R.layout.notice_item_main, null);
+        CardView cardView = (CardView)noticeView.findViewById(R.id.card_message1);
+        final CircleImageView card_message_image_tv = (CircleImageView)cardView.findViewById(R.id.card_message_image1);
+        final TextView card_message_content_tv = (TextView)cardView.findViewById(R.id.card_message_content1);
+        final TextView card_message_time_tv = (TextView)cardView.findViewById(R.id.card_message_time1);
+        final TextView card_message_id_tv = (TextView)cardView.findViewById(R.id.card_message_id1);
         if ((curr < next) && (next > (card_message_content.size() - 1))) {
             next = 0;
         } else if ((curr > next) && (next < 0)) {
             next = card_message_content.size() - 1;
         }
-        card_message_tell_tv.setText(card_message_tell.get(next));
         card_message_content_tv.setText(card_message_content.get(next));
         card_message_time_tv.setText(card_message_time.get(next));
         card_message_image_tv.setImageBitmap(card_message_image.get(next));
@@ -379,9 +399,6 @@ public class MainFragment extends BaseFragment {
                 Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
                 intent.putExtra("put_data_mes_id",Integer.valueOf(card_message_id_tv.getText().toString()));
                 intent.putExtra("put_data_mes_select",1);
-                intent.putExtra("put_data_mes_title",card_message_tell_tv.getText().toString());
-                intent.putExtra("put_data_mes_content",card_message_content_tv.getText().toString());
-                intent.putExtra("put_data_mes_time",card_message_time_tv.getText().toString());
                 startActivity(intent);
             }
         });

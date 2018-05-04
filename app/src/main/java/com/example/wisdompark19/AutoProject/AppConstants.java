@@ -22,5 +22,7 @@ public class AppConstants {
     public static final int CAMERA = 1;
     public static final int ALBUM = 2;
 
-    public static final int SQL_VISION = 1;
+    public static int IS_FIRST = 0;
+
+    public static final int SQL_VISION = 2;
 }

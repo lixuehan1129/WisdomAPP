@@ -30,6 +30,7 @@ import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.R;
 
 import java.sql.Blob;
@@ -56,7 +57,10 @@ public class RepairActivity extends AppCompatActivity {
     public static final int UPDATE_REP = 1;
     private DataBaseHelper dataBaseHelper;
 
-    ArrayList<String> repair_check_content = new ArrayList<String>();
+    ArrayList<String> repair_check_name = new ArrayList<String>();
+    ArrayList<String> repair_check_phone = new ArrayList<String>();
+    ArrayList<String> repair_check_fenlei = new ArrayList<String>();
+    ArrayList<String> repair_check_shijian = new ArrayList<String>();
 //    ArrayList<String> repair_check_user = new ArrayList<String>();
     ArrayList<Integer> repair_check_id = new ArrayList<>();
 
@@ -93,13 +97,15 @@ public class RepairActivity extends AppCompatActivity {
         });
 
         getData();//加载网络内容改为加载本地数据
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-                connectData();
-            }
-        });
+        if(AppConstants.IS_FIRST == 1){
+            swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+                    connectData();
+                }
+            });
+        }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -109,17 +115,30 @@ public class RepairActivity extends AppCompatActivity {
     }
 
     private void getData(){
-        repair_check_content = new ArrayList<>();
+        repair_check_name = new ArrayList<>();
+        repair_check_phone = new ArrayList<>();
+        repair_check_fenlei = new ArrayList<>();
+        repair_check_shijian = new ArrayList<>();
         repair_check_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query("repair",null,"repair_area = ?",new String[]{
-                SharePreferences.getString(this,AppConstants.USER_AREA)
-        },null,null,"repair_id desc");
+        Cursor cursor = null;
+        if(SharePreferences.getInt(RepairActivity.this, AppConstants.USER_SORT) == 0){
+            cursor = sqLiteDatabase.query("repair",null,"repair_area = ?",new String[]{
+                    SharePreferences.getString(this,AppConstants.USER_AREA)
+            },null,null,"repair_id desc");
+        }else {
+            cursor = sqLiteDatabase.query("repair",null,"repair_phone = ?",new String[]{
+                    SharePreferences.getString(this,AppConstants.USER_PHONE)
+            },null,null,"repair_id desc");
+        }
         while (cursor.moveToNext()){
             //从本地数据库读取
-            String content = cursor.getString(cursor.getColumnIndex("repair_content"));
+            String name = cursor.getString(cursor.getColumnIndex("repair_name"));
+            String phone = cursor.getString(cursor.getColumnIndex("repair_phone"));
+            String fenlei = cursor.getString(cursor.getColumnIndex("repair_title"));
+            String shijian = cursor.getString(cursor.getColumnIndex("repair_time"));
             int id = cursor.getInt(cursor.getColumnIndex("repair_id"));
-            findData(content,id);
+            findData(name,phone,fenlei,shijian,id);
         }
         cursor.close();
         sqLiteDatabase.close();
@@ -171,8 +190,8 @@ public class RepairActivity extends AppCompatActivity {
                                     SharePreferences.getString(RepairActivity.this, AppConstants.USER_AREA) +
                                     "' order by repair_time desc limit 10";
                         }else {
-                            sql_connect = "select * from repair where repair_name = '" +
-                                    SharePreferences.getString(RepairActivity.this, AppConstants.USER_NAME) +
+                            sql_connect = "select * from repair where repair_phone = '" +
+                                    SharePreferences.getString(RepairActivity.this, AppConstants.USER_PHONE) +
                                     "' order by repair_time desc limit 10";
                         }
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
@@ -185,6 +204,7 @@ public class RepairActivity extends AppCompatActivity {
                                 values.put("repair_name",resultSet.getString("repair_name"));
                                 values.put("repair_phone",resultSet.getString("repair_phone"));
                                 values.put("repair_time",resultSet.getString("repair_time"));
+                                values.put("repair_select_time",resultSet.getString("repair_select_time"));
                                 values.put("repair_area",resultSet.getString("repair_area"));
                                 values.put("repair_title",resultSet.getString("repair_leixing"));
                                 values.put("repair_content",resultSet.getString("repair_content"));
@@ -250,18 +270,21 @@ public class RepairActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void findData(String content,int id){
-        repair_check_content.add(content);
+    private void findData(String name,String phone,String fenlei,String shijian,int id){
+        repair_check_name.add(name);
+        repair_check_phone.add(phone);
+        repair_check_fenlei.add(fenlei);
+        repair_check_shijian.add(TimeChange.StringToString(shijian));
         repair_check_id.add(id);
 //        repair_check_user.add(user);
     }
 
     private void initData(){
         Data = new ArrayList<>();
-        for(int i=0; i<repair_check_content.size(); i++){
+        for(int i=0; i<repair_check_name.size(); i++){
             RepairCheckAdapter newData = new RepairCheckAdapter(Data);
             RepairCheckAdapter.Repair_Check_item repair_check_item = newData.new Repair_Check_item(
-                    repair_check_content.get(i),"进度:完成","评论：XXXXXX"
+                    repair_check_name.get(i),repair_check_phone.get(i),repair_check_fenlei.get(i),repair_check_shijian.get(i)
             );
             Data.add(repair_check_item);
         }

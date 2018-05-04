@@ -5,11 +5,37 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.daimajia.slider.library.SliderLayout
+            android:id="@+id/shop_trade_page_slider"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"/>
+        <TextView
+            android:id="@+id/shop_trade_page_text"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:text="商品信息"
+            android:textColor="@color/colorBlack"
+            android:textSize="14sp"
+            android:layout_below="@id/shop_trade_page_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+    <View
+        android:id="@+id/view222"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
     <android.support.v7.widget.Toolbar
+        android:layout_below="@+id/view222"
         android:id="@+id/shop_trade_page_mainTool"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorBlue"
+        android:background="@color/colorWu"
         app:titleTextColor="@color/colorWhite"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">

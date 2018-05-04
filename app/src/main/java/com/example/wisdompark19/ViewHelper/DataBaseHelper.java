@@ -72,6 +72,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "repair_name text, "
             + "repair_phone text, "
             + "repair_time text, "
+            + "repair_select_time text, "
             + "repair_area text, "
             + "repair_title text, " //报修类型
             + "repair_content text, "
@@ -133,8 +134,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //数据库升级
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table if exists Book");
-        db.execSQL("drop table if exists Category");
+        db.execSQL("drop table if exists user");
+        db.execSQL("drop table if exists newmessage");
+        db.execSQL("drop table if exists shiwu");
+        db.execSQL("drop table if exists tucao");
+        db.execSQL("drop table if exists repair");
+        db.execSQL("drop table if exists shop");
         onCreate(db);
     }
 

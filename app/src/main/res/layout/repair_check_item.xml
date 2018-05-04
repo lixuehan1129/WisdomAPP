@@ -8,44 +8,206 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/colorGray_White"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="1dp">
+        android:background="@color/colorGray_White"
+        app:cardCornerRadius="3dp"
+        app:contentPadding="2dp">
 
         <LinearLayout
+            android:paddingTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:textSize="20dp"
-                android:text="查看"
-                android:id="@+id/repair_check_content"
+            android:orientation="vertical"
+            android:background="@color/colorWhite">
+            <LinearLayout
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minLines="2"
-                android:maxLines="3"
-                android:background="@drawable/bottom_lay"/>
+                android:orientation="horizontal"
+                android:background="@color/colorWhite">
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:padding="3dp"
+                    android:background="@mipmap/ic_geren"/>
+                <TextView
+                    android:textSize="15sp"
+                    android:text="   报  修  人 ："
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minLines="1" />
+                <TextView
+                    android:textSize="15sp"
+                    android:text="李学翰"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/repair_check_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minLines="1" />
+            </LinearLayout>
             <LinearLayout
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorWhite">
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:padding="3dp"
+                    android:background="@mipmap/ic_dianhua"/>
                 <TextView
-                    android:id="@+id/repair_check_sta"
-                    android:gravity="center|left"
-                    android:layout_weight="1"
-                    android:textSize="20dp"
-                    android:text="状态：完成"
+                    android:textSize="15sp"
+                    android:text="   联系方式 ："
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bottom_lay"/>
+                    android:minLines="1" />
                 <TextView
-                    android:id="@+id/repair_check_ping"
-                    android:textSize="20dp"
-                    android:text="评价:xxxxxxx"
-                    android:gravity="center|left"
+                    android:textSize="15sp"
+                    android:text="17888836862"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/repair_check_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minLines="1" />
+            </LinearLayout>
+            <LinearLayout
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bottom_lay">
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:padding="3dp"
+                    android:background="@mipmap/ic_fenlei"/>
+                <TextView
+                    android:textSize="15sp"
+                    android:text="   报修类型 ："
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minLines="1" />
+                <TextView
+                    android:textSize="15sp"
+                    android:text="水电维修"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/repair_check_leixing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minLines="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bottom_lay"/>
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/pay_shadow">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:padding="3dp"
+                        android:background="@mipmap/ic_shijian"/>
+                    <LinearLayout
+                        android:paddingLeft="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="提交时间"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/repair_check_shijian"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="2018-05-04"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:background="@drawable/pay_shadow"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="21dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:padding="3dp"
+                        android:background="@mipmap/ic_jindu"/>
+                    <LinearLayout
+                        android:paddingLeft="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="处理进度"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/repair_check_jindu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="提交"
+                            android:textSize="12sp"
+                            android:textColor="@color/colorBlack"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:padding="3dp"
+                        android:background="@mipmap/ic_pingjia"/>
+                    <LinearLayout
+                        android:paddingLeft="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="评价状态"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/repair_check_pingjia"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="待评价"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>

@@ -39,6 +39,7 @@ import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.Main.ShopAddActivity;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.Society.SocietyNewMessagePage;
@@ -110,7 +111,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         intent_data_id = intent.getIntExtra("repair_check_image",0);
         Toolbar toolbar = (Toolbar)findViewById(R.id.repair_make_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-        toolbar.setTitle("报修");
+        toolbar.setTitle("报修管理");
         setSupportActionBar(toolbar);
         back(toolbar);
         findView();
@@ -239,7 +240,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             }
             initSpinner(repair_spinner,cursor.getString(cursor.getColumnIndex("repair_title")));
             repair_edit.setText(cursor.getString(cursor.getColumnIndex("repair_content")));
-            repair_time.setText(cursor.getString(cursor.getColumnIndex("repair_time")));
+            repair_time.setText(TimeChange.StringToString1(cursor.getString(cursor.getColumnIndex("repair_select_time"))));
             String picture1 = cursor.getString(cursor.getColumnIndex("repair_picture1"));
             String picture2 = cursor.getString(cursor.getColumnIndex("repair_picture2"));
             String picture3 = cursor.getString(cursor.getColumnIndex("repair_picture3"));
@@ -621,12 +622,12 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH)+3);
         String future = sdf.format(calendar.getTime());
-        repair_time.setText(now);
+        repair_time.setText(TimeChange.StringToString1(now));
 
         mCustomDatePicker = new CustomDatePicker(this, new CustomDatePicker.ResultHandler() {
             @Override
             public void handle(String time) { // 回调接口，获得选中的时间
-                repair_time.setText(time);
+                repair_time.setText(TimeChange.StringToString1(time));
             }
         }, now, future); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
         mCustomDatePicker.showSpecificTime(true); // 显示时和分

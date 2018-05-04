@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -83,16 +84,26 @@
         app:cardElevation="0.3dp"
         app:contentPaddingBottom="1dp"
         android:background="@drawable/bottom_lay">
-
-        <TextView
-            android:id="@+id/minefragment_phone"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_bg"
-            android:padding="15dp"
-            android:text="联系方式"
-            android:textColor="@color/colorBlack"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            android:paddingLeft="10dp">
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/ic_lianxi"/>
+            <TextView
+                android:id="@+id/minefragment_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_bg"
+                android:padding="14dp"
+                android:text="联系方式"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -104,16 +115,27 @@
         app:cardCornerRadius="0.1dp"
         app:cardElevation="0dp"
         app:contentPaddingBottom="1dp">
-
-        <TextView
-            android:id="@+id/minefragment_ziliao"
-            android:padding="15dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="详细资料"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/selector_bg"/>
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            tools:ignore="UseCompoundDrawables">
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/ic_gengduo"/>
+            <TextView
+                android:id="@+id/minefragment_ziliao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_bg"
+                android:padding="14dp"
+                android:text="详细资料"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <View
@@ -133,16 +155,26 @@
         app:cardElevation="0.3dp"
         app:contentPaddingBottom="1dp"
         android:background="@drawable/bottom_lay">
-
-        <TextView
-            android:id="@+id/minefragment_recode"
-            android:padding="15dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="修改密码"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/selector_bg"/>
+            android:orientation="horizontal"
+            android:paddingLeft="10dp">
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/ic_recode"/>
+            <TextView
+                android:id="@+id/minefragment_recode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_bg"
+                android:padding="14dp"
+                android:text="修改密码"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -154,16 +186,26 @@
         app:cardCornerRadius="0.1dp"
         app:cardElevation="0dp"
         app:contentPaddingBottom="1dp">
-
-        <TextView
-            android:id="@+id/minefragment_setting"
-            android:padding="15dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="设置"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/selector_bg"/>
+            android:orientation="horizontal"
+            android:paddingLeft="10dp">
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/ic_shezhi"/>
+            <TextView
+                android:id="@+id/minefragment_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_bg"
+                android:padding="14dp"
+                android:text="设置"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
 
@@ -182,18 +224,26 @@
         android:paddingLeft="10dp"
         app:cardCornerRadius="0.1dp"
         app:cardElevation="0dp">
-
-        <TextView
-            android:id="@+id/minefragment_back"
-            android:paddingLeft="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="退出登录"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/selector_bg"/>
+            android:orientation="horizontal"
+            android:paddingLeft="10dp">
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/ic_tuichu"/>
+            <TextView
+                android:id="@+id/minefragment_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_bg"
+                android:padding="14dp"
+                android:text="退出登陆"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
 </RelativeLayout>

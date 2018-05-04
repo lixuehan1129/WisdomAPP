@@ -1,5 +1,7 @@
 package com.example.wisdompark19.AutoProject;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,5 +21,17 @@ public class TimeChange {
             e.printStackTrace();
         }
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String StringToString1(String time){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = null;
+        try {
+            date = formatter.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new SimpleDateFormat("MM-dd HH:mm").format(date);
     }
 }

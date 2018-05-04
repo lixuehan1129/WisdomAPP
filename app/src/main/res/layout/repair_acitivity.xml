@@ -21,12 +21,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_below="@id/repair_mainTool"
-            android:id="@+id/repair_check_rec"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:layout_below="@id/repair_mainTool"
+                android:id="@+id/repair_check_rec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+        </ScrollView>
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.v7.widget.CardView

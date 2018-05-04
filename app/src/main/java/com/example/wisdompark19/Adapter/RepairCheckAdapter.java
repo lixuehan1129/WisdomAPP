@@ -22,16 +22,21 @@ public class RepairCheckAdapter extends RecyclerView.Adapter<RepairCheckAdapter.
     private Context mContext;
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView repair_check_content;
-        TextView repair_check_sta;
-        TextView repair_check_ping;
+        TextView repair_check_name;
+        TextView repair_check_phone;
+        TextView repair_check_fenlei;
+        TextView repair_check_shijian;
+        TextView repair_check_jindu;
+        TextView repair_check_pingjia;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            repair_check_content = (TextView)itemView.findViewById(R.id.repair_check_content);
-            repair_check_sta = (TextView)itemView.findViewById(R.id.repair_check_sta);
-            repair_check_ping = (TextView)itemView.findViewById(R.id.repair_check_ping);
-
+            repair_check_name = (TextView)itemView.findViewById(R.id.repair_check_name);
+            repair_check_phone = (TextView)itemView.findViewById(R.id.repair_check_phone);
+            repair_check_fenlei = (TextView)itemView.findViewById(R.id.repair_check_leixing);
+            repair_check_shijian = (TextView)itemView.findViewById(R.id.repair_check_shijian);
+            repair_check_jindu = (TextView)itemView.findViewById(R.id.repair_check_jindu);
+            repair_check_pingjia = (TextView)itemView.findViewById(R.id.repair_check_pingjia);
         }
     }
 
@@ -51,14 +56,15 @@ public class RepairCheckAdapter extends RecyclerView.Adapter<RepairCheckAdapter.
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         Repair_Check_item mRepair_Check_item = mDataSet.get(position);
-        String check_content = mRepair_Check_item.getRepair_check_content();
-        String check_sta = mRepair_Check_item.getRepair_check_sta();
-        String check_ping = mRepair_Check_item.getRepair_check_ping();
+        String check_name = mRepair_Check_item.getRepair_check_name();
+        String check_phone = mRepair_Check_item.getRepair_check_phone();
+        String check_fenlei = mRepair_Check_item.getRepair_check_fenlei();
+        String check_shijian = mRepair_Check_item.getRepair_check_shijian();
         //这里的图片来源需要修改
-        holder.repair_check_content.setText(check_content);
-        holder.repair_check_sta.setText(check_sta);
-        holder.repair_check_ping.setText(check_ping);
-
+        holder.repair_check_name.setText(check_name);
+        holder.repair_check_phone.setText(check_phone);
+        holder.repair_check_fenlei.setText(check_fenlei);
+        holder.repair_check_shijian.setText(check_shijian);
 
         //判断是否设置了监听
         //为View设置监听
@@ -89,39 +95,49 @@ public class RepairCheckAdapter extends RecyclerView.Adapter<RepairCheckAdapter.
     }
 
     public class Repair_Check_item{
-        private String repair_check_content;
-        private String repair_check_sta;
-        private String repair_check_ping;
+        private String repair_check_name;
+        private String repair_check_phone;
+        private String repair_check_fenlei;
+        private String repair_check_shijian;
 
-        public String getRepair_check_content() {
-            return repair_check_content;
+        public String getRepair_check_name() {
+            return repair_check_name;
         }
 
-        public void setRepair_check_content(String repair_check_content) {
-            this.repair_check_content = repair_check_content;
+        public void setRepair_check_name(String repair_check_name) {
+            this.repair_check_name = repair_check_name;
         }
 
-        public String getRepair_check_sta() {
-            return repair_check_sta;
+        public String getRepair_check_phone() {
+            return repair_check_phone;
         }
 
-        public void setRepair_check_sta(String repair_check_sta) {
-            this.repair_check_sta = repair_check_sta;
+        public void setRepair_check_phone(String repair_check_phone) {
+            this.repair_check_phone = repair_check_phone;
         }
 
-        public String getRepair_check_ping() {
-            return repair_check_ping;
+        public String getRepair_check_fenlei() {
+            return repair_check_fenlei;
         }
 
-        public void setRepair_check_ping(String repair_check_ping) {
-            this.repair_check_ping = repair_check_ping;
+        public void setRepair_check_fenlei(String repair_check_fenlei) {
+            this.repair_check_fenlei = repair_check_fenlei;
         }
 
-        public Repair_Check_item(String repair_check_content, String repair_check_sta,
-                                 String repair_check_ping){
-            this.repair_check_content = repair_check_content;
-            this.repair_check_sta = repair_check_sta;
-            this.repair_check_ping = repair_check_ping;
+        public String getRepair_check_shijian() {
+            return repair_check_shijian;
+        }
+
+        public void setRepair_check_shijian(String repair_check_shijian) {
+            this.repair_check_shijian = repair_check_shijian;
+        }
+
+        public Repair_Check_item(String repair_check_name, String repair_check_phone,
+                                 String repair_check_fenlei, String repair_check_shijian){
+            this.repair_check_name = repair_check_name;
+            this.repair_check_phone = repair_check_phone;
+            this.repair_check_fenlei = repair_check_fenlei;
+            this.repair_check_shijian = repair_check_shijian;
         }
     }
 }

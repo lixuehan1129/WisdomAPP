@@ -77,19 +77,25 @@ public class ShopActivity extends AppCompatActivity {
         shop_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShopActivity.this,ShopAddActivity.class);
-                startActivity(intent);
+                if (SharePreferences.getInt(ShopActivity.this,AppConstants.USER_SORT) == 0){
+                    Intent intent = new Intent(ShopActivity.this,ShopAddActivity.class);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(ShopActivity.this,"您不是管理员，没有该权限",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         getData();//加载网络内容改为加载本地数据
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                connectData();
-            }
-        });//第一次自动加载
+        if(AppConstants.IS_FIRST == 1){
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    connectData();
+                }
+            });//第一次自动加载
+        }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -271,7 +277,7 @@ public class ShopActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(ShopActivity.this,ShopPageActivity.class);
-                intent.putExtra("put_data",shop_trade_title.get(position));
+                intent.putExtra("put_shop_id",shop_trade_id.get(position));
                 startActivity(intent);
             }
         });

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -84,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:background="@color/colorGray_White"/>
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -100,19 +101,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
-                <View
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+
                 <Spinner
                     android:id="@+id/repair_spinner"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
                     android:layout_gravity="center"
+                    android:entries="@array/spinner_repair"
                     android:gravity="right"
-                    android:entries="@array/spinner_repair">
+                    tools:ignore="RtlHardcoded">
+
                 </Spinner>
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,12 +133,13 @@
                     android:layout_gravity="center"/>
                 <TextView
                     android:id="@+id/repair_time"
-                    android:text="2018-03-16 17:30"
+                    android:text="03-16 17:30"
                     android:textSize="18sp"
                     android:textColor="@color/colorBlue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
+                    android:gravity="right"
+                    android:paddingRight="20dp"/>
 
             </LinearLayout>
 

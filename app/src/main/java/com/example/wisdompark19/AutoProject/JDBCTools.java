@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 /**
  * Created by 最美人间四月天 on 2018/3/29.
- * 该页面有问题暂时不使用
+ *
  */
 
 public class JDBCTools {
