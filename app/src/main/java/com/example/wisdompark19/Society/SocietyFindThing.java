@@ -220,7 +220,7 @@ public class SocietyFindThing extends BaseFragment {
                         //查找信息
                         String sql_connect = "select * from shiwu where shiwu_area = '" +
                                 SharePreferences.getString(getActivity(), AppConstants.USER_AREA) +
-                                "' order by shiwu_id limit 3";
+                                "' order by shiwu_id desc limit 3";
                         ResultSet resultSet = stmt.executeQuery(sql_connect);
                         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
                         while (resultSet.next()){

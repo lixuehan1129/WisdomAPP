@@ -79,7 +79,7 @@ public class MainFragment extends BaseFragment {
             "电商平台",
             "外设接口",
             "报修管理",
-            "通行二维码",
+            "通行证",
             "更多",
             null
     };

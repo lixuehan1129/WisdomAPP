@@ -240,7 +240,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             }
             initSpinner(repair_spinner,cursor.getString(cursor.getColumnIndex("repair_title")));
             repair_edit.setText(cursor.getString(cursor.getColumnIndex("repair_content")));
-            repair_time.setText(TimeChange.StringToString1(cursor.getString(cursor.getColumnIndex("repair_select_time"))));
+            repair_time.setText(cursor.getString(cursor.getColumnIndex("repair_select_time")));
             String picture1 = cursor.getString(cursor.getColumnIndex("repair_picture1"));
             String picture2 = cursor.getString(cursor.getColumnIndex("repair_picture2"));
             String picture3 = cursor.getString(cursor.getColumnIndex("repair_picture3"));
@@ -622,12 +622,12 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH)+3);
         String future = sdf.format(calendar.getTime());
-        repair_time.setText(TimeChange.StringToString1(now));
+        repair_time.setText(now);
 
         mCustomDatePicker = new CustomDatePicker(this, new CustomDatePicker.ResultHandler() {
             @Override
             public void handle(String time) { // 回调接口，获得选中的时间
-                repair_time.setText(TimeChange.StringToString1(time));
+                repair_time.setText(time);
             }
         }, now, future); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
         mCustomDatePicker.showSpecificTime(true); // 显示时和分

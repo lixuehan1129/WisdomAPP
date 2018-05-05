@@ -13,7 +13,7 @@ import java.util.Date;
 public class TimeChange {
     //时间格式转换
     public static String StringToString(String time){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
             date = formatter.parse(time);
