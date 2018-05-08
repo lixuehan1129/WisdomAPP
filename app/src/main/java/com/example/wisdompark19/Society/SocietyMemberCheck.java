@@ -273,8 +273,8 @@ public class SocietyMemberCheck extends BaseFragment {
         mSocietyMemberAdapter.setOnItemClickListener(new SocietyMemberAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(getActivity(), member_phone.get(position), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast=Toast.makeText(getActivity(), member_phone.get(position), Toast.LENGTH_SHORT);
+ //               toast.show();
             }
         });
         mSocietyMemberAdapter.setOnItemLongClickListener(new SocietyMemberAdapter.OnItemLongClickListener() {

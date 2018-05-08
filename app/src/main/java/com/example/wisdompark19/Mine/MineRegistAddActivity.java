@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Mine;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -254,6 +255,7 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
 
     //上传数据
     private void update(){
+        final ProgressDialog progressDialog = ProgressDialog.show(MineRegistAddActivity.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try {
@@ -289,11 +291,13 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
                             }
                             JDBCTools.releaseConnection(statement,conn_update);
                             if(select.equals("regist")){
+                                progressDialog.dismiss();
                                 Intent intent = new Intent(MineRegistAddActivity.this,MineLoginActivity.class);
                                 startActivity(intent);
                             }else {
                                 Toast toast=Toast.makeText(MineRegistAddActivity.this, "修改完成", Toast.LENGTH_SHORT);
                                 toast.show();
+                                progressDialog.dismiss();
                             }
 
                         }
@@ -301,6 +305,7 @@ public class MineRegistAddActivity extends AppCompatActivity implements View.OnC
                         Log.d("调试", "连接失败");
                         Toast toast=Toast.makeText(MineRegistAddActivity.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

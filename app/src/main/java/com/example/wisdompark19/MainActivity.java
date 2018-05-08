@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         init();
         startFragment();//执行点击或滑动
         setQuanXian();
-        isTodayFirstLogin();
         createConnect();
     }
 
@@ -134,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH)!=PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.BLUETOOTH);
+        }
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.VIBRATE)!=PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.VIBRATE);
         }
@@ -192,29 +194,6 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    /**
-     * 判断是否是当日第一次登陆
-     */
-    private void isTodayFirstLogin() {
-        //取
-        SharedPreferences preferences = getSharedPreferences("LastLoginTime", MODE_PRIVATE);
-        String lastTime = preferences.getString("LoginTime", "2018-04-08");
-        // Toast.makeText(MainActivity.this, "value="+date, Toast.LENGTH_SHORT).show();
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
-        todayTime = df.format(new Date());// 获取当前的日期
-
-        if (lastTime.equals(todayTime)) { //如果两个时间段相等
-//            Toast.makeText(this, "不是当日首次登陆", Toast.LENGTH_SHORT).show();
-//            Log.e("Time", lastTime);
-            AppConstants.IS_FIRST = 0;
-        } else {
-//            Toast.makeText(this, "当日首次登陆", Toast.LENGTH_SHORT).show();
-//            Log.e("date", lastTime);
-//            Log.e("todayDate", todayTime);
-            AppConstants.IS_FIRST = 1;
-        }
-    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -350,8 +350,8 @@ public class SocietyNewMessage extends BaseFragment {
         mNoticeItemAdapter.setmOnItemClickListener(new NoticeItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(getActivity(), card_message_tell.get(position), Toast.LENGTH_SHORT);
-                toast.show();
+ //               Toast toast=Toast.makeText(getActivity(), card_message_tell.get(position), Toast.LENGTH_SHORT);
+ //               toast.show();
                 Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
                 intent.putExtra("put_data_mes_id",card_message_id.get(position));
                 intent.putExtra("put_data_mes_select",1);

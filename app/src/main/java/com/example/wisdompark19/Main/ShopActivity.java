@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Main;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -34,7 +35,9 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,7 +90,8 @@ public class ShopActivity extends AppCompatActivity {
         });
 
         getData();//加载网络内容改为加载本地数据
-        if(AppConstants.IS_FIRST == 1){
+        if(SharePreferences.getString(ShopActivity.this,AppConstants.SHOP_TIME).isEmpty()
+                || !SharePreferences.getString(ShopActivity.this,AppConstants.SHOP_TIME).equals(getTime())){
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
@@ -95,7 +99,10 @@ public class ShopActivity extends AppCompatActivity {
                     connectData();
                 }
             });//第一次自动加载
+            SharePreferences.remove(ShopActivity.this,AppConstants.SHOP_TIME);
+            SharePreferences.putString(ShopActivity.this,AppConstants.SHOP_TIME,getTime());
         }
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -281,6 +288,12 @@ public class ShopActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    //获取系统时间，并进行格式转换
+    private String getTime(){
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(new Date());
     }
 
     //返回注销事件

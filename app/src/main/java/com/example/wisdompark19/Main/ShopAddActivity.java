@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Main;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -129,6 +130,7 @@ public class ShopAddActivity extends AppCompatActivity {
     }
 
     private void UpdateData(){
+        final ProgressDialog progressDialog = ProgressDialog.show(ShopAddActivity.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try{
@@ -174,11 +176,13 @@ public class ShopAddActivity extends AppCompatActivity {
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
+                        progressDialog.dismiss();
                         finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(ShopAddActivity.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();

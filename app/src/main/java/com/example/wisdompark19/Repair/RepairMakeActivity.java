@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Repair;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -271,6 +272,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
 
     //上传数据
     private void UpdateData(){
+        final ProgressDialog progressDialog = ProgressDialog.show(RepairMakeActivity.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try{
@@ -316,11 +318,13 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
+                        progressDialog.dismiss();
                         finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(RepairMakeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();

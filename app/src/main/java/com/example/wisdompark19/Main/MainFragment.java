@@ -64,22 +64,22 @@ public class MainFragment extends BaseFragment {
 
     private int[] mImages = {
             R.mipmap.ic_main_pay,
-            R.mipmap.ic_main_map,
-            R.mipmap.ic_main_cart,
-            R.mipmap.ic_main_waishe,
             R.mipmap.ic_main_repair,
+            R.mipmap.ic_main_cart,
             R.mipmap.ic_main_code,
+            R.mipmap.ic_main_map,
+            R.mipmap.ic_main_waishe,
             R.mipmap.ic_main_more,
             0
 
     };
     private String[] mContent = {
             "生活缴费",
-            "我的位置",
-            "电商平台",
-            "外设接口",
             "报修管理",
+            "电商平台",
             "通行证",
+            "我的位置",
+            "外设接口",
             "更多",
             null
     };
@@ -194,10 +194,9 @@ public class MainFragment extends BaseFragment {
                         startActivity(intent);
                     }break;
                     case 1:{
-                        Intent intent = new Intent(getActivity(),MapActivity.class);
-                        intent.putExtra("put_data_weizhi","我的位置");
+                        Intent intent = new Intent(getActivity(),RepairActivity.class);
+                        intent.putExtra("put_data_repair","报修管理");
                         startActivity(intent);
-
                     }break;
                     case 2:{
                         Intent intent = new Intent(getActivity(),ShopActivity.class);
@@ -205,18 +204,18 @@ public class MainFragment extends BaseFragment {
                         startActivity(intent);
                     }break;
                     case 3:{
-                        Intent intent = new Intent(getActivity(),PeripheralActivity.class);
-                        intent.putExtra("put_data_waishe","外设接口");
+                        Intent intent = new Intent(getActivity(),CodeActivity.class);
+                        intent.putExtra("put_data_code","通行证");
                         startActivity(intent);
                     }break;
                     case 4:{
-                        Intent intent = new Intent(getActivity(),RepairActivity.class);
-                        intent.putExtra("put_data_repair","报修管理");
+                        Intent intent = new Intent(getActivity(),MapActivity.class);
+                        intent.putExtra("put_data_weizhi","我的位置");
                         startActivity(intent);
                     }break;
                     case 5:{
-                        Intent intent = new Intent(getActivity(),CodeActivity.class);
-                        intent.putExtra("put_data_code","通行证");
+                        Intent intent = new Intent(getActivity(),PeripheralActivity.class);
+                        intent.putExtra("put_data_waishe","外设接口");
                         startActivity(intent);
                     }break;
                     case 6:{

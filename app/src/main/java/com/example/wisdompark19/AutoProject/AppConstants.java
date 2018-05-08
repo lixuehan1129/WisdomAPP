@@ -22,7 +22,7 @@ public class AppConstants {
     public static final int CAMERA = 1;
     public static final int ALBUM = 2;
 
-    public static int IS_FIRST = 0;
-
+    public static final String SHOP_TIME = "app_shop_time";
+    public static final String REPAIR_TIME = "app_repair_time";
     public static final int SQL_VISION = 2;
 }

@@ -1,5 +1,8 @@
 package com.example.wisdompark19.Main;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,13 +13,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wisdompark19.AutoProject.AppConstants;
+import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.QRCodeUtil;
 import com.example.wisdompark19.AutoProject.SharePreferences;
@@ -32,6 +45,8 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by 最美人间四月天 on 2018/1/18.
  */
@@ -39,9 +54,15 @@ import java.util.Date;
 public class CodeActivity extends AppCompatActivity {
 
     private ImageView imageView;
+    private ImageView imageView_f;
+    private Button code_cancel;
+    private Button code_ok;
+    private EditText code_name;
+    private String code_sex_select;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        System.out.println("第一次打开1");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.code_activity);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
@@ -50,10 +71,28 @@ public class CodeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.code_activity_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);  //标题栏名称
-        back(toolbar);    //返回
-        imageView = (ImageView)findViewById(R.id.code_activity_iv);
+        setMenu(toolbar);
+        findView();
         setView();
     }
+
+
+    private void findView(){
+        imageView = (ImageView) findViewById(R.id.code_activity_iv);
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.code_picture);
+        TextView name = (TextView) findViewById(R.id.code_name);
+        TextView address = (TextView) findViewById(R.id.code_add);
+        String imageBase64 = SharePreferences.getString(CodeActivity.this,AppConstants.USER_PICTURE);
+        Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
+        if(user_bitmap != null){
+            circleImageView.setImageBitmap(user_bitmap);
+        }else {
+            circleImageView.setImageResource(R.mipmap.ic_launcher_round);
+        }
+        name.setText(SharePreferences.getString(CodeActivity.this,AppConstants.USER_NAME));
+        address.setText(SharePreferences.getString(CodeActivity.this,AppConstants.USER_AREA));
+    }
+
 
     private void setView(){
         String sex = SharePreferences.getString(CodeActivity.this, AppConstants.USER_SEX);
@@ -86,14 +125,120 @@ public class CodeActivity extends AppCompatActivity {
             System.out.println(newContent);
             Bitmap bitmap = QRCodeUtil.createQRCodeBitmap(newContent,640,640);
             imageView.setImageBitmap(bitmap);
+    }
+
+    private void setMenu(Toolbar toolbar){
+        toolbar.inflateMenu(R.menu.menu_code);
+        //返回按钮监听
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        //menu item点击事件监听
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.menu_code:
+                        showNewPage();
+                        break;
+                }
+                return false;
+            }
+        });
 
     }
 
+    private void showNewPage(){
+        //1.创建一个Dialog对象，如果是AlertDialog对象的话，弹出的自定义布局四周会有一些阴影，效果不好
+        Dialog mDialog = new Dialog(CodeActivity.this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View           dialogView     = inflater.inflate(R.layout.code_auto, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高,如果不设置的话，弹出的对话框可能不会显示全整个布局，当然在布局中写死宽高也可以
+        /*WindowManager.LayoutParams lp     = new WindowManager.LayoutParams();
+        Window                     window = mDialog.getWindow();
+        lp.copyFrom(window.getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;*/
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+//        window.setAttributes(lp);
+
+        //设置点击其它地方不让消失弹窗
+        mDialog.setCancelable(false);
+        initDialogView(dialogView);
+        initDialogListener(mDialog);
+    }
+
+    private void initDialogView(View view){
+        imageView_f = (ImageView)view.findViewById(R.id.code_auto_iv);
+        code_cancel = (Button)view.findViewById(R.id.code_cancel);
+        code_ok = (Button)view.findViewById(R.id.code_ok);
+        code_name = (EditText)view.findViewById(R.id.code_auto_name);
+        RadioGroup code_sex = (RadioGroup) view.findViewById(R.id.code_sex);
+        code_sex_select = "女";
+        code_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if(R.id.code_male == i){
+                    code_sex_select = "男";
+                }else{
+                    code_sex_select = "女";
+                }
+
+            }
+        });
+    }
+
+    private void initDialogListener(final Dialog dialog){
+        code_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        code_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(code_name.getText().toString().isEmpty()){
+                   Toast.makeText(CodeActivity.this,"请输入访客姓名",Toast.LENGTH_LONG).show();
+                }else {
+                    String code_number = null;
+                    if(code_sex_select.equals("男")){
+                        code_number = "1";
+                    }else if(code_sex_select.equals("女")){
+                        code_number = "0";
+                    }
+                    String setContent = code_number + " " + code_name.getText().toString() + " " + "访客" + " " + getTime() + " " + "访客邀请";
+                    String md5Content = md5(setContent);
+                    String newContent = code_number + "," + code_name.getText().toString() + "," + "访客" + "," + getTime() + "," + "访客邀请" + ","
+                            + md5Content.substring(md5Content.length()-8);
+                    System.out.println(newContent);
+                    Bitmap bitmap = QRCodeUtil.createQRCodeBitmap(newContent,640,640);
+                    imageView_f.setImageBitmap(bitmap);
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm.isActive()){
+                        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(),0);
+
+                    }
+                }
+            }
+        });
+    }
+
+
     //获取系统时间，并进行格式转换
     private String getTime(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = simpleDateFormat.format(new Date());
-        return dateString;
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(new Date());
     }
 
     //MD5加密
@@ -120,15 +265,6 @@ public class CodeActivity extends AppCompatActivity {
         return "";
     }
 
-    //返回注销事件
-    private void back(Toolbar toolbar){
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

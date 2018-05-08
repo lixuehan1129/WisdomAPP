@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Society;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
@@ -70,6 +71,7 @@ public class SocietyMakeComplaintPage extends AppCompatActivity {
     }
 
     private void UpdateData(){
+        final ProgressDialog progressDialog = ProgressDialog.show(SocietyMakeComplaintPage.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try{
@@ -93,11 +95,13 @@ public class SocietyMakeComplaintPage extends AppCompatActivity {
                         JDBCTools.releaseConnection(stmt,conn);
                         Intent intent_broad = new Intent(AppConstants.BROAD_COM);
                         LocalBroadcastManager.getInstance(SocietyMakeComplaintPage.this).sendBroadcast(intent_broad);
+                        progressDialog.dismiss();
                         finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(SocietyMakeComplaintPage.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();

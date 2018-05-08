@@ -2,6 +2,7 @@ package com.example.wisdompark19.Society;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -41,6 +42,7 @@ import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.ForbidClickListener;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.Mine.MineLoginActivity;
 import com.example.wisdompark19.Mine.MineRegistActivity;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
@@ -371,6 +373,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
     }
 
     private void UpdateData(){
+        final ProgressDialog progressDialog = ProgressDialog.show(SocietyNewMessagePage.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try{
@@ -417,11 +420,13 @@ public class SocietyNewMessagePage extends AppCompatActivity {
                         JDBCTools.releaseConnection(stmt,conn);
                         Intent intent_broad = new Intent(AppConstants.BROAD_MES);
                         LocalBroadcastManager.getInstance(SocietyNewMessagePage.this).sendBroadcast(intent_broad);
+                        progressDialog.dismiss();
                         SocietyNewMessagePage.this.finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(SocietyNewMessagePage.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                     }catch (SQLException e) {
                     e.printStackTrace();

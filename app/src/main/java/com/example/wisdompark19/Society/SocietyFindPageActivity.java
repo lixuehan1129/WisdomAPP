@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Society;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -393,6 +394,7 @@ public class SocietyFindPageActivity extends AppCompatActivity {
 
     //上传数据
     private void UpdateData(){
+        final ProgressDialog progressDialog = ProgressDialog.show(SocietyFindPageActivity.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try{
@@ -437,11 +439,13 @@ public class SocietyFindPageActivity extends AppCompatActivity {
                         JDBCTools.releaseConnection(stmt,conn);
                         Intent intent_broad = new Intent(AppConstants.BROAD_FIND);
                         LocalBroadcastManager.getInstance(SocietyFindPageActivity.this).sendBroadcast(intent_broad);
+                        progressDialog.dismiss();
                         SocietyFindPageActivity.this.finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(SocietyFindPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();

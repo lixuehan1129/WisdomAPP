@@ -279,8 +279,8 @@ public class SocietyMakeComplaint extends BaseFragment {
         mSocietyComplaintItemAdapter.setmOnItemClickListener(new SocietyComplaintItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast toast=Toast.makeText(getActivity(), society_com_content.get(position), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast=Toast.makeText(getActivity(), society_com_content.get(position), Toast.LENGTH_SHORT);
+//                toast.show();
             }
         });
     }

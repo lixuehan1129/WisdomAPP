@@ -33,7 +33,9 @@
     <uses-permission android:name="android.permission.READ_LOGS"/>
     <!---->
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-
+    <!-- 蓝牙 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <supports-screens
         android:smallScreens="true"
@@ -42,9 +44,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_app_f"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_app_y"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:hardwareAccelerated="true"
@@ -81,9 +83,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
         <activity android:name=".Repair.RepairMakeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            tools:ignore="InnerclassSeparator" />
-        <activity android:name=".Repair.RepairCheckActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
         <activity android:name=".Society.SocietyNewMessagePage"

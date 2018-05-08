@@ -2,6 +2,7 @@ package com.example.wisdompark19.Mine;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -63,7 +64,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MineLoginActivity extends AppCompatActivity {
 
     private DataBaseHelper dataBaseHelper;
-    private CircleImageView user_login_picture;
     private TextInputLayout user_login_name_layout;
     private TextInputLayout user_login_password_layout;
     private TextInputEditText user_login_phone;
@@ -90,7 +90,7 @@ public class MineLoginActivity extends AppCompatActivity {
     }
 
     private void findView(){
-        user_login_picture = (CircleImageView)findViewById(R.id.user_login_picture);
+//        user_login_picture = (CircleImageView)findViewById(R.id.user_login_picture);
         user_login_name_layout = (TextInputLayout)findViewById(R.id.user_login_name_layout);
         user_login_password_layout = (TextInputLayout)findViewById(R.id.user_login_password_layout);
         user_login_phone = (TextInputEditText)findViewById(R.id.user_login_name);
@@ -150,10 +150,12 @@ public class MineLoginActivity extends AppCompatActivity {
     }
 
     private void login(){
+        final ProgressDialog progressDialog = ProgressDialog.show(MineLoginActivity.this,"","正在登陆，请稍后...",true);
         new  Thread() {
             public void run() {
                 try {
-                   Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    Looper.prepare();
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
                         Log.d("调试", "连接成功");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
@@ -162,7 +164,6 @@ public class MineLoginActivity extends AppCompatActivity {
                                 user_login_phone.getText().toString() +
                                 "'"; //要执行的sql语句
                         ResultSet resultSet_number = stmt.executeQuery(administrators_sql_number); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-                        Looper.prepare();
                         if (resultSet_number.next()) {
                             String login_password_get = resultSet_number.getString("user_password");
                             if(login_password_get.equals(user_login_password.getText().toString())){
@@ -229,12 +230,14 @@ public class MineLoginActivity extends AppCompatActivity {
                                     JDBCTools.releaseConnection(stmt,conn);
                                     Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
                                     toast.show();
+                                    progressDialog.dismiss();
                                     Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                 }else {
                                     JDBCTools.releaseConnection(stmt,conn);
                                     Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功,当前状态为访客，请完善个人信息。", Toast.LENGTH_SHORT);
                                     toast.show();
+                                    progressDialog.dismiss();
                                     Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                 }
@@ -242,16 +245,19 @@ public class MineLoginActivity extends AppCompatActivity {
                             else {
                                 Toast toast = Toast.makeText(MineLoginActivity.this, "密码错误", Toast.LENGTH_SHORT);
                                 toast.show();
+                                progressDialog.dismiss();
                             }
                         }else {
                             Toast toast = Toast.makeText(MineLoginActivity.this, "用户名不存在", Toast.LENGTH_SHORT);
                             toast.show();
+                            progressDialog.dismiss();
                         }
                         Looper.loop();
                     } else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(MineLoginActivity.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

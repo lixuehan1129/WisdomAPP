@@ -1,5 +1,6 @@
 package com.example.wisdompark19.Repair;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -37,7 +38,9 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
@@ -79,6 +82,7 @@ public class RepairActivity extends AppCompatActivity {
    //     connectData();
     }
 
+
     private void findView(){
         Button repair_make = (Button)findViewById(R.id.repair_make);
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.repair_sw);
@@ -97,14 +101,17 @@ public class RepairActivity extends AppCompatActivity {
         });
 
         getData();//加载网络内容改为加载本地数据
-        if(AppConstants.IS_FIRST == 1){
+        if(SharePreferences.getString(RepairActivity.this,AppConstants.REPAIR_TIME).isEmpty()
+                || !SharePreferences.getString(RepairActivity.this,AppConstants.REPAIR_TIME).equals(getTime())){
             swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     swipeRefreshLayout.setRefreshing(true);
                     connectData();
                 }
-            });
+            });//第一次自动加载
+            SharePreferences.remove(RepairActivity.this,AppConstants.REPAIR_TIME);
+            SharePreferences.putString(RepairActivity.this,AppConstants.REPAIR_TIME,getTime());
         }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -306,6 +313,12 @@ public class RepairActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    //获取系统时间，并进行格式转换
+    private String getTime(){
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(new Date());
     }
 
     //返回注销事件

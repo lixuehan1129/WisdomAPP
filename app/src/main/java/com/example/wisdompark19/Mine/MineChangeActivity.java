@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Mine;
 
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -241,6 +242,7 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
 
     //上传数据
     private void update(){
+        final ProgressDialog progressDialog = ProgressDialog.show(MineChangeActivity.this,"","正在上传",true);
         new Thread(){
             public void run(){
                 try {
@@ -334,11 +336,13 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
 
                             Intent intent_broad = new Intent(AppConstants.BROAD_CON);
                             LocalBroadcastManager.getInstance(MineChangeActivity.this).sendBroadcast(intent_broad);
+                            progressDialog.dismiss();
                             MineChangeActivity.this.finish();
                     } else {
                         Log.d("调试", "连接失败");
                         Toast toast=Toast.makeText(MineChangeActivity.this, "请检查网络", Toast.LENGTH_SHORT);
                         toast.show();
+                        progressDialog.dismiss();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
