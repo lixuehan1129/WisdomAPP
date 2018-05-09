@@ -1,5 +1,9 @@
 package com.example.wisdompark19.Main;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,8 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
@@ -20,6 +28,7 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.AmountView;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 
 import java.io.File;
@@ -33,6 +42,11 @@ public class ShopPageActivity extends AppCompatActivity {
 
     private SliderLayout sliderLayout;
     private ArrayList<String> shop_url = new ArrayList<>();
+    private TextView shop_message;
+    private TextView shop_price;
+    private String name;
+    private float price;
+    private int size = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -50,8 +64,10 @@ public class ShopPageActivity extends AppCompatActivity {
         back(toolbar);
         findView();
         initData(intent_data);
+        problem_jiaodian();
     }
 
+    @SuppressLint("SetTextI18n")
     private void initData(int i){
         DataBaseHelper dataBaseHelper = new DataBaseHelper(ShopPageActivity.this, AppConstants.SQL_VISION);
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getWritableDatabase();
@@ -83,6 +99,10 @@ public class ShopPageActivity extends AppCompatActivity {
                 if(bitmap6 != null){
                     shop_url.add(bitmap6);
                 }
+                name = cursor.getString(cursor.getColumnIndex("shop_title"));
+                price = Float.parseFloat(cursor.getString(cursor.getColumnIndex("shop_price")));
+                shop_message.setText(cursor.getString(cursor.getColumnIndex("shop_content")));
+                shop_price.setText("￥" + cursor.getString(cursor.getColumnIndex("shop_price")));
             }
         }
         cursor.close();
@@ -91,7 +111,25 @@ public class ShopPageActivity extends AppCompatActivity {
     }
 
     private void findView(){
-        sliderLayout = (SliderLayout)findViewById(R.id.shop_trade_page_slider);
+        sliderLayout = (SliderLayout) findViewById(R.id.shop_trade_page_slider);
+        shop_message = (TextView) findViewById(R.id.shop_trade_page_text);
+        shop_price = (TextView) findViewById(R.id.shop_trade_page_price);
+        TextView shop_pay = (TextView) findViewById(R.id.shop_trade_page_pay);
+        AmountView mAmountView = (AmountView) findViewById(R.id.amount_view);
+        mAmountView.setGoods_storage(50);
+        mAmountView.setOnAmountChangeListener(new AmountView.OnAmountChangeListener() {
+            @Override
+            public void onAmountChange(View view, int amount) {
+                size = amount;
+            }
+        });
+
+        shop_pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNormalDialog();
+            }
+        });
     }
 
     //图片滚动
@@ -138,6 +176,50 @@ public class ShopPageActivity extends AppCompatActivity {
         public void onPageScrollStateChanged(int state) {}
     };
 
+    private void showNormalDialog(){
+        /* @setIcon 设置对话框图标
+         * @setTitle 设置对话框标题
+         * @setMessage 设置对话框消息提示
+         * setXXX方法返回Dialog对象，因此可以链式设置属性
+         */
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(ShopPageActivity.this);
+        normalDialog.setMessage("商品信息:  "+ name +"\n\n"+
+                                "数   量 :  "+ size +"\n\n"+
+                                "总   价 :  "+ size*price);
+        normalDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        normalDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        // 显示
+        normalDialog.show();
+    }
+    /*
+      * 点击空白区域 Edittext失去焦点 关闭输入法
+      * */
+    @SuppressLint("ClickableViewAccessibility")
+    private void problem_jiaodian() {
+        final RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.sss_rela);
+        relativeLayout.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                relativeLayout.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                return false;
+            }
+        });
+    }
 
     //返回注销事件
     private void back(Toolbar toolbar){

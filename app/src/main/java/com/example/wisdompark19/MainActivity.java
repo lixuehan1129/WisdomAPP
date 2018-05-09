@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private NoScollViewPager viewPager;
     private MenuItem menuItem;
     private BottomNavigationView bottomNavigationView;
-    private String todayTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,24 +191,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.start();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        saveExitTime(todayTime);
-    }
-    /**
-     * 保存每次退出的时间
-     * @param extiLoginTime
-     */
-    private void saveExitTime(String extiLoginTime) {
-        SharedPreferences.Editor editor = getSharedPreferences("LastLoginTime", MODE_PRIVATE).edit();
-        editor.putString("LoginTime", extiLoginTime);
-        //这里用apply()而没有用commit()是因为apply()是异步处理提交，不需要返回结果，而我也没有后续操作
-        //而commit()是同步的，效率相对较低
-        //apply()提交的数据会覆盖之前的,这个需求正是我们需要的结果
-        editor.apply();
     }
 
     private void init(){

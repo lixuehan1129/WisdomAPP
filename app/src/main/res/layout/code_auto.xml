@@ -15,7 +15,7 @@
             android:padding="10dp"
             android:background="@drawable/bottom_lay">
             <TextView
-                android:text="业主姓名:"
+                android:text="访客姓名:"
                 android:textSize="20sp"
                 android:paddingRight="10dp"
                 android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
             android:orientation="horizontal"
             android:background="@drawable/bottom_lay">
             <TextView
-                android:text="业主性别:"
+                android:text="访客性别:"
                 android:textSize="20sp"
                 android:paddingRight="10dp"
                 android:layout_width="wrap_content"
