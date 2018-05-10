@@ -35,4 +35,10 @@ public class TimeChange {
         return new SimpleDateFormat("MM-dd HH:mm").format(date);
     }
 
+    //获取系统时间，并进行格式转换
+    public static String getBigTime(){
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(new Date());
+    }
+
 }

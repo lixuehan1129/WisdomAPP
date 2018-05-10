@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.base.bj.paysdk.utils.TrPay;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Mine.MineLoginActivity;
@@ -17,8 +18,13 @@ import com.example.wisdompark19.Mine.MineLoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private final static String channel = "360";//应用商店渠道名(如：360，小米、华为)
+    private final static String appkey = "d0722f2bd6c84eab99f1508cbd870b6b";//应用AppKey
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //初始化PaySdk(Context请传入当前Activity对象)
+        TrPay.getInstance(SplashActivity.this).initPaySdk(appkey, channel);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);

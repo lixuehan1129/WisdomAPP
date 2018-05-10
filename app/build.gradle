@@ -22,6 +22,12 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
+    repositories{
+        flatDir{
+            dirs'libs'
+        }
+    }
 }
 
 dependencies {
@@ -57,7 +63,12 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.slider:library:1.1.5@aar'
+
+    compile(name:'paysdk-release-1.2.2',ext:'aar')//paysdk-release-1.2.1(sdk 名称)
 }
+
+
+
 
 
 
