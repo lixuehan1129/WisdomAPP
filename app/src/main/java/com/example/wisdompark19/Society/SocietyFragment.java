@@ -121,7 +121,7 @@ public class SocietyFragment extends BaseFragment implements TabLayout.OnTabSele
                 switch (item.getItemId()){
                     case R.id.menu_message:
                         if (SharePreferences.getInt(getActivity(), AppConstants.USER_SORT) == 0) {
-                            Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
+                          //  Toast.makeText(getActivity(),"消息通知",Toast.LENGTH_LONG).show();
                             Intent intent_mes = new Intent(getActivity(), SocietyNewMessagePage.class);
                             intent_mes.putExtra("put_data_mes","消息通知");
                             intent_mes.putExtra("put_data_mes_select",0);
@@ -136,14 +136,14 @@ public class SocietyFragment extends BaseFragment implements TabLayout.OnTabSele
 //                        startActivity(intent_mes);
                         break;
                     case R.id.menu_find:
-                        Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();
+                     //   Toast.makeText(getActivity(),"失物招领",Toast.LENGTH_LONG).show();
                         Intent intent_find = new Intent(getActivity(), SocietyFindPageActivity.class);
                         intent_find.putExtra("put_data_find","失物招领");
                         intent_find.putExtra("put_data_find_select",0);
                         startActivity(intent_find);
                         break;
                     case R.id.menu_tu_cao:
-                        Toast.makeText(getActivity(),"社区吐槽",Toast.LENGTH_LONG).show();
+                     //   Toast.makeText(getActivity(),"社区吐槽",Toast.LENGTH_LONG).show();
                         Intent intent_tucao = new Intent(getActivity(), SocietyMakeComplaintPage.class);
                         intent_tucao.putExtra("put_data_tucao","社区吐槽");
                         startActivity(intent_tucao);

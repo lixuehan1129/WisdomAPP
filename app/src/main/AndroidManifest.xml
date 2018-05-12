@@ -118,6 +118,9 @@
         <activity android:name=".Main.ShopAddActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
+        <activity android:name=".Mine.MineRequireActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            tools:ignore="InnerclassSeparator" />
 
 
         <service android:name="com.baidu.location.f"

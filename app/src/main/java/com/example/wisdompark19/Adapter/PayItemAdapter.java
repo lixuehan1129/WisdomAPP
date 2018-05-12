@@ -57,9 +57,11 @@ public class PayItemAdapter extends RecyclerView.Adapter<PayItemAdapter.ViewHold
         String count_name = mPay_item.getCount_name();
         String count_fee = mPay_item.getCount_fee();
         String count_time = mPay_item.getCount_time();
+        String count_pay = mPay_item.getCount_pay();
         holder.count_name.setText(count_name);
         holder.count_fee.setText(count_fee);
         holder.count_time.setText(count_time);
+        holder.count_pay.setText(count_pay);
 
         //判断是否设置了监听
         //为View设置监听

@@ -100,6 +100,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "shop_picture5 text, "
             + "shop_picture6 text)";
 
+    public static final String CREATE_PAY ="create table pay ("
+            + "pay_id integer primary key autoincrement, "
+            + "pay_user text, "
+            + "pay_phone text, "
+            + "pay_area text, "
+            + "pay_time text, "
+            + "pay_name text, "
+            + "pay_count text, "
+            + "pay_number text, "
+            + "pay_yue text, "
+            + "pay_select text)";
+
     private Context mContext;
 
     /**
@@ -129,6 +141,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TUCAO);
         db.execSQL(CREATE_REPAIR);
         db.execSQL(CREATE_SHOP);
+        db.execSQL(CREATE_PAY);
     }
 
     //数据库升级
@@ -140,6 +153,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists tucao");
         db.execSQL("drop table if exists repair");
         db.execSQL("drop table if exists shop");
+        db.execSQL("drop table if exists pay");
         onCreate(db);
     }
 

@@ -165,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="5dp"
-                android:background="@drawable/bottom_lay">
+                android:background="@color/colorWhite">
                 <TextView
                     android:text="缴费内容  :  "
                     android:textSize="20sp"
@@ -193,6 +193,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="5dp"
+                android:background="@color/colorWhite">
+                <TextView
+                    android:text="当前余额  :  "
+                    android:textSize="20sp"
+                    android:paddingRight="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+                <TextView
+                    android:id="@+id/pay_yue"
+                    android:digits="0123456789."
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:background="@null"
+                    android:maxLength="20"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:textColor="@color/colorBlack"
+                    android:theme="@style/MyEditText" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@+id/pay_li2"
+                android:id="@+id/pay_li3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
                 android:background="@drawable/bottom_lay">
                 <TextView
                     android:text="缴费金额  :  "
@@ -215,9 +244,10 @@
                     android:textColor="@color/colorBlack"
                     android:theme="@style/MyEditText" />
             </LinearLayout>
+
             <LinearLayout
-                android:layout_below="@+id/pay_li2"
-                android:id="@+id/pay_li3"
+                android:layout_below="@+id/pay_li3"
+                android:id="@+id/pay_li4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

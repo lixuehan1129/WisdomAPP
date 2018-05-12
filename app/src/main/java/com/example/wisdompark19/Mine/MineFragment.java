@@ -100,6 +100,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         TextView minefragment_ziliao = (TextView) view.findViewById(R.id.minefragment_ziliao);
         TextView minefragment_recode = (TextView) view.findViewById(R.id.minefragment_recode);
         TextView minefragment_setting = (TextView) view.findViewById(R.id.minefragment_setting);
+        TextView minefragment_fankui = (TextView) view.findViewById(R.id.minefragment_fankui);
         TextView minefragment_back = (TextView) view.findViewById(R.id.minefragment_back);
         String imageBase64 = SharePreferences.getString(getActivity(),AppConstants.USER_PICTURE);
         Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
@@ -113,6 +114,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         minefragment_phone.setOnClickListener(this);
         minefragment_ziliao.setOnClickListener(this);
         minefragment_recode.setOnClickListener(this);
+        minefragment_fankui.setOnClickListener(this);
         minefragment_setting.setOnClickListener(this);
         minefragment_back.setOnClickListener(this);
     }
@@ -147,6 +149,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 //                intent.putExtra("put_data_regist_add","17888836862");
 //                intent.putExtra("put_data_regist_select","regist");
 //                startActivity(intent);
+                break;
+            }
+            case R.id.minefragment_fankui:{
+                startActivity(new Intent(getActivity(),MineRequireActivity.class));
                 break;
             }
             case R.id.minefragment_back:{
