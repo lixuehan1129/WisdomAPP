@@ -2,18 +2,14 @@ package com.example.wisdompark19.Repair;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -21,17 +17,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,23 +33,18 @@ import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
-import com.example.wisdompark19.AutoProject.TimeChange;
-import com.example.wisdompark19.Main.ShopAddActivity;
 import com.example.wisdompark19.R;
-import com.example.wisdompark19.Society.SocietyNewMessagePage;
 import com.example.wisdompark19.ViewHelper.CustomDatePicker;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.ShowImage;
+import com.example.wisdompark19.ViewHelper.SlideSwitch;
+import com.example.xlhratingbar_lib.XLHRatingBar;
 import com.mysql.jdbc.Connection;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -92,16 +80,17 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private CircleImageView repair_image;
     private EditText repair_edit;
     private RecyclerView repair_rv;
-    private CardView repair_tacv;
-    private ImageView repair_make_take, repair_make_add;
     private Spinner repair_spinner;
-    private Button repair_button_ok;
     private CustomDatePicker mCustomDatePicker;
+    private RelativeLayout repair_progress;
+    private RelativeLayout repair_pingjia;
+
     private String time;
     private String spinner;
     private String content;
     private String user,add;
     private Bitmap bitmap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -124,23 +113,53 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         repair_spinner = (Spinner)findViewById(R.id.repair_spinner);
         repair_time = (TextView)findViewById(R.id.repair_time);
         repair_image = (CircleImageView) findViewById(R.id.repair_image);
-        repair_button_ok = (Button)findViewById(R.id.repair_make_ok);
+        Button repair_button_ok = (Button) findViewById(R.id.repair_make_ok);
         repair_edit = (EditText)findViewById(R.id.repair_make_edit);
         repair_rv = (RecyclerView)findViewById(R.id.repair_make_rv);
-        repair_tacv = (CardView)findViewById(R.id.repair_make_tacv);
-        repair_make_take = (ImageView)findViewById(R.id.repair_make_take);
-        repair_make_add = (ImageView)findViewById(R.id.repair_make_add);
+        CardView repair_tacv = (CardView) findViewById(R.id.repair_make_tacv);
+        ImageView repair_make_take = (ImageView) findViewById(R.id.repair_make_take);
+        ImageView repair_make_add = (ImageView) findViewById(R.id.repair_make_add);
+        repair_progress = (RelativeLayout) findViewById(R.id.repair_progress);
+        repair_progress.setVisibility(View.INVISIBLE);
+        SlideSwitch repair_ok = (SlideSwitch) findViewById(R.id.repair_ok);
+        repair_pingjia = (RelativeLayout) findViewById(R.id.repair_pingjia);
+        repair_pingjia.setVisibility(View.INVISIBLE);
+        XLHRatingBar repair_ratingbar = (XLHRatingBar) findViewById(R.id.repair_ratingBar);
         dataBaseHelper = new DataBaseHelper(RepairMakeActivity.this,AppConstants.SQL_VISION);
         ImageDatas = new ArrayList<>();
         ImagePath = new ArrayList<>();
         ImageData = new ArrayList<>();
         if(mes_select == 1){ //第二次进入时使用
             repair_button_ok.setVisibility(View.INVISIBLE);
+            repair_button_ok.setText("提交");
             repair_time.setEnabled(false);
             repair_time.setText(null);
             repair_edit.setMinLines(2);
             repair_edit.setEnabled(false);
             repair_tacv.setVisibility(View.INVISIBLE);
+            if(SharePreferences.getInt(RepairMakeActivity.this,AppConstants.USER_SORT) == 0){
+                repair_progress.setVisibility(View.VISIBLE);
+                repair_ok.setOnStateChangedListener(new SlideSwitch.OnStateChangedListener() {
+                    @Override
+                    public void onStateChanged(boolean state) {
+                        if(true == state)
+                        {
+                            Toast.makeText(RepairMakeActivity.this, "开关已打开", Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(RepairMakeActivity.this, "开关已关闭", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+            repair_pingjia.setVisibility(View.VISIBLE);
+            repair_ratingbar.setOnRatingChangeListener(new XLHRatingBar.OnRatingChangeListener() {
+                @Override
+                public void onChange(int countSelected) {
+                    Toast.makeText(RepairMakeActivity.this, countSelected+"", Toast.LENGTH_LONG).show();
+                }
+            });
             getData();
 //            if(name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
 //                String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);

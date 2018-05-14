@@ -55,6 +55,8 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
     compile 'com.squareup.okio:okio:1.9.0'
 
+    compile 'com.xingliuhua:xlhratingbar_lib:1.0.1'
+
     compile files('libs/BaiduLBS_Android.jar')
     implementation files('libs/mysql-connector-java-5.1.40-bin.jar')
 

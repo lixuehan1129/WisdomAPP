@@ -1,6 +1,7 @@
 package com.example.wisdompark19.Main;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -53,7 +54,7 @@ import java.util.List;
  * Created by 最美人间四月天 on 2018/1/18.
  */
 
-public class PayActivity extends AppCompatActivity implements View.OnClickListener {
+public class PayActivity extends AppCompatActivity {
 
     private List<PayItemAdapter.Pay_item> Data;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -69,10 +70,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private EditText pay_count;
     private TextView pay_cancel, pay_ok;
     private String name = null;
-    private String yue_shui = null;
-    private String yue_dian = null;
-    private String yue_qi = null;
-    private String yue_wu = null;
     private Dialog dialog;
 
     ArrayList<String> count_name; // 上下滚动消息栏内容
@@ -191,7 +188,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                    if(pay_count.getText().toString().trim().isEmpty()) {
                        Toast.makeText(PayActivity.this,"请输入费用",Toast.LENGTH_LONG).show();
                    }else {
-                       showMyDialog();
+                      // showMyDialog();
+                       callPay();
                    }
                 }
             }
@@ -212,6 +210,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             String fee = cursor.getString(cursor.getColumnIndex("pay_yue"));
             String time = cursor.getString(cursor.getColumnIndex("pay_time"));
             String pay = cursor.getString(cursor.getColumnIndex("pay_count"));
+            if(fee.substring(0,1).equals(".")){
+                fee = "0" + fee;
+            }
             initRollData(name,fee,time,pay);
         }
         cursor.close();
@@ -268,28 +269,74 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         mRecyclerView.setAdapter(mPayItemAdapter);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.pay_weixin:{
-//                Toast.makeText(this,"微信",Toast.LENGTH_SHORT).show();
-                weiXin();
-                dialog.dismiss();
-                break;
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()){
+//            case R.id.pay_weixin:{
+////                Toast.makeText(this,"微信",Toast.LENGTH_SHORT).show();
+//                weiXin();
+//                dialog.dismiss();
+//                break;
+//            }
+//            case R.id.pay_zhifubao:{
+////                Toast.makeText(this,"支付宝",Toast.LENGTH_SHORT).show();
+//                zhiFuBao();
+//                dialog.dismiss();
+//                break;
+//            }
+//            case R.id.pay_dismiss:{
+////                Toast.makeText(this,"取消",Toast.LENGTH_SHORT).show();
+//                dialog.dismiss();
+//                break;
+//            }
+//        }
+//    }
+
+    private void callPay(){
+        final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
+        String tradename = pay_name.getText().toString().trim();
+        String outtradeno = userid + TimeChange.getBigTime();
+        long amount = changeY2F(pay_count.getText().toString().trim());
+        String backparams = tradename + outtradeno;
+        // String backparams = null;
+        // String notifyurl = null;
+        String notifyurl = "http://101.200.13.92/notify/alipayTestNotify";
+        //update(userid,tradename,outtradeno,"微信支付");
+        /**
+         * 发起快捷支付调用
+         */
+        TrPay.getInstance(this).callPay(tradename, outtradeno, amount, backparams, notifyurl, userid, new PayResultListener() {
+            /**
+             * 支付完成回调
+             * @param context      上下文
+             * @param outtradeno   商户系统订单号
+             * @param resultCode   支付状态(RESULT_CODE_SUCC：支付成功、RESULT_CODE_FAIL：支付失败)
+             * @param resultString 支付结果
+             * @param payType      支付类型（1：支付宝 2：微信）
+             * @param amount       支付金额
+             * @param tradename    商品名称
+             */
+            @Override
+            public void onPayFinish(Context context, String outtradeno, int resultCode, String resultString, int payType, Long amount, String tradename) {
+                if (resultCode == TrPayResult.RESULT_CODE_SUCC.getId()) {//1：支付成功回调
+                    TrPay.getInstance((Activity) context).closePayView();//关闭快捷支付页面
+                    String type;
+                    if(payType == 1){
+                        type = "支付宝";
+                    }else {
+                        type = "微信";
+                    }
+                    update(userid,tradename,outtradeno,type);
+                    Toast.makeText(PayActivity.this, resultString, Toast.LENGTH_LONG).show();
+                    //支付成功逻辑处理
+                } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {//2：支付失败回调
+                    Toast.makeText(PayActivity.this, resultString, Toast.LENGTH_LONG).show();
+                    //支付失败逻辑处理
+                }
             }
-            case R.id.pay_zhifubao:{
-//                Toast.makeText(this,"支付宝",Toast.LENGTH_SHORT).show();
-                zhiFuBao();
-                dialog.dismiss();
-                break;
-            }
-            case R.id.pay_dismiss:{
-//                Toast.makeText(this,"取消",Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-                break;
-            }
-        }
+        });
     }
+
 
     private void weiXin(){
         final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
@@ -297,8 +344,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         String outtradeno = userid + TimeChange.getBigTime();
         long amount = changeY2F(pay_count.getText().toString().trim());
         String backparams = "微信" + userid + tradename + outtradeno + pay_count.getText().toString().trim();
-        String notifyurl = null;
-        update(userid,tradename,outtradeno,"微信支付");
+       // String backparams = null;
+       // String notifyurl = null;
+        String notifyurl = "http://101.200.13.92/notify/alipayTestNotify";
+        //update(userid,tradename,outtradeno,"微信支付");
 
         /**
          * 3.发起微信支付
@@ -320,11 +369,12 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
              * @param amount       支付金额
              * @param tradename   商品名称
              */
+
             @Override
             public void onPayFinish(Context context, String outtradeno, int resultCode, String resultString, int payType, Long                                                           amount, String tradename) {
                 if (resultCode == TrPayResult.RESULT_CODE_SUCC.getId()) {
                     //支付成功逻辑处理
-                //    update(userid,tradename,outtradeno,"微信支付");
+                    update(userid,tradename,outtradeno,"微信支付");
                     Toast.makeText(PayActivity.this,"支付成功",Toast.LENGTH_SHORT).show();
                 } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {
                     //支付失败逻辑处理
@@ -334,47 +384,49 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    private void zhiFuBao(){
-        final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
-        String tradename = pay_name.getText().toString().trim();
-        String outtradeno = userid + TimeChange.getBigTime();
-        long amount = changeY2F(pay_count.getText().toString().trim());
-        String backparams = "支付宝" + userid + tradename + outtradeno + pay_count.getText().toString().trim();
-        String notifyurl = null;
-
-        /**
-         * 3.发起微信支付
-         * @param tradename   商品名称
-         * @param outtradeno   商户系统订单号(商户系统内唯一)
-         * @param amount        商品价格（单位：分。如1.5元传150）
-         * @param backparams 商户系统回调参数
-         * @param notifyurl       商户系统回调地址
-         * @param userid          商户系统用户ID(如：trpay@52yszd.com，商户系统内唯一)
-         */
-        TrPay.getInstance(PayActivity.this).callAlipay(tradename, outtradeno, amount, backparams, notifyurl, userid, new PayResultListener() {
-            /**
-             * 支付完成回调
-             * @param context        上下文
-             * @param outtradeno   商户系统订单号
-             * @param resultCode   支付状态(RESULT_CODE_SUCC：支付成功、RESULT_CODE_FAIL：支付失败)
-             * @param resultString  支付结果
-             * @param payType      支付类型（1：支付宝 2：微信 3：银联）
-             * @param amount       支付金额
-             * @param tradename   商品名称
-             */
-            @Override
-            public void onPayFinish(Context context, String outtradeno, int resultCode, String resultString, int payType, Long                                                           amount, String tradename) {
-                if (resultCode == TrPayResult.RESULT_CODE_SUCC.getId()) {
-                    //支付成功逻辑处理
-                    update(userid,tradename,outtradeno,"支付宝支付");
-                    Toast.makeText(PayActivity.this,"支付成功",Toast.LENGTH_SHORT).show();
-                } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {
-                    //支付失败逻辑处理
-                    Toast.makeText(PayActivity.this,"支付失败",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
+//    private void zhiFuBao(){
+//        final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
+//        String tradename = pay_name.getText().toString().trim();
+//        String outtradeno = userid + TimeChange.getBigTime();
+//        long amount = changeY2F(pay_count.getText().toString().trim());
+//       // String backparams = null;
+//           String backparams = "支付宝" + userid + tradename + outtradeno + pay_count.getText().toString().trim();
+//        //String notifyurl = null;
+//        String notifyurl = "http://101.200.13.92/notify/alipayTestNotify";
+//
+//        /**
+//         * 3.发起微信支付
+//         * @param tradename   商品名称
+//         * @param outtradeno   商户系统订单号(商户系统内唯一)
+//         * @param amount        商品价格（单位：分。如1.5元传150）
+//         * @param backparams 商户系统回调参数
+//         * @param notifyurl       商户系统回调地址
+//         * @param userid          商户系统用户ID(如：trpay@52yszd.com，商户系统内唯一)
+//         */
+//        TrPay.getInstance(PayActivity.this).callAlipay(tradename, outtradeno, amount, backparams, notifyurl, userid, new PayResultListener() {
+//            /**
+//             * 支付完成回调
+//             * @param context        上下文
+//             * @param outtradeno   商户系统订单号
+//             * @param resultCode   支付状态(RESULT_CODE_SUCC：支付成功、RESULT_CODE_FAIL：支付失败)
+//             * @param resultString  支付结果
+//             * @param payType      支付类型（1：支付宝 2：微信 3：银联）
+//             * @param amount       支付金额
+//             * @param tradename   商品名称
+//             */
+//            @Override
+//            public void onPayFinish(Context context, String outtradeno, int resultCode, String resultString, int payType, Long                                                           amount, String tradename) {
+//                if (resultCode == TrPayResult.RESULT_CODE_SUCC.getId()) {
+//                    //支付成功逻辑处理
+//                    update(userid,tradename,outtradeno,"支付宝支付");
+//                    Toast.makeText(PayActivity.this,"支付成功",Toast.LENGTH_SHORT).show();
+//                } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {
+//                    //支付失败逻辑处理
+//                    Toast.makeText(PayActivity.this,"支付失败",Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
 
     private void update(final String userid, final String tradename, final String outtradeno, final String select){
 
@@ -441,36 +493,36 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
 
-    private void showMyDialog(){
-        dialog = new Dialog(this,R.style.ActionSheetDialogStyle);
-        //填充对话框的布局
-        View inflate = LayoutInflater.from(this).inflate(R.layout.pay_activity_bottom, null);
-        //初始化控件
-        TextView pay_weixin = (TextView) inflate.findViewById(R.id.pay_weixin);
-        TextView pay_zhifubao = (TextView) inflate.findViewById(R.id.pay_zhifubao);
-        TextView pay_dismiss = (TextView) inflate.findViewById(R.id.pay_dismiss);
-        pay_weixin.setOnClickListener(this);
-        pay_zhifubao.setOnClickListener(this);
-        pay_dismiss.setOnClickListener(this);
-        //将布局设置给Dialog
-        dialog.setContentView(inflate);
-        Window dialogWindow = dialog.getWindow();
-        dialogWindow.setGravity(Gravity.BOTTOM);
-        dialogWindow.setWindowAnimations(R.style.ActionSheetDialogStyle); // 添加动画
-        //获取当前Activity所在的窗体
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
-        lp.x = 0; // 新位置X坐标
-        lp.y = -20; // 新位置Y坐标
-        lp.width = (int) getResources().getDisplayMetrics().widthPixels; // 宽度
-//      lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
-//      lp.alpha = 9f; // 透明度
-        inflate.measure(0, 0);
-        lp.height = inflate.getMeasuredHeight();
-        lp.alpha = 9f; // 透明度
-        dialogWindow.setAttributes(lp);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();//显示对话框
-    }
+//    private void showMyDialog(){
+//        dialog = new Dialog(this,R.style.ActionSheetDialogStyle);
+//        //填充对话框的布局
+//        View inflate = LayoutInflater.from(this).inflate(R.layout.pay_activity_bottom, null);
+//        //初始化控件
+//        TextView pay_weixin = (TextView) inflate.findViewById(R.id.pay_weixin);
+//        TextView pay_zhifubao = (TextView) inflate.findViewById(R.id.pay_zhifubao);
+//        TextView pay_dismiss = (TextView) inflate.findViewById(R.id.pay_dismiss);
+////        pay_weixin.setOnClickListener(this);
+////        pay_zhifubao.setOnClickListener(this);
+////        pay_dismiss.setOnClickListener(this);
+//        //将布局设置给Dialog
+//        dialog.setContentView(inflate);
+//        Window dialogWindow = dialog.getWindow();
+//        dialogWindow.setGravity(Gravity.BOTTOM);
+//        dialogWindow.setWindowAnimations(R.style.ActionSheetDialogStyle); // 添加动画
+//        //获取当前Activity所在的窗体
+//        WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
+//        lp.x = 0; // 新位置X坐标
+//        lp.y = -20; // 新位置Y坐标
+//        lp.width = (int) getResources().getDisplayMetrics().widthPixels; // 宽度
+////      lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
+////      lp.alpha = 9f; // 透明度
+//        inflate.measure(0, 0);
+//        lp.height = inflate.getMeasuredHeight();
+//        lp.alpha = 9f; // 透明度
+//        dialogWindow.setAttributes(lp);
+//        dialog.setCanceledOnTouchOutside(false);
+//        dialog.show();//显示对话框
+//    }
 
     /**
      * 将元为单位的转换为分 替换小数点，支持以逗号区分的金额
