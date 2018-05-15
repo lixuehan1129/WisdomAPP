@@ -170,7 +170,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="提交"
+                            android:text="已提交"
                             android:textSize="12sp"
                             android:textColor="@color/colorBlack"/>
                     </LinearLayout>
@@ -197,14 +197,29 @@
                             android:layout_height="wrap_content"
                             android:text="评价状态"
                             android:textSize="12sp"/>
-                        <TextView
-                            android:id="@+id/repair_check_pingjia"
+                        <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="待评价"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="12sp"/>
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/repair_check_pingjia"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="待评价"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="12sp"/>
+                            <com.example.xlhratingbar_lib.XLHRatingBar
+                                xmlns:xlhRatingBar="http://schemas.android.com/apk/res-auto"
+                                android:id="@+id/repair_check_pingjia1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                xlhRatingBar:canEdit="true"
+                                xlhRatingBar:starCount="5"
+                                xlhRatingBar:stateResId="@drawable/comment_ratingbar_selector"
+                                xlhRatingBar:widthAndHeight="14dp">
+                            </com.example.xlhratingbar_lib.XLHRatingBar>
+                        </RelativeLayout>
+
                     </LinearLayout>
                 </LinearLayout>
 

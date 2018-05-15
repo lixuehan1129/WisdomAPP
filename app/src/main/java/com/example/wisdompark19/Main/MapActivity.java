@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -77,7 +76,7 @@ public class MapActivity extends AppCompatActivity {
         mLocationClient.registerLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
-                StringBuilder  currentPosition =  new StringBuilder();
+                StringBuilder currentPosition =  new StringBuilder();
                 currentPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
                 currentPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
                 currentPosition.append("国家：").append(bdLocation.getCountry()).append("\n");
@@ -95,7 +94,6 @@ public class MapActivity extends AppCompatActivity {
                 }
 
                 if(bdLocation.getLocType() == BDLocation.TypeGpsLocation ||bdLocation.getLocType() == BDLocation.TypeNetWorkLocation){
-
                     if(isFirstLocate){
                         LatLng ll = new LatLng(bdLocation.getLatitude(),bdLocation.getLongitude());
                         MapStatus.Builder builder = new MapStatus.Builder();
@@ -108,9 +106,7 @@ public class MapActivity extends AppCompatActivity {
                     locationBuilder.longitude(bdLocation.getLongitude());
                     MyLocationData locationData = locationBuilder.build();
                     baiduMap.setMyLocationData(locationData);
-
                 }
-
 //                textView.setText(currentPosition);
                  System.out.println(currentPosition);
             }

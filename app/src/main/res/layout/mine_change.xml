@@ -42,7 +42,7 @@
             android:src="@mipmap/ic_launcher_round"
             android:background="@color/colorWhite"
             app:civ_border_width="2dp"
-            app:civ_border_color="@color/colorBlue"
+            app:civ_border_color="@color/colorGray"
             android:layout_marginBottom="15dp"/>
         <RelativeLayout
             android:layout_below="@id/mine_change_picture"
@@ -113,12 +113,11 @@
                         android:text="女"/>
                 </RadioGroup>
             </LinearLayout>
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/mine_change_Linear_2"
                 android:layout_below="@id/mine_change_Linear_4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:padding="10dp"
                 android:background="@drawable/bottom_lay">
                 <TextView
@@ -127,20 +126,34 @@
                     android:paddingRight="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:id="@+id/textView2" />
+
                 <EditText
                     android:id="@+id/mine_change_society"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/textView2"
                     android:background="@null"
                     android:maxLength="20"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="@color/colorBlack"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
                     android:theme="@style/MyEditText" />
-            </LinearLayout>
+
+                <TextView
+                    android:id="@+id/mine_change_so"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="center"
+                    android:text="修改"
+                    android:textSize="20sp" />
+            </RelativeLayout>
             <LinearLayout
                 android:layout_below="@id/mine_change_Linear_2"
                 android:id="@+id/Linear_1"

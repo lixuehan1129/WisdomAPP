@@ -81,7 +81,7 @@
         android:layout_below="@id/View_2"
         android:paddingLeft="10dp"
         app:cardCornerRadius="0.1dp"
-        app:cardElevation="0.3dp"
+        app:cardElevation="0.2dp"
         app:contentPaddingBottom="1dp"
         android:background="@drawable/bottom_lay">
         <LinearLayout
@@ -184,7 +184,8 @@
         android:layout_below="@id/CareView_4"
         android:paddingLeft="10dp"
         app:cardCornerRadius="0.1dp"
-        app:cardElevation="0dp"
+        app:cardElevation="0.2dp"
+        android:background="@drawable/bottom_lay"
         app:contentPaddingBottom="1dp">
         <LinearLayout
             android:layout_width="match_parent"
@@ -215,7 +216,7 @@
         android:layout_below="@id/CareView_5"
         android:paddingLeft="10dp"
         app:cardCornerRadius="0.1dp"
-        app:cardElevation="0dp"
+        app:cardElevation="0.1dp"
         app:contentPaddingBottom="1dp">
         <LinearLayout
             android:layout_width="match_parent"

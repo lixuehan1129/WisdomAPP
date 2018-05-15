@@ -1,11 +1,6 @@
 package com.example.wisdompark19.Mine;
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,10 +8,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -24,7 +19,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +32,6 @@ import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
-import com.example.wisdompark19.MainActivity;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
 
@@ -46,10 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -77,7 +67,7 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
     private RadioButton mine_change_female;
     private EditText mine_change_society;
     private LinearLayout mine_change_linear;
-    private LinearLayout mine_change_linear2;
+    private TextView mine_change_so;
     private TextView mine_change_join;
     private TextView mine_change_add;
     private TextView mine_change_address;
@@ -112,8 +102,8 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
         mine_change_sex = (RadioGroup) findViewById(R.id.mine_change_sex);
         mine_change_male = (RadioButton) findViewById(R.id.mine_change_male);
         mine_change_female = (RadioButton) findViewById(R.id.mine_change_female);
-        mine_change_linear2 = (LinearLayout) findViewById(R.id.mine_change_Linear_2);
-        mine_change_linear2.setOnClickListener(this);
+        mine_change_so = (TextView) findViewById(R.id.mine_change_so);
+        mine_change_so.setOnClickListener(this);
         mine_change_society = (EditText) findViewById(R.id.mine_change_society);
         mine_change_linear = (LinearLayout) findViewById(R.id.mine_change_Linear_3);
         mine_change_linear.setVisibility(View.INVISIBLE);
@@ -172,7 +162,7 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                 }).create().show();
                 break;
             }
-            case R.id.mine_change_Linear_2 :{ //社区
+            case R.id.mine_change_so :{ //社区
                 AlertDialog.Builder builder = new AlertDialog.Builder(MineChangeActivity.this);
                 builder.setMessage("修改社区会改变当前的状态")
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {

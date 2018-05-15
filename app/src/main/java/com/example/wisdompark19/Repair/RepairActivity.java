@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,7 +22,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wisdompark19.Adapter.RepairCheckAdapter;
@@ -33,6 +31,8 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
+import com.mysql.jdbc.Connection;
 
 import java.sql.Blob;
 import java.sql.ResultSet;
@@ -43,9 +43,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.example.wisdompark19.ViewHelper.DataBaseHelper;
-import com.mysql.jdbc.Connection;
-
 /**
  * Created by 最美人间四月天 on 2018/1/18.
  */
@@ -55,6 +52,9 @@ public class RepairActivity extends AppCompatActivity {
     private List<RepairCheckAdapter.Repair_Check_item> Data;
     private RecyclerView.LayoutManager mLayoutManager;
     private RepairCheckAdapter mRepairCheckAdapter;
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     public static final int UPDATE_REP = 1;
@@ -64,6 +64,8 @@ public class RepairActivity extends AppCompatActivity {
     ArrayList<String> repair_check_phone = new ArrayList<String>();
     ArrayList<String> repair_check_fenlei = new ArrayList<String>();
     ArrayList<String> repair_check_shijian = new ArrayList<String>();
+    ArrayList<Integer> repair_check_progress = new ArrayList<>();
+    ArrayList<Integer> repair_check_pingjia = new ArrayList<>();
 //    ArrayList<String> repair_check_user = new ArrayList<String>();
     ArrayList<Integer> repair_check_id = new ArrayList<>();
 
@@ -79,7 +81,34 @@ public class RepairActivity extends AppCompatActivity {
         toolbar.setTitle(intent_data);
         back(toolbar);
         findView();
+        getBroad();
    //     connectData();
+    }
+
+    private void getBroad(){
+        broadcastManager = LocalBroadcastManager.getInstance(RepairActivity.this);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_REPAIR);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                swipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(true);
+                    }
+                });
+               connectData();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
     }
 
 
@@ -126,6 +155,8 @@ public class RepairActivity extends AppCompatActivity {
         repair_check_phone = new ArrayList<>();
         repair_check_fenlei = new ArrayList<>();
         repair_check_shijian = new ArrayList<>();
+        repair_check_progress = new ArrayList<>();
+        repair_check_pingjia = new ArrayList<>();
         repair_check_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
         Cursor cursor = null;
@@ -144,8 +175,10 @@ public class RepairActivity extends AppCompatActivity {
             String phone = cursor.getString(cursor.getColumnIndex("repair_phone"));
             String fenlei = cursor.getString(cursor.getColumnIndex("repair_title"));
             String shijian = cursor.getString(cursor.getColumnIndex("repair_time"));
+            int progress = cursor.getInt(cursor.getColumnIndex("repair_progress"));
+            int pingjia = cursor.getInt(cursor.getColumnIndex("repair_pingjia"));
             int id = cursor.getInt(cursor.getColumnIndex("repair_id"));
-            findData(name,phone,fenlei,shijian,id);
+            findData(name,phone,fenlei,shijian,id,progress,pingjia);
         }
         cursor.close();
         sqLiteDatabase.close();
@@ -215,6 +248,8 @@ public class RepairActivity extends AppCompatActivity {
                                 values.put("repair_area",resultSet.getString("repair_area"));
                                 values.put("repair_title",resultSet.getString("repair_leixing"));
                                 values.put("repair_content",resultSet.getString("repair_content"));
+                                values.put("repair_progress",resultSet.getInt("repair_progress"));
+                                values.put("repair_pingjia",resultSet.getInt("repair_pingjia"));
                                 Blob picture1 = resultSet.getBlob("repair_picture1");
                                 if(picture1 != null){
                                     values.put("repair_picture1",DealBitmap.compressImage(picture1,"_picture1_repair"+id));
@@ -252,6 +287,11 @@ public class RepairActivity extends AppCompatActivity {
                                     values.put("repair_picture6", (String) null);
                                 }
                                 sqLiteDatabase.insert("repair",null,values);
+                            }else {
+                                ContentValues values1 = new ContentValues();
+                                values1.put("repair_progress",resultSet.getInt("repair_progress"));
+                                values1.put("repair_pingjia",resultSet.getInt("repair_pingjia"));
+                                sqLiteDatabase.update("repair",values1,"repair_id=?",new String[]{String.valueOf(resultSet.getInt("repair_id"))});
                             }
 //                            findData(resultSet.getString("repair_content"),
 //                                     resultSet.getInt("repair_id"),
@@ -277,12 +317,15 @@ public class RepairActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void findData(String name,String phone,String fenlei,String shijian,int id){
+    private void findData(String name,String phone,String fenlei,String shijian,int id,int progress,
+                          int pingjia){
         repair_check_name.add(name);
         repair_check_phone.add(phone);
         repair_check_fenlei.add(fenlei);
         repair_check_shijian.add(TimeChange.StringToString(shijian));
         repair_check_id.add(id);
+        repair_check_progress.add(progress);
+        repair_check_pingjia.add(pingjia);
 //        repair_check_user.add(user);
     }
 
@@ -291,7 +334,8 @@ public class RepairActivity extends AppCompatActivity {
         for(int i=0; i<repair_check_name.size(); i++){
             RepairCheckAdapter newData = new RepairCheckAdapter(Data);
             RepairCheckAdapter.Repair_Check_item repair_check_item = newData.new Repair_Check_item(
-                    repair_check_name.get(i),repair_check_phone.get(i),repair_check_fenlei.get(i),repair_check_shijian.get(i)
+                    repair_check_name.get(i),repair_check_phone.get(i),repair_check_fenlei.get(i),repair_check_shijian.get(i),
+                    repair_check_progress.get(i),repair_check_pingjia.get(i)
             );
             Data.add(repair_check_item);
         }

@@ -81,7 +81,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "repair_picture3 text, "
             + "repair_picture4 text, "
             + "repair_picture5 text, "
-            + "repair_picture6 text)";
+            + "repair_picture6 text, "
+            + "repair_progress integer, "
+            + "repair_pingjia integer)";
 
     public static final String CREATE_SHOP ="create table shop ("
             + "id integer primary key autoincrement, "

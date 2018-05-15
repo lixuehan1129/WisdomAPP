@@ -15,5 +15,6 @@
     <color name="colorWhite">#FDFEFE</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWu">#00000000</color>
+    <color name="colorRed">#FF0000</color>
     <color name="colorGray_White">#f2f2f2</color>
 </resources>

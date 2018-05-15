@@ -14,16 +14,17 @@
         <com.daimajia.slider.library.SliderLayout
             android:id="@+id/shop_trade_page_slider"
             android:layout_width="match_parent"
-            android:layout_height="280dp"/>
+            android:layout_height="320dp"/>
         <TextView
             android:layout_below="@id/shop_trade_page_slider"
             android:id="@+id/shop_trade_page_price"
             android:paddingTop="10dp"
+            android:paddingBottom="8dp"
             android:paddingLeft="10dp"
             android:text="￥998"
-            android:textColor="@color/colorAccent"
-            android:textSize="18sp"
-            android:background="@drawable/bottom_lay"
+            android:textColor="@color/colorRed"
+            android:textStyle="bold"
+            android:textSize="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
@@ -34,44 +35,10 @@
             android:paddingRight="20dp"
             android:text="商品信息"
             android:textColor="@color/colorBlack"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:layout_below="@id/shop_trade_page_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <RelativeLayout
-            android:id="@+id/rela_ssss"
-            android:background="@color/colorGray_White"
-            android:layout_below="@id/shop_trade_page_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right">
-            <com.example.wisdompark19.ViewHelper.AmountView
-                android:id="@+id/amount_view"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                app:btnTextSize="14sp"
-                app:btnWidth="36dp"
-                app:tvWidth="50dp"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_below="@+id/rela_ssss"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorGray_White"
-            android:padding="3dp">
-
-            <TextView
-                android:id="@+id/shop_trade_page_pay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:padding="8dp"
-                android:text="立  即  购  买"
-                android:textColor="@color/colorAccent"
-                android:textSize="18sp" />
-        </RelativeLayout>
     </RelativeLayout>
 
     <View
@@ -88,5 +55,37 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/society_new_message_page_tacv"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/colorWhite"
+        app:cardElevation="10dp"
+        android:padding="3dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp">
+            <com.example.wisdompark19.ViewHelper.AmountView
+                android:id="@+id/amount_view"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                app:btnTextSize="14sp"
+                app:btnWidth="36dp"
+                app:tvWidth="50dp"/>
+            <TextView
+                android:id="@+id/shop_trade_page_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:padding="8dp"
+                android:text="立  即  购  买"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

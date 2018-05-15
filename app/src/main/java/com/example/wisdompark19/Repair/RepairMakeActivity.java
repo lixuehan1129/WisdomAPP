@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,10 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +40,6 @@ import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.CustomDatePicker;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.ShowImage;
-import com.example.wisdompark19.ViewHelper.SlideSwitch;
 import com.example.xlhratingbar_lib.XLHRatingBar;
 import com.mysql.jdbc.Connection;
 
@@ -45,6 +47,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -84,6 +87,10 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
     private CustomDatePicker mCustomDatePicker;
     private RelativeLayout repair_progress;
     private RelativeLayout repair_pingjia;
+    private XLHRatingBar repair_ratingbar;
+    private Switch repair_ok;
+    private int progress_i = 0;
+    private int pingjia_i = 0;
 
     private String time;
     private String spinner;
@@ -113,24 +120,30 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         repair_spinner = (Spinner)findViewById(R.id.repair_spinner);
         repair_time = (TextView)findViewById(R.id.repair_time);
         repair_image = (CircleImageView) findViewById(R.id.repair_image);
-        Button repair_button_ok = (Button) findViewById(R.id.repair_make_ok);
         repair_edit = (EditText)findViewById(R.id.repair_make_edit);
         repair_rv = (RecyclerView)findViewById(R.id.repair_make_rv);
+        repair_progress = (RelativeLayout) findViewById(R.id.repair_progress);
+        repair_progress.setVisibility(View.INVISIBLE);
+        repair_pingjia = (RelativeLayout) findViewById(R.id.repair_pingjia);
+        repair_pingjia.setVisibility(View.INVISIBLE);
+        repair_ratingbar = (XLHRatingBar) findViewById(R.id.repair_ratingBar);
+        repair_ok = (Switch) findViewById(R.id.repair_ok);
+
+        Button repair_button_ok = (Button) findViewById(R.id.repair_make_ok);
+        repair_button_ok.setOnClickListener(this);
+
         CardView repair_tacv = (CardView) findViewById(R.id.repair_make_tacv);
         ImageView repair_make_take = (ImageView) findViewById(R.id.repair_make_take);
         ImageView repair_make_add = (ImageView) findViewById(R.id.repair_make_add);
-        repair_progress = (RelativeLayout) findViewById(R.id.repair_progress);
-        repair_progress.setVisibility(View.INVISIBLE);
-        SlideSwitch repair_ok = (SlideSwitch) findViewById(R.id.repair_ok);
-        repair_pingjia = (RelativeLayout) findViewById(R.id.repair_pingjia);
-        repair_pingjia.setVisibility(View.INVISIBLE);
-        XLHRatingBar repair_ratingbar = (XLHRatingBar) findViewById(R.id.repair_ratingBar);
+
+
         dataBaseHelper = new DataBaseHelper(RepairMakeActivity.this,AppConstants.SQL_VISION);
         ImageDatas = new ArrayList<>();
         ImagePath = new ArrayList<>();
         ImageData = new ArrayList<>();
+
         if(mes_select == 1){ //第二次进入时使用
-            repair_button_ok.setVisibility(View.INVISIBLE);
+         //   repair_button_ok.setVisibility(View.INVISIBLE);
             repair_button_ok.setText("提交");
             repair_time.setEnabled(false);
             repair_time.setText(null);
@@ -139,27 +152,25 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             repair_tacv.setVisibility(View.INVISIBLE);
             if(SharePreferences.getInt(RepairMakeActivity.this,AppConstants.USER_SORT) == 0){
                 repair_progress.setVisibility(View.VISIBLE);
-                repair_ok.setOnStateChangedListener(new SlideSwitch.OnStateChangedListener() {
+                repair_ok.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onStateChanged(boolean state) {
-                        if(true == state)
-                        {
-                            Toast.makeText(RepairMakeActivity.this, "开关已打开", Toast.LENGTH_LONG).show();
-                        }
-                        else
-                        {
-                            Toast.makeText(RepairMakeActivity.this, "开关已关闭", Toast.LENGTH_LONG).show();
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked){
+                            progress_i = 1; //完成
+                        }else {
+                            progress_i = 0; //未完成
+
                         }
                     }
                 });
             }
-            repair_pingjia.setVisibility(View.VISIBLE);
-            repair_ratingbar.setOnRatingChangeListener(new XLHRatingBar.OnRatingChangeListener() {
-                @Override
-                public void onChange(int countSelected) {
-                    Toast.makeText(RepairMakeActivity.this, countSelected+"", Toast.LENGTH_LONG).show();
-                }
-            });
+//            repair_ratingbar.setOnRatingChangeListener(new XLHRatingBar.OnRatingChangeListener() {
+//                @Override
+//                public void onChange(int countSelected) {
+//                    Toast.makeText(RepairMakeActivity.this, countSelected+"", Toast.LENGTH_LONG).show();
+//                }
+//            });
+
             getData();
 //            if(name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
 //                String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
@@ -181,7 +192,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             repair_name.setText(name);
             repair_add.setText(SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_ADDRESS));
             repair_time.setOnClickListener(RepairMakeActivity.this);
-            repair_button_ok.setOnClickListener(this);
             repair_make_take.setOnClickListener(this);
             repair_make_add.setOnClickListener(this);
             repair_edit.setMinLines(3);
@@ -197,15 +207,27 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                 break;
             }
             case R.id.repair_make_ok:{
-                if(repair_edit.getText().toString().isEmpty()){
-                    Toast.makeText(RepairMakeActivity.this,"内容不能为空",Toast.LENGTH_LONG).show();
+                if(mes_select == 1){
+                    updateOld();
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //
                 }else {
-                    if(ImagePath.size()<6){
-                        for(int i = 6-ImagePath.size(); i > 0; i--){
-                            ImagePath.add(null);
+                    if(repair_edit.getText().toString().isEmpty()){
+                        Toast.makeText(RepairMakeActivity.this,"内容不能为空",Toast.LENGTH_LONG).show();
+                    }else {
+                        if(ImagePath.size()<6){
+                            for(int i = 6-ImagePath.size(); i > 0; i--){
+                                ImagePath.add(null);
+                            }
                         }
+                        UpdateData();
                     }
-                    UpdateData();
                 }
                 break;
             }
@@ -236,6 +258,23 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                 null,null,null);
         if(cursor.moveToFirst()){
             String phone = cursor.getString(cursor.getColumnIndex("repair_phone"));
+            repair_ratingbar.setCountSelected(cursor.getInt(cursor.getColumnIndex("repair_pingjia")));
+            if(SharePreferences.getString(RepairMakeActivity.this,AppConstants.USER_PHONE).equals(phone)){
+                repair_pingjia.setVisibility(View.VISIBLE);
+                repair_ratingbar.setOnRatingChangeListener(new XLHRatingBar.OnRatingChangeListener() {
+                    @Override
+                    public void onChange(int countSelected) {
+                        pingjia_i = countSelected;
+                    }
+                });
+            }
+            int progress = cursor.getInt(cursor.getColumnIndex("repair_progress"));
+            progress_i = progress;
+            if(progress == 0){
+                repair_ok.setChecked(false);
+            }else {
+                repair_ok.setChecked(true);
+            }
             Cursor cursor_phone = sqLiteDatabase.query("user",null,
                     "user_phone = ?",new String[]{phone},null,null,null);
             if(cursor_phone != null){
@@ -289,6 +328,39 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
         sqLiteDatabase.close();
     }
 
+    private void updateOld(){
+        final ProgressDialog progressDialog = ProgressDialog.show(RepairMakeActivity.this,"","正在上传",true);
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();//用于toast
+                    Connection conn_update = JDBCTools.getConnection("shequ","Zz123456");
+                    if(conn_update != null){
+                        Log.d("调试", "连接成功");
+                        Statement stmt = conn_update.createStatement();
+                        String update_old = "update repair set repair_progress = ?, repair_pingjia = ? where repair_id = ?";
+                        PreparedStatement preparedStatement;
+                        preparedStatement = conn_update.prepareStatement(update_old);
+                        preparedStatement.setInt(1,progress_i);
+                        preparedStatement.setInt(2,pingjia_i);
+                        preparedStatement.setInt(3,intent_data_id);
+                        preparedStatement.executeUpdate();//执行更新操作
+                        preparedStatement.close();
+                        JDBCTools.releaseConnection(stmt,conn_update);
+                        Intent intent_broad = new Intent(AppConstants.BROAD_REPAIR);
+                        LocalBroadcastManager.getInstance(RepairMakeActivity.this).sendBroadcast(intent_broad);
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                    progressDialog.dismiss();
+                }
+                Looper.loop();
+            }
+        }.start();
+    }
+
     //上传数据
     private void UpdateData(){
         final ProgressDialog progressDialog = ProgressDialog.show(RepairMakeActivity.this,"","正在上传",true);
@@ -337,6 +409,8 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
+                        Intent intent_broad = new Intent(AppConstants.BROAD_REPAIR);
+                        LocalBroadcastManager.getInstance(RepairMakeActivity.this).sendBroadcast(intent_broad);
                         progressDialog.dismiss();
                         finish();
                     }else {
