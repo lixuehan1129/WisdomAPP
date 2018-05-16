@@ -28,6 +28,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String CREATE_NEWMESSAGE ="create table newmessage ("
             + "id integer primary key autoincrement, "
             + "newmessage_id integer, "
+            + "newmessage_xin integer, "
             + "newmessage_name text, "
             + "newmessage_area text, "
             + "newmessage_phone text, "

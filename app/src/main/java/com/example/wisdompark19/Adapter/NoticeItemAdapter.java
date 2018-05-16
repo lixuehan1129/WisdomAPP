@@ -2,16 +2,13 @@ package com.example.wisdompark19.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.wisdompark19.R;
 
 import java.util.List;
@@ -34,6 +31,7 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         TextView card_message_content;
         TextView card_message_time;
         CircleImageView card_message_image;
+        ImageView card_message_xin;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -41,6 +39,7 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
             card_message_content = (TextView)itemView.findViewById(R.id.card_message_content);
             card_message_time = (TextView)itemView.findViewById(R.id.card_message_time);
             card_message_image = (CircleImageView)itemView.findViewById(R.id.card_message_image);
+            card_message_xin = (ImageView)itemView.findViewById(R.id.card_message_xin);
         }
     }
 
@@ -66,6 +65,7 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         String card_message_content = mNotice_item.getCard_message_content();
         String card_message_time = mNotice_item.getCard_message_time();
         Bitmap url = mNotice_item.getCard_message_image();
+        int card_message_x = mNotice_item.getCard_message_xin();
         if(url!=null){
 //            Glide.with(mContext)
 //                    .load(url)
@@ -78,6 +78,11 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
             holder.card_message_image.setImageResource(R.mipmap.ic_launcher_round);
         }
 
+        if(card_message_x == 1){
+            holder.card_message_xin.setVisibility(View.INVISIBLE);
+        }else {
+            holder.card_message_xin.setVisibility(View.VISIBLE);
+        }
         holder.card_message_tell.setText(card_message_tell);
         holder.card_message_content.setText(card_message_content);
         holder.card_message_time.setText(card_message_time);
@@ -115,13 +120,16 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
         private String card_message_time;
         private Bitmap card_message_image;
         private int card_message_id;
+        private int card_message_xin;
+
         public Notice_item(String card_message_tell, String card_message_content, String card_message_time,
-                           Bitmap card_message_image, int card_message_id){
+                           Bitmap card_message_image, int card_message_id, int card_message_xin){
             this.card_message_tell = card_message_tell;
             this.card_message_content = card_message_content;
             this.card_message_time = card_message_time;
             this.card_message_image = card_message_image;
             this.card_message_id = card_message_id;
+            this.card_message_xin = card_message_xin;
         }
         public int getCard_message_id() {
             return card_message_id;
@@ -159,6 +167,14 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
 
         public void setCard_message_time(String card_message_time) {
             this.card_message_time = card_message_time;
+        }
+
+        public int getCard_message_xin() {
+            return card_message_xin;
+        }
+
+        public void setCard_message_xin(int card_message_xin) {
+            this.card_message_xin = card_message_xin;
         }
 
     }

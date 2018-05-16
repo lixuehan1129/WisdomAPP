@@ -4,6 +4,17 @@ import android.annotation.SuppressLint;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.example.wisdompark19.R;
 
 import java.lang.reflect.Field;
 
@@ -34,4 +45,6 @@ public class BottomNavigationViewHelper {
             e.printStackTrace();
         }
     }
+
+
 }

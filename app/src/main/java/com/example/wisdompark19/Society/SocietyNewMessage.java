@@ -34,7 +34,6 @@ import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,10 +64,12 @@ public class SocietyNewMessage extends BaseFragment {
     ArrayList<String> card_message_time;
     ArrayList<Bitmap> card_message_image;
     ArrayList<Integer> card_message_id;
+    ArrayList<Integer> card_message_xin;
 
     @Override
     public void onStart(){
         super.onStart();
+        localData();
     }
 
     @Override
@@ -108,6 +109,7 @@ public class SocietyNewMessage extends BaseFragment {
     }
 
 
+
     @Override
     protected void onFragmentFirstVisible() {
         localData();
@@ -143,11 +145,13 @@ public class SocietyNewMessage extends BaseFragment {
     }
 
     private void localData(){
+        int unRead = 0;
         card_message_tell = new ArrayList<>();
         card_message_content = new ArrayList<>();
         card_message_time = new ArrayList<>();
         card_message_image = new ArrayList<>();
         card_message_id = new ArrayList<>();
+        card_message_xin = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query("newmessage",null,"newmessage_area = ?",new String[]{
                 SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
@@ -159,6 +163,7 @@ public class SocietyNewMessage extends BaseFragment {
             String content = cursor.getString(cursor.getColumnIndex("newmessage_content"));
             String time = cursor.getString(cursor.getColumnIndex("newmessage_time"));
             int id = cursor.getInt(cursor.getColumnIndex("newmessage_id"));
+            int xin = cursor.getInt(cursor.getColumnIndex("newmessage_xin"));
             Cursor cursor_phone = sqLiteDatabase.query("user",null,
                     "user_phone = ?",new String[]{phone},null,null,null);
             Bitmap picture = null;
@@ -173,10 +178,16 @@ public class SocietyNewMessage extends BaseFragment {
                 }
                 cursor_phone.close();
             }
-            initRollData(title,content,time,id,picture);
+            if(xin != 1){
+                unRead++;
+            }
+            initRollData(title,content,time,id,picture,xin);
         }
         cursor.close();
         sqLiteDatabase.close();
+        Intent intent_broad = new Intent(AppConstants.BROAD_UNREAD);
+        intent_broad.putExtra("unread",unRead);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent_broad);
         //执行事件
         initData();
         setAdapter();
@@ -238,6 +249,7 @@ public class SocietyNewMessage extends BaseFragment {
                                 values.put("newmessage_title",resultSet.getString("newmessage_title"));
                                 values.put("newmessage_area",resultSet.getString("newmessage_area"));
                                 values.put("newmessage_content",resultSet.getString("newmessage_content"));
+                                values.put("newmessage_xin",0);
                                 Blob picture1 = resultSet.getBlob("newmessage_picture1");
                                 if(picture1 != null){
                                     values.put("newmessage_picture1",DealBitmap.compressImage(picture1,"_picture1_message"+id));
@@ -318,7 +330,7 @@ public class SocietyNewMessage extends BaseFragment {
     }
 
 
-    private void initRollData(String title, String content, String time, int id, Bitmap picture){
+    private void initRollData(String title, String content, String time, int id, Bitmap picture,int xin){
         if(title.isEmpty()){
             card_message_tell.add(content);
         }else {
@@ -328,6 +340,7 @@ public class SocietyNewMessage extends BaseFragment {
         card_message_time.add(TimeChange.StringToString(time));
         card_message_id.add(id);
         card_message_image.add(picture);
+        card_message_xin.add(xin);
     }
 
     private void initData(){
@@ -336,7 +349,7 @@ public class SocietyNewMessage extends BaseFragment {
             NoticeItemAdapter newData = new NoticeItemAdapter(Data);
             NoticeItemAdapter.Notice_item notice_item = newData.new Notice_item(card_message_tell.get(i),
                     card_message_content.get(i),card_message_time.get(i),card_message_image.get(i),
-                    card_message_id.get(i));
+                    card_message_id.get(i),card_message_xin.get(i));
             Data.add(notice_item);
         }
     }
@@ -355,9 +368,6 @@ public class SocietyNewMessage extends BaseFragment {
                 Intent intent = new Intent(getActivity(), SocietyNewMessagePage.class);
                 intent.putExtra("put_data_mes_id",card_message_id.get(position));
                 intent.putExtra("put_data_mes_select",1);
-//                intent.putExtra("put_data_mes_title",card_message_tell.get(position));
-//                intent.putExtra("put_data_mes_content",card_message_content.get(position));
-//                intent.putExtra("put_data_mes_time",card_message_time.get(position));
                 startActivity(intent);
             }
         });

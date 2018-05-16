@@ -1,24 +1,14 @@
 package com.example.wisdompark19.Society;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +16,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,30 +31,21 @@ import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.ForbidClickListener;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
-import com.example.wisdompark19.Mine.MineLoginActivity;
-import com.example.wisdompark19.Mine.MineRegistActivity;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.example.wisdompark19.ViewHelper.ShowImage;
 import com.mysql.jdbc.Connection;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import top.zibin.luban.Luban;
@@ -141,6 +121,7 @@ public class SocietyNewMessagePage extends AppCompatActivity {
 //            society_new_message_page_title.setText(title);
 //            society_new_message_page_content.setText(content);
 //            society_new_message_page_time.setText(time);
+            updateXin();
             getData();
         }
 
@@ -267,6 +248,14 @@ public class SocietyNewMessagePage extends AppCompatActivity {
 //        }
 //    });
 
+    private void updateXin(){
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("newmessage_xin",1);
+        sqLiteDatabase.update("newmessage",values,"newmessage_id = ?",
+                new String[]{String.valueOf(intent_data_id)});
+        sqLiteDatabase.close();
+    }
     private void getData(){
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query("newmessage",null,"newmessage_id = ?",new String[]{String.valueOf(intent_data_id)},

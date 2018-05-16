@@ -8,11 +8,10 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wisdompark19.Adapter.SocietyComplaintItemAdapter;
@@ -34,8 +32,6 @@ import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
-import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -105,6 +101,7 @@ public class SocietyMakeComplaint extends BaseFragment {
     public void onStart(){
         super.onStart();
     }
+
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         if (isVisible) {
