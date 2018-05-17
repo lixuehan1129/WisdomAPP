@@ -19,7 +19,7 @@ import com.example.wisdompark19.Mine.MineLoginActivity;
 public class SplashActivity extends AppCompatActivity {
 
     private final static String channel = "360";//应用商店渠道名(如：360，小米、华为)
-    private final static String appkey = "d0722f2bd6c84eab99f1508cbd870b6b";//应用AppKey
+    private final static String appkey = "c45a799b4c2d4b80a361eacd228ef79e";//应用AppKey
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

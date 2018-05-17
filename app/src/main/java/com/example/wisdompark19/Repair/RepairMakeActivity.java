@@ -170,7 +170,6 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
 //                    Toast.makeText(RepairMakeActivity.this, countSelected+"", Toast.LENGTH_LONG).show();
 //                }
 //            });
-
             getData();
 //            if(name.equals(SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE))){
 //                String imageBase64 = SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PICTURE);
@@ -208,15 +207,7 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
             }
             case R.id.repair_make_ok:{
                 if(mes_select == 1){
-                    updateOld();
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //
-                    //
+                    updateOld(); //报修信息更新
                 }else {
                     if(repair_edit.getText().toString().isEmpty()){
                         Toast.makeText(RepairMakeActivity.this,"内容不能为空",Toast.LENGTH_LONG).show();
@@ -377,8 +368,8 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                         java.sql.PreparedStatement preparedStatement = null;
                         String repair_sql_insert = "insert into repair (repair_name,repair_phone,repair_area,repair_time," +
                                 "repair_leixing,repair_content,repair_picture1,repair_picture2," +
-                                "repair_picture3,repair_picture4,repair_picture5,repair_picture6,repair_select_time) " +
-                                "values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                                "repair_picture3,repair_picture4,repair_picture5,repair_picture6,repair_select_time,repair_progress,repair_pingjia) " +
+                                "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                         preparedStatement = (java.sql.PreparedStatement)conn.prepareStatement(repair_sql_insert,Statement.RETURN_GENERATED_KEYS);
                         preparedStatement.setString(1, SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_NAME));
                         preparedStatement.setString(2, SharePreferences.getString(RepairMakeActivity.this, AppConstants.USER_PHONE));
@@ -387,6 +378,8 @@ public class RepairMakeActivity extends AppCompatActivity implements View.OnClic
                         preparedStatement.setString(5, repair_spinner.getSelectedItem().toString());
                         preparedStatement.setString(6, repair_edit.getText().toString());
                         preparedStatement.setString(13,repair_time.getText().toString());
+                        preparedStatement.setInt(14,0);
+                        preparedStatement.setInt(15,0);
                         for(int i = 0; i < 6; i++){
                             File file = null;
                             System.out.println(ImagePath.get(i));

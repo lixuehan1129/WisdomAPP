@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar.setTabSelectedListener(this);
 
         badgeItem.setBackgroundColorResource(R.color.colorRed);
-        badgeItem.hide();//角标
+       // badgeItem.hide();//角标
 
         bottomNavigationBar.clearAll();
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
@@ -255,11 +255,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                                 SharePreferences.getString(MainActivity.this,AppConstants.USER_PHONE) +
                                 "'"; //要执行的sql语句
                         ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-                        while (rs.next()) {
+                        while (rs.first()) {
                             int user_sort = rs.getInt("user_sort");
+                            String name = rs.getString("user_name");
+                            String area = rs.getString("user_area");
+                            String address = rs.getString("user_address");
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_SORT);
                             SharePreferences.putInt(MainActivity.this,AppConstants.USER_SORT,user_sort);
+                            SharePreferences.remove(MainActivity.this,AppConstants.USER_NAME);
+                            SharePreferences.putString(MainActivity.this,AppConstants.USER_NAME,name);
+                            SharePreferences.remove(MainActivity.this,AppConstants.USER_AREA);
+                            SharePreferences.putString(MainActivity.this,AppConstants.USER_AREA,area);
+                            SharePreferences.remove(MainActivity.this,AppConstants.USER_ADDRESS);
+                            SharePreferences.putString(MainActivity.this,AppConstants.USER_ADDRESS,address);
                         }
+                        Intent intent_broad = new Intent(AppConstants.BROAD_CON);
+                        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent_broad);
                         rs.close();
                         JDBCTools.releaseConnection(stmt,conn);
                     }else{

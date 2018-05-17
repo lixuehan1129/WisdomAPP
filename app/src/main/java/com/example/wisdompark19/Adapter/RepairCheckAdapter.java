@@ -67,7 +67,7 @@ public class RepairCheckAdapter extends RecyclerView.Adapter<RepairCheckAdapter.
         int checke_jindu = mRepair_Check_item.getRepair_check_progress();
         int checke_pingjia = mRepair_Check_item.getRepair_check_pingjia();
         //这里的图片来源需要修改
-        if(checke_pingjia == 0){
+        if(checke_pingjia == 0 || checke_jindu == 0){
             holder.repair_check_pingjia.setVisibility(View.INVISIBLE);
         }else {
             holder.repair_pingjia.setVisibility(View.INVISIBLE);

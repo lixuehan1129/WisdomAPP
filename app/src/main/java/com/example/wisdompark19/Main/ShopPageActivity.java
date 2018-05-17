@@ -2,12 +2,14 @@ package com.example.wisdompark19.Main;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,11 +27,17 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.example.wisdompark19.AutoProject.AppConstants;
+import com.example.wisdompark19.AutoProject.JDBCTools;
+import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.AmountView;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
+import com.mysql.jdbc.Connection;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -184,12 +192,13 @@ public class ShopPageActivity extends AppCompatActivity {
                 new AlertDialog.Builder(ShopPageActivity.this);
         normalDialog.setMessage("商品信息:  "+ name +"\n\n"+
                                 "数   量 :  "+ size +"\n\n"+
-                                "总   价 :  "+ size*price);
+                                "总   价 :  "+ size*price +"\n\n"+
+                                "地   址 :  "+ SharePreferences.getString(ShopPageActivity.this,AppConstants.USER_ADDRESS));
         normalDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        updateDingdan();
                     }
                 });
         normalDialog.setNegativeButton("取消",
@@ -202,6 +211,53 @@ public class ShopPageActivity extends AppCompatActivity {
         // 显示
         normalDialog.show();
     }
+
+    private void updateDingdan(){
+        final ProgressDialog progressDialog = ProgressDialog.show(ShopPageActivity.this,"","正在创建订单",true);
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();//用于toast
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+
+                        //上传
+                        java.sql.PreparedStatement preparedStatement = null;
+                        String shop_sql_insert = "insert into dingdan (dingdan_user,dingdan_phone,dingdan_area,dingdan_time," +
+                                "dingdan_name,dingdan_price,dingdan_num,dingdan_add,dingdan_progress) " +
+                                "values(?,?,?,?,?,?,?,?,?)";
+                        preparedStatement = (java.sql.PreparedStatement)conn.prepareStatement(shop_sql_insert,Statement.RETURN_GENERATED_KEYS);
+                        preparedStatement.setString(1, SharePreferences.getString(ShopPageActivity.this, AppConstants.USER_NAME));
+                        preparedStatement.setString(2, SharePreferences.getString(ShopPageActivity.this, AppConstants.USER_PHONE));
+                        preparedStatement.setString(3, SharePreferences.getString(ShopPageActivity.this, AppConstants.USER_AREA));
+                        preparedStatement.setString(4, TimeChange.getBigTime());
+                        preparedStatement.setString(5, name);
+                        preparedStatement.setFloat(6, price);
+                        preparedStatement.setInt(7, size);
+                        preparedStatement.setString(8, SharePreferences.getString(ShopPageActivity.this, AppConstants.USER_ADDRESS));
+                        preparedStatement.setInt(9, 0);
+                        preparedStatement.executeUpdate();
+
+                        preparedStatement.close();
+                        JDBCTools.releaseConnection(stmt,conn);
+                        progressDialog.dismiss();
+                        finish();
+                    }else {
+                        Log.d("调试", "连接失败");
+                        Toast toast = Toast.makeText(ShopPageActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                        progressDialog.dismiss();
+                    }
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }.start();
+    }
+
     /*
       * 点击空白区域 Edittext失去焦点 关闭输入法
       * */
