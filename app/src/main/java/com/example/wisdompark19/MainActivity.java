@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
         badgeItem.setBackgroundColorResource(R.color.colorRed);
        // badgeItem.hide();//角标
+        badgeItem.setText("0");
 
         bottomNavigationBar.clearAll();
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                     Looper.prepare();
                     Connection conn = JDBCTools.getConnection("shequ","Zz123456");
                     if(conn!=null){ //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
-                        Log.d("调试","连接成功");
+                        Log.d("调试","连接成功，成员更新");
                         Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
                         String sql = "select * from user where user_phone = '" +
                                 SharePreferences.getString(MainActivity.this,AppConstants.USER_PHONE) +

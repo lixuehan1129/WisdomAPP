@@ -1,4 +1,4 @@
-package com.example.wisdompark19.Main;
+package com.example.wisdompark19.Shop;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;

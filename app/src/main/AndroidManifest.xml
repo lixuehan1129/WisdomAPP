@@ -79,7 +79,7 @@
         <activity android:name=".Repair.RepairActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
-        <activity android:name=".Main.ShopActivity"
+        <activity android:name=".Shop.ShopActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
         <activity android:name=".Repair.RepairMakeActivity"
@@ -91,7 +91,7 @@
         <activity android:name=".Society.SocietyFindPageActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
-        <activity android:name=".Main.ShopPageActivity"
+        <activity android:name=".Shop.ShopPageActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
         <activity android:name=".Mine.MineLoginActivity"
@@ -115,10 +115,13 @@
         <activity android:name=".ViewHelper.ShowImage"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
-        <activity android:name=".Main.ShopAddActivity"
+        <activity android:name=".Shop.ShopAddActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
         <activity android:name=".Mine.MineRequireActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            tools:ignore="InnerclassSeparator" />
+        <activity android:name=".Shop.ShopCheckActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="InnerclassSeparator" />
 

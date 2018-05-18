@@ -1,11 +1,10 @@
-package com.example.wisdompark19.Main;
+package com.example.wisdompark19.Shop;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,7 +29,6 @@ import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,6 +71,7 @@ public class ShopActivity extends AppCompatActivity {
 
     private void findView(){
         Button shop_ok = (Button) findViewById(R.id.shop_ok);
+        Button shop_dingdan = (Button) findViewById(R.id.shop_dingdan);
         mRecyclerView = (RecyclerView) findViewById(R.id.shop_trade_rec);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.shop_swip);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this,3));
@@ -86,6 +85,14 @@ public class ShopActivity extends AppCompatActivity {
                 }else {
                     Toast.makeText(ShopActivity.this,"您不是管理员，没有该权限",Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        shop_dingdan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShopActivity.this,ShopCheckActivity.class);
+                startActivity(intent);
             }
         });
 

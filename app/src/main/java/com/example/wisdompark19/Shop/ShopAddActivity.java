@@ -1,4 +1,4 @@
-package com.example.wisdompark19.Main;
+package com.example.wisdompark19.Shop;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

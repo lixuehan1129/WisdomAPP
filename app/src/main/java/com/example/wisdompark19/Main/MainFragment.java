@@ -32,11 +32,11 @@ import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.Repair.RepairActivity;
+import com.example.wisdompark19.Shop.ShopActivity;
 import com.example.wisdompark19.Society.SocietyNewMessagePage;
 import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;

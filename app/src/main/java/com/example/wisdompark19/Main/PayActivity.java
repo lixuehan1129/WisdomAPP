@@ -10,27 +10,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.base.bj.paysdk.domain.TrPayResult;
 import com.base.bj.paysdk.listener.PayResultListener;
@@ -44,6 +36,7 @@ import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
@@ -72,6 +65,8 @@ public class PayActivity extends AppCompatActivity {
     private String name = null;
     private Dialog dialog;
 
+    private String yue_shui = "正在加载",yue_dian = "正在加载",yue_qi = "正在加载",yue_wu = "正在加载";
+
     ArrayList<String> count_name; // 上下滚动消息栏内容
     ArrayList<String> count_fee;
     ArrayList<String> count_time;
@@ -89,6 +84,7 @@ public class PayActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
         toolbar.setTitle(intent_data);
         back(toolbar);
+        getYue();
         findView();
     }
 
@@ -115,12 +111,10 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pay_name.setText("水费");
-                pay_card.setVisibility(View.VISIBLE);
-                if(getYue(1) != null){
-                    pay_yue.setText(getYue(1));
-                }else {
-                    pay_yue.setText("0");
+                if(yue_shui != null){
+                    pay_yue.setText(yue_shui);
                 }
+                pay_card.setVisibility(View.VISIBLE);
                 name = "水费";
             }
         });
@@ -128,12 +122,10 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pay_name.setText("电费");
-                pay_card.setVisibility(View.VISIBLE);
-                if(getYue(2) != null){
-                    pay_yue.setText(getYue(2));
-                }else {
-                    pay_yue.setText("0");
+                if(yue_dian != null){
+                    pay_yue.setText(yue_dian);
                 }
+                pay_card.setVisibility(View.VISIBLE);
                 name = "电费";
             }
         });
@@ -141,12 +133,10 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pay_name.setText("天然气");
-                pay_card.setVisibility(View.VISIBLE);
-                if(getYue(3) != null){
-                    pay_yue.setText(getYue(3));
-                }else {
-                    pay_yue.setText("0");
+                if(yue_qi != null){
+                    pay_yue.setText(yue_qi);
                 }
+                pay_card.setVisibility(View.VISIBLE);
                 name = "天然气";
             }
         });
@@ -154,12 +144,10 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pay_name.setText("物业费");
-                pay_card.setVisibility(View.VISIBLE);
-                if(getYue(4) != null){
-                    pay_yue.setText(getYue(4));
-                }else {
-                    pay_yue.setText("0");
+                if(yue_wu != null){
+                    pay_yue.setText(yue_wu);
                 }
+                pay_card.setVisibility(View.VISIBLE);
                 name = "物业费";
             }
         });
@@ -188,6 +176,7 @@ public class PayActivity extends AppCompatActivity {
                    if(pay_count.getText().toString().trim().isEmpty()) {
                        Toast.makeText(PayActivity.this,"请输入费用",Toast.LENGTH_LONG).show();
                    }else {
+                       pay_card.setVisibility(View.INVISIBLE);
                       // showMyDialog();
                        callPay();
                    }
@@ -220,31 +209,107 @@ public class PayActivity extends AppCompatActivity {
         initData();
     }
 
-    private String getYue(int i){
-        String yue = null;
-        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
-        Cursor cursor = null;
-        if(i == 1){
-            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
-                    new String[]{"水费"},null,null,"pay_time desc","1");
-        }else if(i == 2){
-            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
-                    new String[]{"电费"},null,null,"pay_time desc","1");
-        }else if(i == 3){
-            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
-                    new String[]{"天然气"},null,null,"pay_time desc","1");
-        }else if(i == 4){
-            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
-                    new String[]{"物业费"},null,null,"pay_time desc","1");
-        }
-        if(cursor != null){
-            while (cursor.moveToNext()){
-                yue = cursor.getString(cursor.getColumnIndex("pay_yue"));
+    private void getYue(){
+        //获取余额
+//        final SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+//        Cursor cursor = null;
+//        if(i == 1){
+//            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
+//                    new String[]{"水费"},null,null,"pay_time desc","1");
+//        }else if(i == 2){
+//            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
+//                    new String[]{"电费"},null,null,"pay_time desc","1");
+//        }else if(i == 3){
+//            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
+//                    new String[]{"天然气"},null,null,"pay_time desc","1");
+//        }else if(i == 4){
+//            cursor = sqLiteDatabase.query("pay",new String[]{"pay_yue"},"pay_name = ?",
+//                    new String[]{"物业费"},null,null,"pay_time desc","1");
+//        }
+//        if(cursor != null){
+//            while (cursor.moveToNext()){
+//                yue = cursor.getString(cursor.getColumnIndex("pay_yue"));
+//                if(yue.substring(0,1).equals(".")){
+//                    yue = "0" + yue;
+//                }
+//            }
+//            cursor.close();
+//        }
+//        sqLiteDatabase.close();
+        new Thread(){
+            public void run(){
+                try{
+                    Looper.prepare();//用于toast
+                    Connection conn = JDBCTools.getConnection("shequ","Zz123456");
+                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试", "连接成功,yue");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        //查询余额
+
+                        String sql_yue_shui = "select pay_yue from pay where pay_area = '" +
+                                   SharePreferences.getString(PayActivity.this,AppConstants.USER_AREA) +
+                                   "' and pay_phone = '" +
+                                   SharePreferences.getString(PayActivity.this,AppConstants.USER_PHONE) +
+                                   "' and pay_name = '水费' order by pay_time desc limit 1";
+
+                        String sql_yue_dian = "select pay_yue from pay where pay_area = '" +
+                                    SharePreferences.getString(PayActivity.this,AppConstants.USER_AREA) +
+                                    "' and pay_phone = '" +
+                                    SharePreferences.getString(PayActivity.this,AppConstants.USER_PHONE) +
+                                    "' and pay_name = '电费' order by pay_time desc limit 1";
+
+                        String sql_yue_qi = "select pay_yue from pay where pay_area = '" +
+                                    SharePreferences.getString(PayActivity.this,AppConstants.USER_AREA) +
+                                    "' and pay_phone = '" +
+                                    SharePreferences.getString(PayActivity.this,AppConstants.USER_PHONE) +
+                                    "' and pay_name = '天然气' order by pay_time desc limit 1";
+
+                        String sql_yue_wu = "select pay_yue from pay where pay_area = '" +
+                                    SharePreferences.getString(PayActivity.this,AppConstants.USER_AREA) +
+                                    "' and pay_phone = '" +
+                                    SharePreferences.getString(PayActivity.this,AppConstants.USER_PHONE) +
+                                    "' and pay_name = '物业费' order by pay_time desc limit 1";
+
+                        ResultSet resultSet_shui = stmt.executeQuery(sql_yue_shui);
+                        if (resultSet_shui.first()){
+                            yue_shui = resultSet_shui.getString("pay_yue");
+                        }else {
+                            yue_shui = "0";
+                        }
+                        resultSet_shui.close();
+                        ResultSet resultSet_dian = stmt.executeQuery(sql_yue_dian);
+                        if (resultSet_dian.first()){
+                            yue_dian = resultSet_dian.getString("pay_yue");
+                        }else {
+                            yue_dian = "0";
+                        }
+                        resultSet_dian.close();
+                        ResultSet resultSet_qi = stmt.executeQuery(sql_yue_qi);
+                        if (resultSet_qi.first()){
+                            yue_qi = resultSet_qi.getString("pay_yue");
+                        }else {
+                            yue_qi = "0";
+                        }
+                        resultSet_qi.close();
+                        ResultSet resultSet_wu = stmt.executeQuery(sql_yue_wu);
+                        if (resultSet_wu.first()){
+                            yue_wu = resultSet_wu.getString("pay_yue");
+                        }else {
+                            yue_wu = "0";
+                        }
+                        resultSet_wu.close();
+                        JDBCTools.releaseConnection(stmt,conn);
+                    }else {
+                        Log.d("调试", "连接失败");
+                        Toast toast = Toast.makeText(PayActivity.this, "请检查网络", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
             }
-            cursor.close();
-        }
-        sqLiteDatabase.close();
-        return yue;
+        }.start();
     }
 
     private void initRollData(String name, String fee, String time, String pay){
@@ -327,7 +392,9 @@ public class PayActivity extends AppCompatActivity {
                         type = "微信";
                     }
                     update(userid,tradename,outtradeno,type);
-                    Toast.makeText(PayActivity.this, resultString, Toast.LENGTH_LONG).show();
+                    System.out.println("支付成功");
+                    getYue();
+                   // Toast.makeText(PayActivity.this, resultString, Toast.LENGTH_LONG).show();
                     //支付成功逻辑处理
                 } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {//2：支付失败回调
                     Toast.makeText(PayActivity.this, resultString, Toast.LENGTH_LONG).show();
@@ -338,51 +405,51 @@ public class PayActivity extends AppCompatActivity {
     }
 
 
-    private void weiXin(){
-        final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
-        String tradename = pay_name.getText().toString().trim();
-        String outtradeno = userid + TimeChange.getBigTime();
-        long amount = changeY2F(pay_count.getText().toString().trim());
-        String backparams = "微信" + userid + tradename + outtradeno + pay_count.getText().toString().trim();
-       // String backparams = null;
-       // String notifyurl = null;
-        String notifyurl = "http://101.200.13.92/notify/alipayTestNotify";
-        //update(userid,tradename,outtradeno,"微信支付");
-
-        /**
-         * 3.发起微信支付
-         * @param tradename   商品名称
-         * @param outtradeno   商户系统订单号(商户系统内唯一)
-         * @param amount        商品价格（单位：分。如1.5元传150）
-         * @param backparams 商户系统回调参数
-         * @param notifyurl       商户系统回调地址
-         * @param userid          商户系统用户ID(如：trpay@52yszd.com，商户系统内唯一)
-         */
-        TrPay.getInstance(PayActivity.this).callWxPay(tradename, outtradeno, amount, backparams, notifyurl, userid, new PayResultListener() {
-            /**
-             * 支付完成回调
-             * @param context        上下文
-             * @param outtradeno   商户系统订单号
-             * @param resultCode   支付状态(RESULT_CODE_SUCC：支付成功、RESULT_CODE_FAIL：支付失败)
-             * @param resultString  支付结果
-             * @param payType      支付类型（1：支付宝 2：微信 3：银联）
-             * @param amount       支付金额
-             * @param tradename   商品名称
-             */
-
-            @Override
-            public void onPayFinish(Context context, String outtradeno, int resultCode, String resultString, int payType, Long                                                           amount, String tradename) {
-                if (resultCode == TrPayResult.RESULT_CODE_SUCC.getId()) {
-                    //支付成功逻辑处理
-                    update(userid,tradename,outtradeno,"微信支付");
-                    Toast.makeText(PayActivity.this,"支付成功",Toast.LENGTH_SHORT).show();
-                } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {
-                    //支付失败逻辑处理
-                    Toast.makeText(PayActivity.this,"支付失败",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
+//    private void weiXin(){
+//        final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
+//        String tradename = pay_name.getText().toString().trim();
+//        String outtradeno = userid + TimeChange.getBigTime();
+//        long amount = changeY2F(pay_count.getText().toString().trim());
+//        String backparams = "微信" + userid + tradename + outtradeno + pay_count.getText().toString().trim();
+//       // String backparams = null;
+//       // String notifyurl = null;
+//        String notifyurl = "http://101.200.13.92/notify/alipayTestNotify";
+//        //update(userid,tradename,outtradeno,"微信支付");
+//
+//        /**
+//         * 3.发起微信支付
+//         * @param tradename   商品名称
+//         * @param outtradeno   商户系统订单号(商户系统内唯一)
+//         * @param amount        商品价格（单位：分。如1.5元传150）
+//         * @param backparams 商户系统回调参数
+//         * @param notifyurl       商户系统回调地址
+//         * @param userid          商户系统用户ID(如：trpay@52yszd.com，商户系统内唯一)
+//         */
+//        TrPay.getInstance(PayActivity.this).callWxPay(tradename, outtradeno, amount, backparams, notifyurl, userid, new PayResultListener() {
+//            /**
+//             * 支付完成回调
+//             * @param context        上下文
+//             * @param outtradeno   商户系统订单号
+//             * @param resultCode   支付状态(RESULT_CODE_SUCC：支付成功、RESULT_CODE_FAIL：支付失败)
+//             * @param resultString  支付结果
+//             * @param payType      支付类型（1：支付宝 2：微信 3：银联）
+//             * @param amount       支付金额
+//             * @param tradename   商品名称
+//             */
+//
+//            @Override
+//            public void onPayFinish(Context context, String outtradeno, int resultCode, String resultString, int payType, Long                                                           amount, String tradename) {
+//                if (resultCode == TrPayResult.RESULT_CODE_SUCC.getId()) {
+//                    //支付成功逻辑处理
+//                    update(userid,tradename,outtradeno,"微信支付");
+//                    Toast.makeText(PayActivity.this,"支付成功",Toast.LENGTH_SHORT).show();
+//                } else if (resultCode == TrPayResult.RESULT_CODE_FAIL.getId()) {
+//                    //支付失败逻辑处理
+//                    Toast.makeText(PayActivity.this,"支付失败",Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
 
 //    private void zhiFuBao(){
 //        final String userid = SharePreferences.getString(this,AppConstants.USER_PHONE);
@@ -435,8 +502,11 @@ public class PayActivity extends AppCompatActivity {
         final String pay_time = TimeChange.getBigTime();
         final String pay_money = pay_count.getText().toString().trim();
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        final String pay_yu = decimalFormat.format(Double.parseDouble(pay_yue.getText().toString().trim()) +
+        String pay_yu = decimalFormat.format(Double.parseDouble(pay_yue.getText().toString().trim()) +
                               Double.parseDouble(pay_count.getText().toString().trim()));
+        if(pay_yu.substring(0,1).equals(".")){
+            pay_yu = "0" + pay_yu;
+        }
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("pay_user",user_name);
@@ -452,6 +522,7 @@ public class PayActivity extends AppCompatActivity {
         sqLiteDatabase.close();
         getData();
 
+        final String finalPay_yu = pay_yu;
         new Thread(){
             public void run(){
                 try{
@@ -472,12 +543,11 @@ public class PayActivity extends AppCompatActivity {
                         preparedStatement.setString(5, tradename);
                         preparedStatement.setString(6, pay_money);
                         preparedStatement.setString(7, outtradeno);
-                        preparedStatement.setString(8, pay_yu);
+                        preparedStatement.setString(8, finalPay_yu);
                         preparedStatement.setString(9,select);
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
-                        finish();
                     }else {
                         Log.d("调试", "连接失败");
                         Toast toast = Toast.makeText(PayActivity.this, "请检查网络", Toast.LENGTH_SHORT);

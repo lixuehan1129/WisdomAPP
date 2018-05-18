@@ -37,10 +37,12 @@ public class SplashActivity extends AppCompatActivity {
     private void IntoMain(){
         Intent intent = new Intent(SplashActivity.this,MainActivity.class);
         startActivity(intent);
+      //  finish();
     }
     private void IntoLogin(){
         Intent intent = new Intent(SplashActivity.this,MineLoginActivity.class);
         startActivity(intent);
+      //  finish();
     }
 
 

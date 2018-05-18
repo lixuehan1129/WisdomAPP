@@ -51,7 +51,7 @@
                         android:gravity="center"
                         android:src="@mipmap/ic_launcher_round"
                         app:civ_border_width="1dp"
-                        app:civ_border_color="@color/colorBlue" />
+                        app:civ_border_color="@color/colorGray" />
                 </LinearLayout>
 
                 <android.support.design.widget.TextInputLayout
