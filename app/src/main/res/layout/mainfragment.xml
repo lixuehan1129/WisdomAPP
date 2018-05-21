@@ -26,7 +26,7 @@
         android:id="@+id/roll_vis"
         android:padding="25dp"
         android:text="欢迎回来"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:gravity="center"
         android:background="@color/colorWhite"
         android:layout_width="match_parent"

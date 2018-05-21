@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -42,6 +43,12 @@ import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.iflytek.autoupdate.IFlytekUpdate;
+import com.iflytek.autoupdate.IFlytekUpdateListener;
+import com.iflytek.autoupdate.UpdateConstants;
+import com.iflytek.autoupdate.UpdateErrorCode;
+import com.iflytek.autoupdate.UpdateInfo;
+import com.iflytek.autoupdate.UpdateType;
 import com.mysql.jdbc.Connection;
 
 import java.lang.reflect.Field;
@@ -65,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private BroadcastReceiver mReceiver;
     private int unread = 0;
     private TextBadgeItem badgeItem = new TextBadgeItem();
+    private IFlytekUpdate updManager;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         getBroad();
       //  startFragment();//执行点击或滑动
         setQuanXian();
+        autoUpdate();
         createConnect();
     }
 
@@ -286,6 +296,57 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         }.start();
     }
 
+    private void autoUpdate(){
+
+        mContext = this.getApplicationContext();
+        //初始化自动更新对象
+        updManager = IFlytekUpdate.getInstance(mContext);
+        //开启调试模式，默认不开启
+        updManager.setDebugMode(true);
+        //开启wifi环境下检测更新，仅对自动更新有效，强制更新则生效
+        updManager.setParameter(UpdateConstants.EXTRA_WIFIONLY, "true");
+        //设置通知栏使用应用icon，详情请见示例
+        updManager.setParameter(UpdateConstants.EXTRA_NOTI_ICON, "false");
+        //设置更新提示类型，默认为通知栏提示
+       // updManager.setParameter(UpdateConstants.EXTRA_STYLE,UpdateConstants.UPDATE_UI_DIALOG);
+        updManager.setParameter(UpdateConstants.EXTRA_STYLE,UpdateConstants.UPDATE_UI_NITIFICATION);
+        // 启动自动更新
+        updManager.autoUpdate(MainActivity.this, updateListener);
+      //  updManager.forceUpdate(MainActivity.this, updateListener);
+
+        //自动更新回调方法，详情参考demo
+    }
+
+    private IFlytekUpdateListener updateListener = new IFlytekUpdateListener() {
+
+        @Override
+        public void onResult(int errorcode, UpdateInfo result) {
+
+            if(errorcode == UpdateErrorCode.OK && result!= null) {
+                if(result.getUpdateType() == UpdateType.NoNeed) {
+                    showTip("已经是最新版本！");
+
+                    return;
+                }
+                updManager.showUpdateInfo(mContext,result);
+            }
+            else
+            {
+                showTip("请求更新失败！\n更新错误码：" + errorcode);
+            }
+        }
+    };
+
+    private void showTip(final String str) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this,str,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
     private void init(){
         Stetho.initializeWithDefaults(this);
         new OkHttpClient.Builder()
@@ -386,3 +447,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         return (int) (dpValue * scale + 0.5f);
     }
 }
+
+
