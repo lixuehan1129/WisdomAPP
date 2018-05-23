@@ -324,16 +324,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
             if(errorcode == UpdateErrorCode.OK && result!= null) {
                 if(result.getUpdateType() == UpdateType.NoNeed) {
-                    showTip("已经是最新版本！");
-
                     return;
                 }
                 updManager.showUpdateInfo(mContext,result);
             }
-            else
-            {
-                showTip("请求更新失败！\n更新错误码：" + errorcode);
-            }
+     //       else
+     //       {
+     //           showTip("请求更新失败！\n更新错误码：" + errorcode);
+     //       }
         }
     };
 

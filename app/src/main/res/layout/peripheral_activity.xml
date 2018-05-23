@@ -71,6 +71,13 @@
             android:layout_height="wrap_content"
             android:onClick="visible"
             android:text="可见" />
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="service"
+            android:text="服务" />
 
         <Button
             android:layout_weight="1"
