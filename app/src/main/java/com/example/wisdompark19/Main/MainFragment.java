@@ -2,13 +2,17 @@ package com.example.wisdompark19.Main;
 
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -56,6 +60,9 @@ public class MainFragment extends BaseFragment {
     private int mCurrPos;
     private SliderLayout sliderLayout;
     private ArrayList<Integer> shop_url = new ArrayList<Integer>();
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
      // 上下滚动消息栏内容
     ArrayList<String> card_message_content = new ArrayList<String>();
     ArrayList<String> card_message_time = new ArrayList<String>();
@@ -118,6 +125,27 @@ public class MainFragment extends BaseFragment {
 //        getData();
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_LOGIN);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                LocalData();
+                initRoll();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
+    }
 
     //初始化界面
     private void findView(View view){

@@ -7,38 +7,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
-import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
 import com.example.wisdompark19.ViewHelper.BaseFragment;
-import com.mysql.jdbc.Connection;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -82,6 +64,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
         intentFilter = new IntentFilter();
         intentFilter.addAction(AppConstants.BROAD_CON);
+        intentFilter.addAction(AppConstants.BROAD_LOGIN);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent){

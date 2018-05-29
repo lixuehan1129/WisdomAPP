@@ -87,6 +87,7 @@ public class SocietyNewMessage extends BaseFragment {
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
         intentFilter = new IntentFilter();
         intentFilter.addAction(AppConstants.BROAD_MES);
+        intentFilter.addAction(AppConstants.BROAD_LOGIN);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent){
@@ -107,7 +108,6 @@ public class SocietyNewMessage extends BaseFragment {
         super.onDestroy();
         broadcastManager.unregisterReceiver(mReceiver);
     }
-
 
 
     @Override

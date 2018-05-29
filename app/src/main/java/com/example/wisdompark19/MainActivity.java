@@ -41,8 +41,6 @@ import com.example.wisdompark19.Main.MainFragment;
 import com.example.wisdompark19.Mine.MineFragment;
 import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
-import com.facebook.stetho.Stetho;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.iflytek.autoupdate.IFlytekUpdate;
 import com.iflytek.autoupdate.IFlytekUpdateListener;
 import com.iflytek.autoupdate.UpdateConstants;
@@ -57,8 +55,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener, ViewPager.OnPageChangeListener {
 
@@ -81,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         setContentView(R.layout.activity_main);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         findView(); //初始化布局
-        init();
+        //init();
         getBroad();
       //  startFragment();//执行点击或滑动
         setQuanXian();
@@ -345,12 +341,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     }
 
 
-    private void init(){
-        Stetho.initializeWithDefaults(this);
-        new OkHttpClient.Builder()
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();
-    }
+//    private void init(){
+//        Stetho.initializeWithDefaults(this);
+//        new OkHttpClient.Builder()
+//                .addNetworkInterceptor(new StethoInterceptor())
+//                .build();
+//    }
 
 
     @Override

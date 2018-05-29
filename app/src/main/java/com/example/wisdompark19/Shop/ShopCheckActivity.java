@@ -21,6 +21,7 @@ import com.example.wisdompark19.Adapter.DingDanAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
+import com.example.wisdompark19.AutoProject.TimeChange;
 import com.example.wisdompark19.R;
 import com.mysql.jdbc.Connection;
 
@@ -163,7 +164,7 @@ public class ShopCheckActivity extends AppCompatActivity {
         dingdan_n.add(n);
         dingdan_num.add(num);
         dingdan_pro.add(pro);
-        dingdan_time.add(time);
+        dingdan_time.add(TimeChange.StringToString1(time));
         dingdan_id.add(id);
     }
 

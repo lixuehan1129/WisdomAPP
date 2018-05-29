@@ -24,14 +24,11 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -41,21 +38,17 @@ import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.MainActivity;
 import com.example.wisdompark19.R;
-import com.example.wisdompark19.SplashActivity;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.sql.Blob;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by 最美人间四月天 on 2018/3/28.
@@ -230,6 +223,8 @@ public class MineLoginActivity extends AppCompatActivity {
                                     JDBCTools.releaseConnection(stmt,conn);
                                     Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
                                     toast.show();
+//                                    Intent intent_broad = new Intent(AppConstants.BROAD_LOGIN);
+//                                    LocalBroadcastManager.getInstance(MineLoginActivity.this).sendBroadcast(intent_broad);
                                     progressDialog.dismiss();
                                     Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);
                                     startActivity(intent);
