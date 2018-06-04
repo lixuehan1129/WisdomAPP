@@ -11,11 +11,10 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +35,6 @@ import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -135,6 +133,11 @@ public class SocietyMemberCheck extends BaseFragment {
         member_name = new ArrayList<>();
         member_phone = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+
+        //删除重复数据
+        String delete = "delete from user where user_id in (select user_id from user group by user_id having count(user_id) > 1)";
+        sqLiteDatabase.execSQL(delete);
+        //查询数据
         @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase.query("user",null,
                 "user_area = ?",new String[]{
                         SharePreferences.getString(getActivity(),AppConstants.USER_AREA)

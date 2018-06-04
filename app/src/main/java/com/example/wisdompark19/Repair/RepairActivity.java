@@ -159,6 +159,11 @@ public class RepairActivity extends AppCompatActivity {
         repair_check_pingjia = new ArrayList<>();
         repair_check_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+
+        //删除重复数据
+        String delete = "delete from repair where repair_id in (select repair_id from repair group by repair_id having count(repair_id) > 1)";
+        sqLiteDatabase.execSQL(delete);
+
         Cursor cursor = null;
         if(SharePreferences.getInt(RepairActivity.this, AppConstants.USER_SORT) == 0){
             cursor = sqLiteDatabase.query("repair",null,"repair_area = ?",new String[]{

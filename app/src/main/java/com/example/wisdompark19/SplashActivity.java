@@ -11,6 +11,7 @@ import com.base.bj.paysdk.utils.TrPay;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.Mine.MineLoginActivity;
+import com.tencent.bugly.Bugly;
 
 /**
  * Created by ROBOSOFT on 2018/4/18.
@@ -25,6 +26,9 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //初始化PaySdk(Context请传入当前Activity对象)
         TrPay.getInstance(SplashActivity.this).initPaySdk(appkey, channel);
+
+       // Bmob.initialize(SplashActivity.this,"17f7847bf93a59bff2a1dfa47c14dc9c");
+
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);

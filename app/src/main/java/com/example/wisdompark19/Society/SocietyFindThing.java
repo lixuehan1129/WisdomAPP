@@ -8,23 +8,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.wisdompark19.Adapter.SocietyFindAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.DealBitmap;
@@ -35,7 +32,6 @@ import com.example.wisdompark19.ViewHelper.BaseFragment;
 import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -158,6 +154,11 @@ public class SocietyFindThing extends BaseFragment {
         society_find_id = new ArrayList<>();
 
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+
+        //删除重复数据
+        String delete = "delete from shiwu where shiwu_id in (select shiwu_id from shiwu group by shiwu_id having count(shiwu_id) > 1)";
+        sqLiteDatabase.execSQL(delete);
+
         Cursor cursor = sqLiteDatabase.query("shiwu",null,"shiwu_area = ?",new String[]{
                 SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
         },null,null,"shiwu_id desc");

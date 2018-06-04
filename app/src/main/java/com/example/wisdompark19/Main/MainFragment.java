@@ -130,7 +130,6 @@ public class MainFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
         intentFilter = new IntentFilter();
-        intentFilter.addAction(AppConstants.BROAD_LOGIN);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent){

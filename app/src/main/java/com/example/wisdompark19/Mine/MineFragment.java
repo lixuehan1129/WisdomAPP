@@ -64,12 +64,13 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
         intentFilter = new IntentFilter();
         intentFilter.addAction(AppConstants.BROAD_CON);
-        intentFilter.addAction(AppConstants.BROAD_LOGIN);
+       // intentFilter.addAction(AppConstants.BROAD_LOGIN);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent){
                 //收到广播后所作的操作
                 findView(getView());
+                System.out.println("收广播呀");
             }
         };
         broadcastManager.registerReceiver(mReceiver, intentFilter);

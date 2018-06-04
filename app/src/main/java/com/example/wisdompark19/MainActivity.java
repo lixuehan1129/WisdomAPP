@@ -8,8 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +18,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -33,7 +30,6 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.ashokvarma.bottomnavigation.TextBadgeItem;
 import com.example.wisdompark19.Adapter.SectionsPagerAdapter;
-import com.example.wisdompark19.Adapter.ViewPagerAdapter;
 import com.example.wisdompark19.AutoProject.AppConstants;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
@@ -41,13 +37,9 @@ import com.example.wisdompark19.Main.MainFragment;
 import com.example.wisdompark19.Mine.MineFragment;
 import com.example.wisdompark19.Society.SocietyFragment;
 import com.example.wisdompark19.ViewHelper.NoScollViewPager;
-import com.iflytek.autoupdate.IFlytekUpdate;
-import com.iflytek.autoupdate.IFlytekUpdateListener;
-import com.iflytek.autoupdate.UpdateConstants;
-import com.iflytek.autoupdate.UpdateErrorCode;
-import com.iflytek.autoupdate.UpdateInfo;
-import com.iflytek.autoupdate.UpdateType;
 import com.mysql.jdbc.Connection;
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.beta.Beta;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -59,8 +51,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener, ViewPager.OnPageChangeListener {
 
     private NoScollViewPager viewPager;
-    private MenuItem menuItem;
-    private BottomNavigationView bottomNavigationView;
     private BottomNavigationBar bottomNavigationBar;
     private List<Fragment> fragments;
     private LocalBroadcastManager broadcastManager;
@@ -68,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private BroadcastReceiver mReceiver;
     private int unread = 0;
     private TextBadgeItem badgeItem = new TextBadgeItem();
-    private IFlytekUpdate updManager;
-    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +65,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         setContentView(R.layout.activity_main);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
         findView(); //初始化布局
-        //init();
         getBroad();
-      //  startFragment();//执行点击或滑动
+        Bugly.init(getApplicationContext(), "7ad29ea377", false);
+        Beta.autoInit = true;
+        Beta.autoCheckUpgrade = true;
+        Beta.smallIconId = R.mipmap.icon_app_f;
         setQuanXian();
-        autoUpdate();
         createConnect();
     }
 
@@ -159,55 +148,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         viewPager.setCurrentItem(0);
     }
 
-
-    private void startFragment(){
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.item_main:
-                                viewPager.setCurrentItem(0);
-                                break;
-                            case R.id.item_society:
-                                viewPager.setCurrentItem(1);
-                                break;
-                            case R.id.item_mine:
-                                viewPager.setCurrentItem(2);
-                                break;
-                        }
-                        return false;
-                    }
-                });
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-            @Override
-            public void onPageSelected(int position) {
-                if (menuItem != null) {
-                    menuItem.setChecked(false);
-                } else {
-                    bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                }
-                menuItem = bottomNavigationView.getMenu().getItem(position);
-                menuItem.setChecked(true);
-            }
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-        setupViewPager(viewPager);
-    }
-
-    private void setupViewPager(ViewPager viewPager){
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(MainFragment.newInstance("主页"));
-        viewPagerAdapter.addFragment(SocietyFragment.newInstance("社区"));
-        viewPagerAdapter.addFragment(MineFragment.newInstance("我的"));
-        viewPager.setAdapter(viewPagerAdapter);
-    }
-
     private void setQuanXian(){
         //获取权限
         List<String> permissionList = new ArrayList<>();
@@ -262,22 +202,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                                 SharePreferences.getString(MainActivity.this,AppConstants.USER_PHONE) +
                                 "'"; //要执行的sql语句
                         ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
-                        while (rs.first()) {
+                        while (rs.next()) {
                             int user_sort = rs.getInt("user_sort");
                             String name = rs.getString("user_name");
                             String area = rs.getString("user_area");
                             String address = rs.getString("user_address");
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_SORT);
                             SharePreferences.putInt(MainActivity.this,AppConstants.USER_SORT,user_sort);
+
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_NAME);
                             SharePreferences.putString(MainActivity.this,AppConstants.USER_NAME,name);
+
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_AREA);
                             SharePreferences.putString(MainActivity.this,AppConstants.USER_AREA,area);
+
                             SharePreferences.remove(MainActivity.this,AppConstants.USER_ADDRESS);
                             SharePreferences.putString(MainActivity.this,AppConstants.USER_ADDRESS,address);
                         }
-                        Intent intent_broad = new Intent(AppConstants.BROAD_CON);
-                        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent_broad);
+//                        Intent intent_broad = new Intent(AppConstants.BROAD_CON);
+//                        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent_broad);
                         rs.close();
                         JDBCTools.releaseConnection(stmt,conn);
                     }else{
@@ -291,45 +234,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             }
         }.start();
     }
-
-    private void autoUpdate(){
-
-        mContext = this.getApplicationContext();
-        //初始化自动更新对象
-        updManager = IFlytekUpdate.getInstance(mContext);
-        //开启调试模式，默认不开启
-        updManager.setDebugMode(true);
-        //开启wifi环境下检测更新，仅对自动更新有效，强制更新则生效
-        updManager.setParameter(UpdateConstants.EXTRA_WIFIONLY, "true");
-        //设置通知栏使用应用icon，详情请见示例
-        updManager.setParameter(UpdateConstants.EXTRA_NOTI_ICON, "false");
-        //设置更新提示类型，默认为通知栏提示
-       // updManager.setParameter(UpdateConstants.EXTRA_STYLE,UpdateConstants.UPDATE_UI_DIALOG);
-        updManager.setParameter(UpdateConstants.EXTRA_STYLE,UpdateConstants.UPDATE_UI_NITIFICATION);
-        // 启动自动更新
-        updManager.autoUpdate(MainActivity.this, updateListener);
-      //  updManager.forceUpdate(MainActivity.this, updateListener);
-
-        //自动更新回调方法，详情参考demo
-    }
-
-    private IFlytekUpdateListener updateListener = new IFlytekUpdateListener() {
-
-        @Override
-        public void onResult(int errorcode, UpdateInfo result) {
-
-            if(errorcode == UpdateErrorCode.OK && result!= null) {
-                if(result.getUpdateType() == UpdateType.NoNeed) {
-                    return;
-                }
-                updManager.showUpdateInfo(mContext,result);
-            }
-     //       else
-     //       {
-     //           showTip("请求更新失败！\n更新错误码：" + errorcode);
-     //       }
-        }
-    };
 
     private void showTip(final String str) {
         runOnUiThread(new Runnable() {

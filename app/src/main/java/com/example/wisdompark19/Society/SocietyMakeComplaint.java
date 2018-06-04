@@ -142,6 +142,11 @@ public class SocietyMakeComplaint extends BaseFragment {
         society_com_image = new ArrayList<>();
         society_com_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+
+        //删除重复数据
+        String delete = "delete from tucao where tucao_id in (select tucao_id from tucao group by tucao_id having count(tucao_id) > 1)";
+        sqLiteDatabase.execSQL(delete);
+
         Cursor cursor = sqLiteDatabase.query("tucao",null,"tucao_area = ?",new String[]{
                 SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
         },null,null,"tucao_id desc");

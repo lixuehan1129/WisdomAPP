@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,7 @@ import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.QRCodeUtil;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -40,6 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CodeActivity extends AppCompatActivity {
 
+    private DataBaseHelper dataBaseHelper = new DataBaseHelper(CodeActivity.this,AppConstants.SQL_VISION);
     private ImageView imageView;
     private ImageView imageView_f;
     private TextView code_cancel;
@@ -49,7 +53,6 @@ public class CodeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        System.out.println("第一次打开1");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.code_activity);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
@@ -86,6 +89,23 @@ public class CodeActivity extends AppCompatActivity {
             }
         });
     }
+
+    private Bitmap getPicture(){
+        Bitmap picture = null;
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase.query("user",null,
+                "user_phone = ?",new String[]{
+                        SharePreferences.getString(CodeActivity.this,AppConstants.USER_PHONE)
+                },null,null,null);
+        while (cursor.moveToFirst()){
+            byte[] bytes = cursor.getBlob(cursor.getColumnIndex("user_picture"));
+            if(bytes != null){
+                picture = DealBitmap.byteToBit(bytes);
+            }
+        }
+        return picture;
+    }
+
 
 
     private void setView(){

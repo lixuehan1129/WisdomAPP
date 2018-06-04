@@ -1,14 +1,18 @@
 package com.example.wisdompark19.Shop;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -44,6 +48,9 @@ import java.util.List;
  */
 public class ShopActivity extends AppCompatActivity {
 
+    private LocalBroadcastManager broadcastManager;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver mReceiver;
     private DataBaseHelper dataBaseHelper;
     private List<ShopTradeItemAdapter.Shop_Trade_item> Data;
     private ShopTradeItemAdapter mShopTradeItemAdapter;
@@ -67,6 +74,33 @@ public class ShopActivity extends AppCompatActivity {
         toolbar.setTitle(intent_data);
         back(toolbar);
         findView();
+        getBroad();
+    }
+
+    private void getBroad(){
+        broadcastManager = LocalBroadcastManager.getInstance(ShopActivity.this);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.BROAD_SHOP);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent){
+                //收到广播后所作的操作
+                mSwipeRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
+                connectData();
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(mReceiver);
     }
 
     private void findView(){
@@ -124,6 +158,11 @@ public class ShopActivity extends AppCompatActivity {
         shop_trade_image = new ArrayList<>();
         shop_trade_id = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+
+        //删除重复数据
+        String delete = "delete from shop where shop_id in (select shop_id from shop group by shop_id having count(shop_id) > 1)";
+        sqLiteDatabase.execSQL(delete);
+
         Cursor cursor = sqLiteDatabase.query("shop",null,"shop_area = ?",new String[]{
                 SharePreferences.getString(this,AppConstants.USER_AREA)
         },null,null,"shop_id desc");

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -176,6 +177,8 @@ public class ShopAddActivity extends AppCompatActivity {
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         JDBCTools.releaseConnection(stmt,conn);
+                        Intent intent_broad = new Intent(AppConstants.BROAD_SHOP);
+                        LocalBroadcastManager.getInstance(ShopAddActivity.this).sendBroadcast(intent_broad);
                         progressDialog.dismiss();
                         finish();
                     }else {

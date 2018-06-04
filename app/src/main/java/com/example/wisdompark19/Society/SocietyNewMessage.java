@@ -87,7 +87,6 @@ public class SocietyNewMessage extends BaseFragment {
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
         intentFilter = new IntentFilter();
         intentFilter.addAction(AppConstants.BROAD_MES);
-        intentFilter.addAction(AppConstants.BROAD_LOGIN);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent){
@@ -153,6 +152,11 @@ public class SocietyNewMessage extends BaseFragment {
         card_message_id = new ArrayList<>();
         card_message_xin = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+
+        //删除重复数据
+        String delete = "delete from newmessage where newmessage_id in (select newmessage_id from newmessage group by newmessage_id having count(newmessage_id) > 1)";
+        sqLiteDatabase.execSQL(delete);
+
         Cursor cursor = sqLiteDatabase.query("newmessage",null,"newmessage_area = ?",new String[]{
                 SharePreferences.getString(getActivity(),AppConstants.USER_AREA)
         },null,null,"newmessage_id desc");

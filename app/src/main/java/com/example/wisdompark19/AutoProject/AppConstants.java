@@ -3,7 +3,7 @@ package com.example.wisdompark19.AutoProject;
 /*
 * */
 public class AppConstants {
-    public static final String FIRST_OPEN = "first_open";
+   // public static final String FIRST_OPEN = "first_open";
     public static final String USER_PHONE = "app_user_phone";
     public static final String USER_NAME = "app_user_name";
     public static final String USER_ADDRESS = "app_user_address";
@@ -19,7 +19,6 @@ public class AppConstants {
     public static final String BROAD_REPAIR = "android.intent.action.broadcast.repair";
     public static final String BROAD_SHOP = "android.intent.action.broadcast.shop";
     public static final String BROAD_UNREAD = "android.intent.action.broadcast.unread";
-    public static final String BROAD_LOGIN = "android.intent.action.broadcast.login";
 
     public static final int CAMERA = 1;
     public static final int ALBUM = 2;

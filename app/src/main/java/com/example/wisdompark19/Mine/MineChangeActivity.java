@@ -33,6 +33,7 @@ import com.example.wisdompark19.AutoProject.DealBitmap;
 import com.example.wisdompark19.AutoProject.JDBCTools;
 import com.example.wisdompark19.AutoProject.SharePreferences;
 import com.example.wisdompark19.R;
+import com.example.wisdompark19.ViewHelper.DataBaseHelper;
 import com.mysql.jdbc.Connection;
 
 import java.io.ByteArrayOutputStream;
@@ -59,6 +60,8 @@ import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolute
  */
 
 public class MineChangeActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private DataBaseHelper dataBaseHelper = new DataBaseHelper(MineChangeActivity.this,AppConstants.SQL_VISION);
     private CircleImageView mine_change_picture;
     private Button mine_change_ok;
     private EditText mine_change_name;
@@ -113,8 +116,8 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
         mine_change_add.setOnClickListener(this);
         mine_change_address = (EditText)findViewById(R.id.mine_change_address);
 
-        String imageBase64 = SharePreferences.getString(MineChangeActivity.this,AppConstants.USER_PICTURE);
-        Bitmap user_bitmap = DealBitmap.StringToBitmap(imageBase64);
+        String image = SharePreferences.getString(MineChangeActivity.this,AppConstants.USER_PICTURE);
+        Bitmap user_bitmap = DealBitmap.StringToBitmap(image);
         if(user_bitmap != null){
             mine_change_picture.setImageBitmap(user_bitmap);
         }else {
@@ -315,12 +318,16 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                             JDBCTools.releaseConnection(statement,conn_update);
                             Toast toast=Toast.makeText(MineChangeActivity.this, "修改完成", Toast.LENGTH_SHORT);
                             toast.show();
+
                             SharePreferences.remove(MineChangeActivity.this,AppConstants.USER_NAME);
                             SharePreferences.putString(MineChangeActivity.this,AppConstants.USER_NAME,mine_change_name.getText().toString());
+
                             SharePreferences.remove(MineChangeActivity.this,AppConstants.USER_ADDRESS);
                             SharePreferences.putString(MineChangeActivity.this,AppConstants.USER_ADDRESS,mine_change_address.getText().toString());
+
                             SharePreferences.remove(MineChangeActivity.this,AppConstants.USER_AREA);
                             SharePreferences.putString(MineChangeActivity.this,AppConstants.USER_AREA,mine_change_society.getText().toString());
+
                             SharePreferences.remove(MineChangeActivity.this,AppConstants.USER_SEX);
                             SharePreferences.putString(MineChangeActivity.this,AppConstants.USER_SEX,user_sex_select);
 
@@ -424,6 +431,7 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
             }
         }.start();
     }
+
 
     //调用相机拍照
     private void take_photo(){

@@ -223,8 +223,6 @@ public class MineLoginActivity extends AppCompatActivity {
                                     JDBCTools.releaseConnection(stmt,conn);
                                     Toast toast = Toast.makeText(MineLoginActivity.this, "登录成功", Toast.LENGTH_SHORT);
                                     toast.show();
-//                                    Intent intent_broad = new Intent(AppConstants.BROAD_LOGIN);
-//                                    LocalBroadcastManager.getInstance(MineLoginActivity.this).sendBroadcast(intent_broad);
                                     progressDialog.dismiss();
                                     Intent intent = new Intent(MineLoginActivity.this, MainActivity.class);
                                     startActivity(intent);
