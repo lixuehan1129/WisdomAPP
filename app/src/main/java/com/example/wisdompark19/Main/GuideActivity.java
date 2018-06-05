@@ -56,7 +56,6 @@ public class GuideActivity extends AppCompatActivity {
     private GuideAdapter guideAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
-    private Button button;
 
     private ArrayList<String> guide_que;
     private ArrayList<String> guide_ans;
@@ -107,7 +106,7 @@ public class GuideActivity extends AppCompatActivity {
 
     private void findView(){
         recyclerView = (RecyclerView)findViewById(R.id.guide_re);
-        button = (Button)findViewById(R.id.guide_btn);
+        Button button = (Button) findViewById(R.id.guide_btn);
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.guide_sw);
         dataBaseHelper = new DataBaseHelper(GuideActivity.this,AppConstants.SQL_VISION);
         button.setOnClickListener(new View.OnClickListener() {

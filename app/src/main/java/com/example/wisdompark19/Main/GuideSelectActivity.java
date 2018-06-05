@@ -46,7 +46,7 @@ public class GuideSelectActivity extends AppCompatActivity {
         select_id = intent.getIntExtra("guide_select",0);
         Toolbar toolbar = (Toolbar)findViewById(R.id.guide_select_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-        toolbar.setTitle("办事指南");
+        toolbar.setTitle("社区咨询");
         back(toolbar);
         findView();
     }

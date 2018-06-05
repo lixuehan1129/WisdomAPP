@@ -86,7 +86,7 @@ public class MainFragment extends BaseFragment {
             "通行证",
             "我的位置",
    //         "外设接口",
-            "办事指南",
+            "咨询中心",
             "更多",
             null
     };
@@ -245,7 +245,7 @@ public class MainFragment extends BaseFragment {
                    //     Intent intent = new Intent(getActivity(),PeripheralActivity.class);
                     //    intent.putExtra("put_data_waishe","外设接口");
                         Intent intent = new Intent(getActivity(),GuideActivity.class);
-                        intent.putExtra("put_data_waishe","办事指南");
+                        intent.putExtra("put_data_waishe","咨询中心");
                         startActivity(intent);
                     }break;
                     case 6:{
