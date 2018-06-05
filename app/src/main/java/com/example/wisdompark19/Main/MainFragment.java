@@ -3,7 +3,6 @@ package com.example.wisdompark19.Main;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -86,7 +85,8 @@ public class MainFragment extends BaseFragment {
             "电商平台",
             "通行证",
             "我的位置",
-            "外设接口",
+   //         "外设接口",
+            "办事指南",
             "更多",
             null
     };
@@ -125,26 +125,27 @@ public class MainFragment extends BaseFragment {
 //        getData();
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        intentFilter = new IntentFilter();
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent){
-                //收到广播后所作的操作
-                LocalData();
-                initRoll();
-            }
-        };
-        broadcastManager.registerReceiver(mReceiver, intentFilter);
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        broadcastManager.unregisterReceiver(mReceiver);
-    }
+     //这是干什么的，给忘了？？
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+//        intentFilter = new IntentFilter();
+//        mReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent){
+//                //收到广播后所作的操作
+//                LocalData();
+//                initRoll();
+//            }
+//        };
+//        broadcastManager.registerReceiver(mReceiver, intentFilter);
+//    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        broadcastManager.unregisterReceiver(mReceiver);
+//    }
 
     //初始化界面
     private void findView(View view){
@@ -241,8 +242,10 @@ public class MainFragment extends BaseFragment {
                         startActivity(intent);
                     }break;
                     case 5:{
-                        Intent intent = new Intent(getActivity(),PeripheralActivity.class);
-                        intent.putExtra("put_data_waishe","外设接口");
+                   //     Intent intent = new Intent(getActivity(),PeripheralActivity.class);
+                    //    intent.putExtra("put_data_waishe","外设接口");
+                        Intent intent = new Intent(getActivity(),GuideActivity.class);
+                        intent.putExtra("put_data_waishe","办事指南");
                         startActivity(intent);
                     }break;
                     case 6:{

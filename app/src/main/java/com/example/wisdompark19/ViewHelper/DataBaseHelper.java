@@ -115,6 +115,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + "pay_yue text, "
             + "pay_select text)";
 
+    public static final String CREATE_GUIDE ="create table guide ("
+            + "id integer primary key autoincrement, "
+            + "guide_id integer, "
+            + "guide_phone text, "
+            + "guide_area text, "
+            + "guide_que text, "
+            + "guide_ans text, "
+            + "guide_time text)";
+
     private Context mContext;
 
     /**
@@ -145,6 +154,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_REPAIR);
         db.execSQL(CREATE_SHOP);
         db.execSQL(CREATE_PAY);
+        db.execSQL(CREATE_GUIDE);
     }
 
     //数据库升级
@@ -157,6 +167,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists repair");
         db.execSQL("drop table if exists shop");
         db.execSQL("drop table if exists pay");
+        db.execSQL("drop table if exists guide");
         onCreate(db);
     }
 

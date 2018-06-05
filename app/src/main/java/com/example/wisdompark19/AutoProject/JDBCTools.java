@@ -3,12 +3,8 @@ package com.example.wisdompark19.AutoProject;
 import android.util.Log;
 
 import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
 
 import java.sql.DriverManager;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 
 /**

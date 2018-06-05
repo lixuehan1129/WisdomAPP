@@ -19,11 +19,13 @@ public class AppConstants {
     public static final String BROAD_REPAIR = "android.intent.action.broadcast.repair";
     public static final String BROAD_SHOP = "android.intent.action.broadcast.shop";
     public static final String BROAD_UNREAD = "android.intent.action.broadcast.unread";
+    public static final String BROAD_GUIDE = "android.intent.action.broadcast.guide";
 
     public static final int CAMERA = 1;
     public static final int ALBUM = 2;
 
     public static final String SHOP_TIME = "app_shop_time";
     public static final String REPAIR_TIME = "app_repair_time";
-    public static final int SQL_VISION = 2;
+    public static final String GUIDE_TIME = "app_guide_time";
+    public static final int SQL_VISION = 1;
 }

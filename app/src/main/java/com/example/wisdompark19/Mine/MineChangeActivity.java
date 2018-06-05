@@ -1,6 +1,8 @@
 package com.example.wisdompark19.Mine;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,13 +20,16 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +99,7 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
         back(toolbar);
         initSpinner();
         findView();
+        problem_jiaodian();
     }
 
     private void findView(){
@@ -537,6 +543,23 @@ public class MineChangeActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+  * 点击空白区域 Edittext失去焦点 关闭输入法
+  * */
+    @SuppressLint("ClickableViewAccessibility")
+    private void problem_jiaodian() {
+        final RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.mine_relv);
+        relativeLayout.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                relativeLayout.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                return false;
+            }
+        });
     }
 
 
