@@ -1,7 +1,6 @@
 package com.example.wisdompark19.Mine;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -33,11 +32,9 @@ public class MineRequireActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mine_require_activity);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlue)); //设置顶部系统栏颜色
-        Intent intent = getIntent();
-        String intent_data = intent.getStringExtra("put_data_waishe");
         Toolbar toolbar = (Toolbar)findViewById(R.id.mine_require_mainTool); //标题栏
         toolbar.setNavigationIcon(R.mipmap.ic_back_white);
-        toolbar.setTitle(intent_data);
+        toolbar.setTitle("意见反馈");
         back(toolbar);
         findView();
     }

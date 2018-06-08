@@ -225,9 +225,9 @@ public class RepairActivity extends AppCompatActivity {
                 try{
                     Looper.prepare();
                     Connection conn = JDBCTools.getConnection("shequ","Zz123456");
-                    if (conn != null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                    if (conn != null) {
                         Log.d("调试", "连接成功,报修管理");
-                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        Statement stmt = conn.createStatement();
                         //查找信息
                         String sql_connect;
                         if(SharePreferences.getInt(RepairActivity.this, AppConstants.USER_SORT) == 0){

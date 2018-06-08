@@ -202,8 +202,8 @@ public class MainFragment extends BaseFragment {
 
         for (int i = 0; i < 8; i++) {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("ItemImage", mImages[i]);// 添加图像资源的ID
-            map.put("ItemText", mContent[i]);// 按序号做ItemText
+            map.put("ItemImage", mImages[i]);// 图片
+            map.put("ItemText", mContent[i]);// 名称
             lstImageItem.add(map);
         }
         //构建一个适配器
@@ -211,11 +211,11 @@ public class MainFragment extends BaseFragment {
                 new String[] { "ItemImage", "ItemText" }, new int[] {R.id.gridview_item_card_image,
                 R.id.gridview_item_card_name });
         mGridView.setAdapter(simple);
-        //添加选择项监听事件
+        //添加监听事件
         mGridView.setOnItemClickListener(new GridView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){ //对应的功能点击
+                switch (position){
                     case 0:{
                         Intent intent = new Intent(getActivity(),PayActivity.class);
                         intent.putExtra("put_data_pay","生活缴费");
