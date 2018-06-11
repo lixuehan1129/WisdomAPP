@@ -144,7 +144,7 @@ public class SocietyNewMessage extends BaseFragment {
     }
 
     private void localData(){
-        int unRead = 0;
+        int unRead = 1;
         card_message_tell = new ArrayList<>();
         card_message_content = new ArrayList<>();
         card_message_time = new ArrayList<>();
@@ -189,8 +189,10 @@ public class SocietyNewMessage extends BaseFragment {
         }
         cursor.close();
         sqLiteDatabase.close();
+
         Intent intent_broad = new Intent(AppConstants.BROAD_UNREAD);
         intent_broad.putExtra("unread",unRead);
+        System.out.println("sdsadasdsa");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent_broad);
         //执行事件
         initData();

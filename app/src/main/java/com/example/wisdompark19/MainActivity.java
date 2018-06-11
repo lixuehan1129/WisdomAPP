@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 if(unread != intent.getIntExtra("unread",0)){
                     unread = intent.getIntExtra("unread",0);
                     System.out.println("接受广播,数量"+unread);
-                    if(unread != 0){
-                        badgeItem.setText(String.valueOf(unread));
+                    if(unread >= 2){
+                        badgeItem.setText(String.valueOf(unread-1));
                         badgeItem.show();
                     }else {
                         badgeItem.hide();
@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         badgeItem.setBackgroundColorResource(R.color.colorRed);
        // badgeItem.hide();//角标
         badgeItem.setText("0");
+      //  badgeItem.hide();
 
         bottomNavigationBar.clearAll();
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
