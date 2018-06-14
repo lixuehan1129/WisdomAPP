@@ -66,6 +66,7 @@ import static com.example.wisdompark19.AutoProject.AbsolutePath.getImageAbsolute
 
 public class MineChangeActivity extends AppCompatActivity implements View.OnClickListener{
 
+    //添加设置
     private DataBaseHelper dataBaseHelper = new DataBaseHelper(MineChangeActivity.this,AppConstants.SQL_VISION);
     private CircleImageView mine_change_picture;
     private Button mine_change_ok;
